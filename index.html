@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <!-- Контроль кеширования -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>Skills - Развитие навыков</title>
+    <link rel="manifest" href="manifest.json?v=1.1" />
+    <meta name="theme-color" content="#007AFF" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png?v=1.1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=1.1" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <span class="header-text">Навыки</span>
+        <div class="header-dot"></div>
+      </header>
+
+      <div class="principle-card">
+        <div class="principle-header">
+          <i class="ph ph-sparkle"></i>
+          <h3 class="principle-title"></h3>
+          <i class="ph ph-caret-down principle-expand"></i>
+        </div>
+        <div class="principle-details">
+          <p class="principle-description"></p>
+          <div class="principle-implications"></div>
+          <p class="principle-application"></p>
+        </div>
+      </div>
+
+      <div class="skill-list">
+        <!-- Skills will be dynamically inserted here -->
+      </div>
+
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-view="theory">
+          <i class="ph ph-stack"></i>
+          <span>Навыки</span>
+        </button>
+        <button class="nav-item" data-view="practice">
+          <i class="ph ph-sparkle"></i>
+          <span>Практика</span>
+        </button>
+        <button class="nav-item" data-view="diary">
+          <i class="ph ph-notebook"></i>
+          <span>Дневник</span>
+        </button>
+        <button class="nav-item" data-view="settings">
+          <i class="ph ph-gear-six"></i>
+          <span>Настройки</span>
+        </button>
+      </nav>
+    </div>
+
+    <script src="js/db.js?v=1.1"></script>
+    <script src="js/app.js?v=1.1" type="module"></script>
+    <script>
+      // Регистрация Service Worker
+      if ("serviceWorker" in navigator) {
+        // Сначала удаляем старый Service Worker
+        navigator.serviceWorker
+          .getRegistrations()
+          .then(function (registrations) {
+            for (let registration of registrations) {
+              registration.unregister();
+            }
+          })
+          .then(function () {
+            // Регистрируем новый
+            return navigator.serviceWorker.register("/sw.js?v=1.1");
+          })
+          .then((registration) => console.log("ServiceWorker registered"))
+          .catch((error) =>
+            console.log("ServiceWorker registration failed:", error)
+          );
+      }
+    </script>
+  </body>
+</html>
