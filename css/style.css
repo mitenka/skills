@@ -9,17 +9,22 @@
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
   --primary-text: #333;
   --hover-background: #f7f7f7;
-  
+
   /* Пастельные цвета для секций */
   --section-color-1: #f0f7ff;
   --section-color-2: #fff0f7;
   --section-color-3: #f3fff0;
   --section-color-4: #fff7f0;
   --section-color-5: #f0f0ff;
-  
+
   /* Градиенты */
   --header-gradient: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
-  --text-gradient: linear-gradient(135deg, #6366f1 0%, #0ea5e9 50%, #10b981 100%);
+  --text-gradient: linear-gradient(
+    135deg,
+    #6366f1 0%,
+    #0ea5e9 50%,
+    #10b981 100%
+  );
   --header-text-gradient: linear-gradient(135deg, #2d3436 0%, #000000 100%);
 }
 
@@ -50,7 +55,7 @@ body {
 }
 
 .header-text {
-  font-family: 'Unbounded', system-ui;
+  font-family: "Unbounded", system-ui;
   font-size: 22px;
   font-weight: 700;
   background: var(--text-gradient);
@@ -68,7 +73,8 @@ body {
 #app {
   max-width: 800px;
   margin: 0 auto;
-  padding: calc(var(--header-height) + 16px) 16px calc(65px + var(--safe-area-inset-bottom)) 16px;
+  padding: calc(var(--header-height) + 16px) 16px
+    calc(65px + var(--safe-area-inset-bottom)) 16px;
   padding-top: calc(var(--header-height) + 16px);
   padding-bottom: calc(49px + var(--safe-area-inset-bottom));
   min-height: 100vh;
@@ -549,12 +555,24 @@ body {
     padding: 6px 0;
   }
 
-  .scale-button:nth-child(1) { grid-area: 1 / 1; }
-  .scale-button:nth-child(2) { grid-area: 1 / 2; }
-  .scale-button:nth-child(3) { grid-area: 1 / 3; }
-  .scale-button:nth-child(4) { grid-area: 2 / 1; }
-  .scale-button:nth-child(5) { grid-area: 2 / 2; }
-  .scale-button:nth-child(6) { grid-area: 2 / 3; }
+  .scale-button:nth-child(1) {
+    grid-area: 1 / 1;
+  }
+  .scale-button:nth-child(2) {
+    grid-area: 1 / 2;
+  }
+  .scale-button:nth-child(3) {
+    grid-area: 1 / 3;
+  }
+  .scale-button:nth-child(4) {
+    grid-area: 2 / 1;
+  }
+  .scale-button:nth-child(5) {
+    grid-area: 2 / 2;
+  }
+  .scale-button:nth-child(6) {
+    grid-area: 2 / 3;
+  }
 
   .binary-buttons {
     display: grid;
@@ -817,4 +835,238 @@ body {
   .tracking-table td {
     padding: 8px 4px;
   }
+}
+
+.install-section {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.install-section h3 {
+  font-size: 18px;
+  margin: 0 0 12px 0;
+  color: var(--text-color);
+}
+
+.install-instructions {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.install-instructions li {
+  margin-bottom: 12px;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.install-instructions i {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 4px;
+  color: var(--primary-color);
+  font-size: 18px;
+}
+
+.platform-instructions {
+  margin-top: 16px;
+}
+
+.platform-instructions h4 {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.platform-instructions h4 i {
+  color: var(--primary-color);
+}
+
+.settings-section {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.settings-section h2 {
+  font-size: 18px;
+  margin: 0 0 16px 0;
+  color: var(--text-color);
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-item span {
+  flex: 1;
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.setting-item label {
+  color: var(--text-color);
+  font-size: 16px;
+  margin-right: 12px;
+}
+
+.setting-item input[type="time"] {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 16px;
+  color: var(--text-color);
+  width: 120px;
+}
+
+.setting-item input[type="time"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.setting-item.disabled {
+  opacity: 0.5;
+}
+
+/* Switch styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  margin-right: 12px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-color);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.slider.round {
+  border-radius: 28px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Time input when disabled */
+.setting-item input[type="time"]:disabled {
+  background-color: var(--background-color);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Adding styles for next notification time display */
+.notification-next-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--secondary-text);
+  font-size: 14px;
+  padding-top: 8px;
+}
+
+.notification-next-time i {
+  color: var(--primary-color);
+  font-size: 18px;
+}
+
+.notification-next-time span {
+  font-size: 14px;
+  color: var(--secondary-text);
+}
+
+/* Adding styles for notification description */
+.notification-description {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  background: var(--background-color);
+  border-radius: 8px;
+}
+
+.notification-description i {
+  color: var(--primary-color);
+  font-size: 18px;
+  margin-top: 2px;
+}
+
+.notification-description span {
+  font-size: 14px;
+  color: var(--secondary-text);
+  line-height: 1.4;
+}
+
+/* Adding styles for test notification button */
+.test-notification-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+
+.test-notification-btn:active {
+  opacity: 0.8;
+}
+
+.test-notification-btn i {
+  font-size: 20px;
 }
