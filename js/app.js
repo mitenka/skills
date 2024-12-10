@@ -695,11 +695,63 @@ class SkillsApp {
     return `${date} в ${formattedTime}`;
   }
 
+  isIOS() {
+    return [
+      'iPad Simulator',
+      'iPhone Simulator',
+      'iPod Simulator',
+      'iPad',
+      'iPhone',
+      'iPod'
+    ].includes(navigator.platform)
+    || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+  }
+
+  getIOSVersion() {
+    if (!this.isIOS()) return null;
+    
+    const match = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
+    if (match) {
+      return parseFloat(match[1] + '.' + match[2]);
+    }
+    return null;
+  }
+
+  isPWAInstalled() {
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.navigator.standalone;
+  }
+
   async requestNotificationPermission() {
     try {
+      const isIOS = this.isIOS();
+      const iOSVersion = this.getIOSVersion();
+      const isPWA = this.isPWAInstalled();
+
+      if (isIOS) {
+        if (iOSVersion < 16.4) {
+          alert("Для работы уведомлений требуется iOS 16.4 или выше");
+          return;
+        }
+        
+        if (!isPWA) {
+          const installPrompt = confirm(
+            "Для работы уведомлений необходимо установить приложение на главный экран. " +
+            "Показать инструкцию по установке?"
+          );
+          
+          if (installPrompt) {
+            this.showIOSInstallInstructions();
+          }
+          return;
+        }
+      }
+
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
+        localStorage.setItem("notificationsEnabled", "true");
         this.scheduleNotification(localStorage.getItem("notificationTime") || "09:00");
+        this.renderSettings();
       } else {
         localStorage.setItem("notificationsEnabled", "false");
         const toggle = document.querySelector("#notifications-toggle");
@@ -711,11 +763,34 @@ class SkillsApp {
       localStorage.setItem("notificationsEnabled", "false");
       const toggle = document.querySelector("#notifications-toggle");
       if (toggle) toggle.checked = false;
-      alert("Ваш браузер не поддерживает уведомления");
+      alert("Произошла ошибка при настройке уведомлений");
     }
   }
 
-  scheduleNotification(time) {
+  showIOSInstallInstructions() {
+    const modal = document.createElement('div');
+    modal.className = 'ios-install-modal';
+    modal.innerHTML = `
+      <div class="ios-install-content">
+        <h3>Как установить приложение на iOS:</h3>
+        <ol>
+          <li>Нажмите кнопку <i class="ph ph-share-network"></i> «Поделиться»</li>
+          <li>Прокрутите вниз и выберите «На экран "Домой"»</li>
+          <li>Нажмите «Добавить»</li>
+        </ol>
+        <p>После установки откройте приложение с главного экрана для настройки уведомлений.</p>
+        <button class="close-modal">Закрыть</button>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('.close-modal').addEventListener('click', () => {
+      modal.remove();
+    });
+  }
+
+  async scheduleNotification(time) {
     // Отменяем предыдущее уведомление если оно было
     this.cancelNotification();
     
