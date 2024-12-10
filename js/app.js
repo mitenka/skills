@@ -94,86 +94,41 @@ function renderTheoryBlocks(data) {
   const container = document.querySelector(".blocks-container");
   if (!container) return;
 
-  const blocksHTML = data.blocks
-    .map(
-      (block) => `
-        <div class="theory-block">
-            <h2>${block.title}</h2>
-            <div class="skills-grid">
-                ${block.skills
-                  .map(
-                    (skill) => `
-                    <div class="skill-card" tabindex="0" role="button">
-                        <div class="skill-header">
-                            <div class="skill-title">
-                                <h3>${skill.name}</h3>
-                                ${
-                                  skill.category
-                                    ? `<span class="skill-category">${skill.category}</span>`
-                                    : ""
-                                }
-                            </div>
-                            <span class="icon">▼</span>
-                        </div>
-                        <div class="skill-details">
-                            ${
-                              skill.points
-                                ? skill.points
-                                    .map(
-                                      (point) => `
-                                <div class="point">
-                                    <p>${point.text}</p>
-                                    ${
-                                      point.subpoints
-                                        ? `
-                                        <ul>
-                                            ${point.subpoints
-                                              .map(
-                                                (subpoint) => `
-                                                <li>${subpoint}</li>
-                                            `
-                                              )
-                                              .join("")}
-                                        </ul>
-                                    `
-                                        : ""
-                                    }
-                                </div>
-                            `
-                                    )
-                                    .join("")
-                                : ""
-                            }
-                        </div>
-                    </div>
-                `
-                  )
-                  .join("")}
+  function renderPoints(points) {
+    if (!points?.length) return '';
+    
+    return points.map(point => `
+      <div class="point">
+        <p>${point.text}</p>
+        ${point.subpoints ? `
+          <ul>
+            ${point.subpoints.map(sub => `<li>${sub}</li>`).join('')}
+          </ul>
+        ` : ''}
+      </div>
+    `).join('');
+  }
+
+  container.innerHTML = data.blocks.map(block => `
+    <div class="theory-block">
+      <h2>${block.title}</h2>
+      <div class="skills-grid">
+        ${block.skills.map(skill => `
+          <details class="skill-card">
+            <summary class="skill-header">
+              <div class="skill-title">
+                <h3>${skill.name}</h3>
+                ${skill.category ? `<span class="skill-category">${skill.category}</span>` : ''}
+              </div>
+            </summary>
+            <div class="skill-details">
+              ${renderPoints(skill.points)}
             </div>
-        </div>
-    `
-    )
-    .join("");
-
-  container.innerHTML = blocksHTML;
-
-  // Добавляем обработчики для карточек
-  container.querySelectorAll(".skill-card").forEach((card) => {
-    // Обработка клика
-    card.addEventListener("click", function () {
-      this.classList.toggle("expanded");
-      const icon = this.querySelector(".icon");
-      icon.textContent = this.classList.contains("expanded") ? "▲" : "▼";
-    });
-
-    // Обработка нажатия клавиши Enter
-    card.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        this.click();
-      }
-    });
-  });
+          </details>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
 }
 
 // Отображение аксиом
