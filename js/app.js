@@ -79,10 +79,14 @@ async function loadTheoryData() {
     const axiomsData = await axiomsResponse.json();
 
     renderTheoryBlocks(theoryData);
-    renderAxioms(axiomsData);
+    
+    // Проверяем настройку отображения допущений
+    const showAssumptions = localStorage.getItem('showAssumptions') !== 'false';
+    if (showAssumptions) {
+      renderAxioms(axiomsData);
+    }
   } catch (error) {
     console.error("Ошибка при загрузке данных:", error);
-    // Показываем сообщение об ошибке только если действительно офлайн
     if (!navigator.onLine) {
       showOfflineMessage();
     }
@@ -209,9 +213,36 @@ function showOfflineMessage() {
   }, 3000);
 }
 
+// Инициализация настроек
+function initSettings() {
+  const showAssumptionsToggle = document.getElementById('show-assumptions');
+  if (showAssumptionsToggle) {
+    // Устанавливаем начальное состояние
+    const showAssumptions = localStorage.getItem('showAssumptions') !== 'false';
+    showAssumptionsToggle.checked = showAssumptions;
+
+    // Добавляем обработчик изменений
+    showAssumptionsToggle.addEventListener('change', (e) => {
+      const showAssumptions = e.target.checked;
+      localStorage.setItem('showAssumptions', showAssumptions);
+      
+      // Обновляем отображение допущений
+      const assumptionsContainer = document.querySelector('.axioms-list');
+      if (assumptionsContainer) {
+        if (showAssumptions) {
+          loadTheoryData(); // Перезагружаем данные для отображения допущения
+        } else {
+          assumptionsContainer.innerHTML = ''; // Очищаем контейнер
+        }
+      }
+    });
+  }
+}
+
 // Инициализация приложения
 document.addEventListener("DOMContentLoaded", () => {
   initNavigation();
   loadTheoryData();
   registerServiceWorker();
+  initSettings();
 });
