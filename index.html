@@ -1,106 +1,60 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <!-- Контроль кеширования -->
-    <meta
-      http-equiv="Cache-Control"
-      content="no-cache, no-store, must-revalidate"
-    />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>ДПТ Навыки</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-192x192.png">
+    <link rel="shortcut icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="#theory" class="active">Теория</a></li>
+            <li><a href="#practice">Практика</a></li>
+            <li><a href="#diary">Дневник</a></li>
+            <li><a href="#settings">Настройки</a></li>
+        </ul>
+    </nav>
 
-    <title>Skills - Развитие навыков</title>
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#007AFF" />
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  </head>
-  <body>
-    <div id="app">
-      <header class="header">
-        <span class="header-text">Это точно работает?</span>
-        <div class="header-dot"></div>
-      </header>
+    <main>
+        <section id="theory" class="page active">
+            <h1>Теория ДПТ</h1>
+            <div class="axioms-container">
+                <h2>Аксиомы ДПТ</h2>
+                <div class="axioms-list"></div>
+            </div>
+            <div class="blocks-container"></div>
+        </section>
 
-      <div class="principle-card">
-        <div class="principle-header">
-          <i class="ph ph-sparkle"></i>
-          <h3 class="principle-title"></h3>
-          <i class="ph ph-caret-down principle-expand"></i>
-        </div>
-        <div class="principle-details">
-          <p class="principle-description"></p>
-          <div class="principle-implications"></div>
-          <p class="principle-application"></p>
-        </div>
-      </div>
+        <section id="practice" class="page">
+            <h1>Практика</h1>
+            <p>Раздел практических упражнений и заданий.</p>
+        </section>
 
-      <div class="skill-list">
-        <!-- Skills will be dynamically inserted here -->
-      </div>
+        <section id="diary" class="page">
+            <h1>Дневник</h1>
+            <p>Ваш личный дневник для отслеживания прогресса.</p>
+        </section>
 
-      <nav class="bottom-nav">
-        <button class="nav-item active" data-view="theory">
-          <i class="ph ph-stack"></i>
-          <span>Навыки</span>
-        </button>
-        <button class="nav-item" data-view="practice">
-          <i class="ph ph-sparkle"></i>
-          <span>Практика</span>
-        </button>
-        <button class="nav-item" data-view="diary">
-          <i class="ph ph-notebook"></i>
-          <span>Дневник</span>
-        </button>
-        <button class="nav-item" data-view="settings">
-          <i class="ph ph-gear-six"></i>
-          <span>Настройки</span>
-        </button>
-      </nav>
-    </div>
+        <section id="settings" class="page">
+            <h1>Настройки</h1>
+            <p>Настройки приложения и персонализация.</p>
+        </section>
+    </main>
 
-    <script src="js/db.js"></script>
-    <script type="module">
-      import { SkillsApp } from './js/app.js';
-      document.addEventListener("DOMContentLoaded", () => {
-        console.log('DOM loaded, initializing app...');
-        window.app = new SkillsApp();
-      });
-    </script>
+    <script src="js/app.js" type="module"></script>
     <script>
-      // Регистрация Service Worker
-      if ("serviceWorker" in navigator) {
-        // Сначала удаляем старый Service Worker
-        navigator.serviceWorker
-          .getRegistrations()
-          .then(function (registrations) {
-            for (let registration of registrations) {
-              registration.unregister();
-            }
-          })
-          .then(function () {
-            // Регистрируем новый
-            return navigator.serviceWorker.register("/sw.js");
-          })
-          .then((registration) => console.log("ServiceWorker registered"))
-          .catch((error) =>
-            console.log("ServiceWorker registration failed:", error)
-          );
-      }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => console.log('ServiceWorker registered'))
+                .catch(error => console.log('ServiceWorker registration failed:', error));
+        }
     </script>
-  </body>
+</body>
 </html>

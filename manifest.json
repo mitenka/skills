@@ -1,23 +1,21 @@
 {
-    "name": "Skills - Развитие навыков",
-    "short_name": "Skills",
-    "description": "Приложение для развития личных и профессиональных навыков",
+    "name": "ДПТ Навыки",
+    "short_name": "ДПТ",
+    "description": "Приложение для изучения навыков Динамической Психологической Терапии",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#F5F7FA",
-    "theme_color": "#4A90E2",
+    "background_color": "#ffffff",
+    "theme_color": "#4a90e2",
     "icons": [
         {
             "src": "icons/icon-192x192.png",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         },
         {
             "src": "icons/icon-512x512.png",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         }
     ]
 }
