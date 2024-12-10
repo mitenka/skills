@@ -236,7 +236,7 @@ class SkillsApp {
     this.skillList.innerHTML = `
       <div class="settings-container">
         <div class="settings-section">
-          <h2>Уведомления</h2>
+          <h2>Настройки</h2>
           <div class="setting-item">
             <label class="switch">
               <input type="checkbox" id="notifications-toggle" ${
@@ -268,24 +268,23 @@ class SkillsApp {
         </div>
 
         <div class="install-section">
-          <h3>Установка приложения</h3>
-          <div class="platform-instructions">
-            <h4><i class="ph ph-device-mobile"></i>iOS (Safari)</h4>
-            <ol class="install-instructions">
-              <li>Нажмите кнопку "Поделиться" <i class="ph ph-share-network"></i> в нижней части браузера</li>
-              <li>В появившемся меню выберите "На экран «Домой»" <i class="ph ph-plus-circle"></i></li>
-              <li>Нажмите "Добавить" в правом верхнем углу</li>
-            </ol>
+          <h2>Установка</h2>
+          <p>
+            Установите приложение на ваше устройство для быстрого доступа и работы в офлайн режиме
+          </p>
+        </div>
+
+        <div class="about-section">
+          <div class="version-info">
+            <i class="ph ph-info"></i>
+            <span>Версия 1.2.0</span>
           </div>
-          
-          <div class="platform-instructions">
-            <h4><i class="ph ph-device-mobile"></i>Android (Chrome)</h4>
-            <ol class="install-instructions">
-              <li>Нажмите на три точки <i class="ph ph-dots-three-vertical"></i> в правом верхнем углу браузера</li>
-              <li>Выберите "Установить приложение" <i class="ph ph-download-simple"></i></li>
-              <li>Нажмите "Установить" в появившемся окне</li>
-            </ol>
-          </div>
+          ${this.isIOS() ? `
+            <div class="device-info">
+              <i class="ph ph-device-mobile"></i>
+              <span>iOS ${this.getIOSVersion()}</span>
+            </div>
+          ` : ''}
         </div>
       </div>
     `;
