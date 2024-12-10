@@ -95,40 +95,88 @@ function renderTheoryBlocks(data) {
   if (!container) return;
 
   function renderPoints(points) {
-    if (!points?.length) return '';
-    
-    return points.map(point => `
+    if (!points?.length) return "";
+
+    return points
+      .map(
+        (point) => `
       <div class="point">
         <p>${point.text}</p>
-        ${point.subpoints ? `
+        ${
+          point.subpoints
+            ? `
           <ul>
-            ${point.subpoints.map(sub => `<li>${sub}</li>`).join('')}
+            ${point.subpoints.map((sub) => `<li>${sub}</li>`).join("")}
           </ul>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   }
 
-  container.innerHTML = data.blocks.map(block => `
+  container.innerHTML = data.blocks
+    .map(
+      (block) => `
     <div class="theory-block">
       <h2>${block.title}</h2>
       <div class="skills-grid">
-        ${block.skills.map(skill => `
-          <details class="skill-card">
-            <summary class="skill-header">
+        ${block.skills
+          .map(
+            (skill) => `
+          <div class="skill-card">
+            <div class="skill-header">
               <div class="skill-title">
                 <h3>${skill.name}</h3>
-                ${skill.category ? `<span class="skill-category">${skill.category}</span>` : ''}
+                ${
+                  skill.category
+                    ? `<span class="skill-category">${skill.category}</span>`
+                    : ""
+                }
               </div>
-            </summary>
+              <span class="arrow">▼</span>
+            </div>
             <div class="skill-details">
               ${renderPoints(skill.points)}
             </div>
-          </details>
-        `).join('')}
+          </div>
+        `
+          )
+          .join("")}
       </div>
     </div>
-  `).join('');
+  `
+    )
+    .join("");
+
+  // Добавляем обработчики для анимации
+  container.querySelectorAll(".skill-card").forEach((card) => {
+    const content = card.querySelector(".skill-details");
+    const arrow = card.querySelector(".arrow");
+
+    // Предварительно измеряем высоту
+    content.style.height = "auto";
+    content.style.maxHeight = "none";
+    content.style.opacity = "0";
+    content.style.display = "block";
+    const height = content.offsetHeight;
+    content.style.display = "";
+    content.style.opacity = "";
+    content.style.maxHeight = "";
+    content.style.height = "";
+
+    // Устанавливаем реальную высоту как CSS-переменную
+    card.style.setProperty("--content-height", `${height}px`);
+
+    card.addEventListener("click", () => {
+      requestAnimationFrame(() => {
+        content.classList.toggle("open");
+        arrow.classList.toggle("open");
+      });
+    });
+  });
 }
 
 // Отображение аксиом
