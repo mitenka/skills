@@ -1,15 +1,18 @@
 :root {
-  --primary-color: #87ceeb;
-  --background-color: #f5f5f5;
-  --text-color: #333;
-  --nav-height: 60px;
+  --primary-color: #007AFF;
+  --background-color: #F2F2F7;
+  --text-color: #1C1C1E;
+  --nav-height: 70px;
   --content-height: 500px;
+  --card-background: rgba(255, 255, 255, 0.9);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -18,6 +21,7 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--background-color);
+  font-weight: 400;
 }
 
 .main-nav {
@@ -25,8 +29,10 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: white;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--card-background);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
 
@@ -35,19 +41,45 @@ body {
   justify-content: space-around;
   list-style: none;
   padding: 10px 0;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .main-nav a {
   text-decoration: none;
   color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 8px 12px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.7;
 }
 
 .main-nav a.active {
   color: var(--primary-color);
-  background-color: rgba(74, 144, 226, 0.1);
+  opacity: 1;
+}
+
+.main-nav i {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.main-nav a:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.main-nav a.active i {
+  background: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), #5856D6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 main {
@@ -66,9 +98,10 @@ main {
 }
 
 h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: var(--primary-color);
+  font-size: 28px;
+  margin-bottom: 24px;
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 .blocks-container {
@@ -94,22 +127,28 @@ h1 {
 }
 
 .axiom-card {
-  background: var(--background-color);
-  padding: 15px;
-  border-radius: 6px;
-  border-left: 4px solid var(--primary-color);
+  background: var(--card-background);
+  padding: 20px;
+  border-radius: 14px;
+  border-left: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .axiom-card h3 {
-  color: var(--primary-color);
+  color: var(--text-color);
   margin-bottom: 8px;
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .axiom-card p {
   color: var(--text-color);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
+  font-weight: 400;
+  opacity: 0.8;
 }
 
 .assumption-card {
@@ -177,18 +216,24 @@ h1 {
 }
 
 .theory-block {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--card-background);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theory-block:active {
+  transform: scale(0.98);
 }
 
 .theory-block h2 {
-  text-align: left;
-  margin-bottom: 15px;
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 600;
   color: var(--text-color);
+  margin-bottom: 16px;
 }
 
 .theory-block ul li {
