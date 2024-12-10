@@ -1,8 +1,9 @@
-class SkillsApp {
+export class SkillsApp {
   constructor() {
+    console.log('Initializing SkillsApp...');
     this.skillList = document.querySelector(".skill-list");
     this.bottomNav = document.querySelector(".bottom-nav");
-    this.currentView = null;
+    this.currentView = "theory"; // Set initial view
 
     // Добавляем ссылки на элементы принципа
     this.principleCard = document.querySelector(".principle-card");
@@ -22,9 +23,7 @@ class SkillsApp {
     this.currentEntry = {};
 
     this.setupEventListeners();
-    this.loadData().then(() => {
-      this.switchView("theory");
-    });
+    this.loadData();
   }
 
   setupEventListeners() {
@@ -85,106 +84,150 @@ class SkillsApp {
 
   async loadData() {
     try {
-      const [skillsResponse, principlesResponse, behaviorsResponse] =
+      console.log('Loading data...');
+      const [skillsResponse, principlesResponse, behaviorsResponse, versionResponse] =
         await Promise.all([
-          fetch("data/skills.json"),
-          fetch("data/principles.json"),
-          fetch("data/behaviors.json"),
+          fetch("./data/skills.json"),
+          fetch("./data/principles.json"),
+          fetch("./data/behaviors.json"),
+          fetch("./data/version.json"),
         ]);
+
+      if (!skillsResponse.ok) {
+        throw new Error(`Failed to load skills.json: ${skillsResponse.status}`);
+      }
 
       this.skills = await skillsResponse.json();
       this.principles = await principlesResponse.json();
       this.behaviors = await behaviorsResponse.json();
+      this.version = await versionResponse.json();
+
+      console.log('Data loaded:', { skills: this.skills, principles: this.principles, version: this.version });
 
       this.renderSkills();
       this.setupPrincipleCard();
       this.showRandomPrinciple();
     } catch (error) {
-      console.error("Failed to load data:", error);
+      console.error('Error loading data:', error);
+      this.skillList.innerHTML = `<div class="error-message">Ошибка загрузки данных: ${error.message}</div>`;
     }
   }
 
   renderSkills() {
-    if (!this.skills || !this.skills.categories) return;
+    console.log('Rendering skills...', { currentView: this.currentView, skills: this.skills });
+    if (this.currentView !== "theory" || !this.skills) {
+      console.log('Skipping render - wrong view or no skills');
+      return;
+    }
+    
+    this.skillList.innerHTML = "";
+    
+    this.skills.categories.forEach(category => {
+      console.log('Rendering category:', category.title);
+      const categorySection = document.createElement("section");
+      categorySection.className = "category-section";
+      
+      const categoryHeader = document.createElement("div");
+      categoryHeader.className = "category-header";
+      categoryHeader.innerHTML = `
+        <i class="ph ph-${category.icon}"></i>
+        <h2>${category.title}</h2>
+      `;
+      categorySection.appendChild(categoryHeader);
 
-    this.skillList.innerHTML = this.skills.categories
-      .map(
-        (category) => `
-        <div class="category-section ${
-          category.unlocked ? "unlocked" : "locked"
-        }">
-          <h2 class="category-title">${category.title}</h2>
-          ${
-            category.unlocked
-              ? category.skillGroups
-                ? this.renderSkillGroups(category.skillGroups)
-                : this.renderSkillList(category.skills)
-              : this.renderLockedSkillList()
-          }
-        </div>
-      `
-      )
-      .join("");
+      if (category.skillGroups) {
+        category.skillGroups.forEach(group => {
+          console.log('Rendering skill group:', group.title);
+          const groupContainer = document.createElement("div");
+          groupContainer.className = "skill-group";
+          
+          const groupHeader = document.createElement("h3");
+          groupHeader.className = "group-header";
+          groupHeader.textContent = group.title;
+          groupContainer.appendChild(groupHeader);
+
+          const skillsGrid = document.createElement("div");
+          skillsGrid.className = "skills-grid";
+          
+          // Display only first 4 skills
+          const skillsToShow = group.skills.slice(0, 4);
+          skillsToShow.forEach(skill => {
+            console.log('Adding skill to group:', skill.title);
+            const skillCard = this.createSkillCard(skill);
+            skillsGrid.appendChild(skillCard);
+          });
+          
+          groupContainer.appendChild(skillsGrid);
+          categorySection.appendChild(groupContainer);
+        });
+      } else if (category.skills) {
+        const skillsGrid = document.createElement("div");
+        skillsGrid.className = "skills-grid";
+        
+        // Display only first 4 skills
+        const skillsToShow = category.skills.slice(0, 4);
+        skillsToShow.forEach(skill => {
+          console.log('Adding skill to category:', skill.title);
+          const skillCard = this.createSkillCard(skill);
+          skillsGrid.appendChild(skillCard);
+        });
+        
+        categorySection.appendChild(skillsGrid);
+      }
+      
+      this.skillList.appendChild(categorySection);
+    });
   }
 
-  renderSkillGroups(groups) {
-    return groups
-      .map(
-        (group) => `
-        <div class="skill-group">
-          <h3 class="group-title">${group.title}</h3>
-          ${this.renderSkillList(group.skills)}
-        </div>
-      `
-      )
-      .join("");
+  createSkillCard(skill) {
+    const card = document.createElement("div");
+    card.className = "skill-card";
+    card.innerHTML = `
+      <h4 class="skill-title">${skill.title}</h4>
+    `;
+    
+    card.addEventListener("click", () => this.showSkillDetail(skill));
+    return card;
   }
 
-  renderSkillList(skills) {
-    return skills
-      .map(
-        (skill) => `
-        <div class="skill-card">
-          <div class="skill-header">
-            <h5>${skill.title}</h5>
-            ${
-              skill.level
-                ? `<span class="skill-level">${skill.level}</span>`
-                : ""
-            }
-          </div>
-          ${
-            skill.description
-              ? `<p class="skill-description">${skill.description}</p>`
-              : ""
-          }
-          ${
-            skill.tasks
-              ? `
-            <div class="skill-tasks">
-              <h6>Задачи:</h6>
-              <ul>
-                ${skill.tasks.map((task) => `<li>${task}</li>`).join("")}
-              </ul>
-            </div>
-          `
-              : ""
-          }
-        </div>
-      `
-      )
-      .join("");
-  }
-
-  renderLockedSkillList() {
-    return `
-      <div class="skill-card locked-skill">
-        <div class="lock-icon">
-          <i class="ph ph-lock"></i>
-        </div>
-        <p>Этот раздел пока заблокирован</p>
+  showSkillDetail(skill) {
+    // Create and append detail view
+    const detailView = document.createElement("div");
+    detailView.className = "skill-detail-view slide-in";
+    
+    detailView.innerHTML = `
+      <div class="detail-header">
+        <button class="back-button">
+          <i class="ph ph-arrow-left"></i>
+        </button>
+        <h2>${skill.title}</h2>
+      </div>
+      <div class="detail-content">
+        <p class="description">${skill.description}</p>
+        ${skill.practices ? `
+          <h3>Практики</h3>
+          <ul class="practices-list">
+            ${skill.practices.map(practice => `<li>${practice}</li>`).join("")}
+          </ul>
+        ` : ""}
       </div>
     `;
+    
+    document.body.appendChild(detailView);
+    
+    // Add animation frame to trigger transition
+    requestAnimationFrame(() => {
+      detailView.classList.add("active");
+    });
+    
+    // Handle back button
+    const backButton = detailView.querySelector(".back-button");
+    backButton.addEventListener("click", () => {
+      detailView.classList.remove("active");
+      setTimeout(() => {
+        detailView.remove();
+      }, 300); // Match transition duration
+    });
   }
 
   setupPrincipleCard() {
@@ -277,7 +320,7 @@ class SkillsApp {
         <div class="about-section">
           <div class="version-info">
             <i class="ph ph-info"></i>
-            <span>Версия 1.2.0</span>
+            <span>Версия ${this.version?.version || '1.0.0'}</span>
           </div>
           ${this.isIOS() ? `
             <div class="device-info">
@@ -838,6 +881,8 @@ class SkillsApp {
 }
 
 // Initialize app
+let app;
 document.addEventListener("DOMContentLoaded", () => {
-  new SkillsApp();
+  console.log('DOM loaded, initializing app...');
+  app = new SkillsApp();
 });

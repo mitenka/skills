@@ -1,4 +1,16 @@
-const CACHE_VERSION = 'v1.1';
+// Загрузка версии из JSON
+let appVersion = 'v1.0';
+
+fetch('/data/version.json')
+  .then(response => response.json())
+  .then(data => {
+    appVersion = 'v' + data.version;
+  })
+  .catch(error => {
+    console.error('Error loading version:', error);
+  });
+
+const CACHE_VERSION = appVersion;
 const CACHE_NAME = `skills-app-${CACHE_VERSION}`;
 
 const ASSETS_TO_CACHE = [

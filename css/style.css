@@ -1154,3 +1154,162 @@ input:checked + .slider:before {
 .device-info i {
   font-size: 16px;
 }
+
+/* Skills Grid Layout */
+.category-section {
+  margin-bottom: 32px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+.category-header i {
+  font-size: 24px;
+  color: var(--primary-color);
+}
+
+.category-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.skill-group {
+  margin-bottom: 24px;
+}
+
+.group-header {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--secondary-text);
+  margin: 0 16px 12px;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 16px;
+}
+
+@media (min-width: 768px) {
+  .skills-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.skill-card {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skill-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.skill-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* Skill Detail View */
+.skill-detail-view {
+  position: fixed;
+  top: 0;
+  left: 100%;
+  width: 100%;
+  height: 100%;
+  background: var(--background-color);
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+}
+
+.skill-detail-view.active {
+  transform: translateX(-100%);
+}
+
+.skill-detail-view.slide-in {
+  transform: translateX(0);
+}
+
+.detail-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1001;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  margin-right: 8px;
+  cursor: pointer;
+  color: var(--primary-color);
+  font-size: 20px;
+}
+
+.detail-header h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.detail-content {
+  padding: calc(var(--header-height) + 16px) 16px 16px;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-color);
+  margin-bottom: 24px;
+}
+
+.practices-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.practices-list li {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
