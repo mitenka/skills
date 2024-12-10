@@ -67,7 +67,7 @@ async function loadTheoryData() {
   try {
     const [theoryResponse, axiomsResponse] = await Promise.all([
       fetch("data/theory.json"),
-      fetch("data/axioms.json"),
+      fetch("data/assumptions.json"),
     ]);
 
     // Проверяем статус ответа
@@ -179,23 +179,21 @@ function renderTheoryBlocks(data) {
   });
 }
 
-// Отображение аксиом
+// Отображение случайного допущения
 function renderAxioms(data) {
   const container = document.querySelector(".axioms-list");
-  if (!container) return;
+  if (!container || !data.assumptions || data.assumptions.length === 0) return;
 
-  const axiomsHTML = data.axioms
-    .map(
-      (axiom) => `
-        <div class="axiom-card">
-            <h3>${axiom.title}</h3>
-            <p>${axiom.text}</p>
-        </div>
-    `
-    )
-    .join("");
+  // Выбираем случайное допущение
+  const randomIndex = Math.floor(Math.random() * data.assumptions.length);
+  const randomAssumption = data.assumptions[randomIndex];
 
-  container.innerHTML = axiomsHTML;
+  container.innerHTML = `
+    <div class="assumption-card">
+      <div class="assumption-text">${randomAssumption.text}</div>
+      <div class="assumption-title">${randomAssumption.title}</div>
+    </div>
+  `;
 }
 
 // Сообщение об офлайн режиме

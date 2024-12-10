@@ -79,10 +79,7 @@ h1 {
 
 .axioms-container {
   margin-bottom: 30px;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .axioms-container h2 {
@@ -92,8 +89,8 @@ h1 {
 }
 
 .axioms-list {
-  display: grid;
-  gap: 15px;
+  margin-bottom: 30px;
+  width: 100%;
 }
 
 .axiom-card {
@@ -113,6 +110,41 @@ h1 {
   color: var(--text-color);
   font-size: 14px;
   line-height: 1.5;
+}
+
+.assumption-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  padding-left: 40px;
+  width: 100%;
+}
+
+.assumption-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: #4A90E2;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.assumption-text {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.assumption-title {
+  font-size: 0.95rem;
+  color: #666;
+  font-style: italic;
 }
 
 .update-notification {
