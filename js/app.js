@@ -208,23 +208,33 @@ function getRandomAssumption(assumptions) {
 
 // Отображение случайного допущения
 function renderAxioms(data) {
-  const container = document.querySelector(".axioms-list");
-  if (!container || !data.assumptions || data.assumptions.length === 0) return;
-
+  if (!data.assumptions || data.assumptions.length === 0) return;
+  
+  const section = document.getElementById('theory');
   const randomAssumption = getRandomAssumption(data.assumptions);
   if (!randomAssumption) return;
-
+  
+  const container = document.createElement('div');
+  container.className = 'assumption-card';
   container.innerHTML = `
-    <div class="assumption-card">
-      <div class="assumption-header">
-        <button class="refresh-button" aria-label="Показать следующее допущение">
-          <i class="ri-refresh-line"></i>
-        </button>
-      </div>
-      <div class="assumption-title">${randomAssumption.title}</div>
-      <div class="assumption-text">${randomAssumption.text}</div>
+    <div class="assumption-header">
+      <button class="refresh-button" aria-label="Показать следующее допущение">
+        <i class="ri-refresh-line"></i>
+      </button>
     </div>
+    <div class="assumption-title">${randomAssumption.title}</div>
+    <div class="assumption-text">${randomAssumption.text}</div>
   `;
+
+  // Находим существующую карточку и заменяем её
+  const existingCard = section.querySelector('.assumption-card');
+  if (existingCard) {
+    section.replaceChild(container, existingCard);
+  } else {
+    // Если карточки нет, добавляем её после заголовка
+    const title = section.querySelector('h1');
+    title.after(container);
+  }
 
   // Добавляем обработчик для кнопки обновления
   const refreshButton = container.querySelector('.refresh-button');

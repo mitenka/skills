@@ -148,11 +148,6 @@ h1 {
   font-size: 20px;
 }
 
-.axioms-list {
-  margin-bottom: 30px;
-  width: 100%;
-}
-
 .axiom-card {
   background: var(--card-background);
   padding: 20px;
@@ -180,19 +175,18 @@ h1 {
 
 .assumption-card {
   background: var(--card-background);
-  padding: 20px;
+  padding: 20px 24px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-color);
   position: relative;
-  padding-left: 40px;
   width: 100%;
   border: 1px solid var(--border-color);
+  margin-bottom: 30px;
 }
 
 .assumption-header {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  float: right;
+  margin: -4px -8px 12px 12px;
 }
 
 .refresh-button {
@@ -200,7 +194,9 @@ h1 {
   border: none;
   color: var(--primary-color);
   cursor: pointer;
-  padding: 8px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border-radius: 50%;
   transition: all 0.2s ease;
   display: flex;
@@ -208,22 +204,28 @@ h1 {
   justify-content: center;
 }
 
+.refresh-button i {
+  font-size: 20px;
+}
+
 .refresh-button:hover {
-  background: rgba(0, 122, 255, 0.1);
+  background: var(--hover-background);
 }
 
 .assumption-title {
   color: var(--text-color);
   font-weight: 600;
   font-size: 1.1rem;
-  margin-bottom: 8px;
-  padding-right: 32px;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 
 .assumption-text {
   color: var(--text-color);
   opacity: 0.8;
+  line-height: 1.5;
   font-size: 0.95rem;
+  clear: both;
 }
 
 .about-links {
