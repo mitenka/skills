@@ -528,6 +528,33 @@ input:checked + .slider:before {
   color: var(--text-secondary);
 }
 
+.behavior-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.behavior-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.behavior-card h3 {
+  margin: 0;
+  padding: 0.6rem;
+  color: var(--text-color);
+}
+
+.behavior-card:hover {
+  transform: translateY(-2px);
+}
+
+@media (min-width: 768px) {
+  .behavior-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (min-width: 768px) {
   .main-nav {
     top: 0;
