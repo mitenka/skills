@@ -30,3 +30,13 @@ export async function deleteBehavior(id) {
         throw error;
     }
 }
+
+// Функция для обновления поведения
+export async function updateBehavior(behavior) {
+    try {
+        await db.behaviors.update(behavior.id, behavior);
+    } catch (error) {
+        console.error('Ошибка при обновлении поведения:', error);
+        throw error;
+    }
+}

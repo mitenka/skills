@@ -543,6 +543,37 @@ html[data-theme="dark"] .modal-content select {
   color: var(--text-color);
 }
 
+.behavior-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.behavior-actions button {
+  background: none;
+  border: none;
+  padding: 0.4rem;
+  cursor: pointer;
+  color: var(--text-color-secondary);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.behavior-actions button:hover {
+  background: var(--hover-background);
+  color: var(--text-color);
+}
+
+.behavior-actions .delete-behavior:hover {
+  color: #ff3b30;
+}
+
+.behavior-actions .edit-behavior:hover {
+  color: var(--primary-color);
+}
+
 .delete-behavior {
   background: none;
   border: none;
