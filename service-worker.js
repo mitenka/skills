@@ -1,14 +1,17 @@
-const CACHE_NAME = 'dpt-skills-v2';
+const CACHE_NAME = 'dpt-skills-v3';
 const ASSETS_TO_CACHE = [
     './',
     'index.html',
     'styles/main.css',
     'js/app.js',
+    'js/db.js',
+    'js/behaviors.js',
     'manifest.json',
     'data/theory.json',
-    'data/axioms.json',
+    'data/assumptions.json',
     'icons/icon-192x192.png',
-    'icons/icon-512x512.png'
+    'icons/icon-512x512.png',
+    'https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css'
 ];
 
 // При установке воркера
