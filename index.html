@@ -111,6 +111,23 @@
 
         <div class="settings-section">
           <h2>Отображение</h2>
+          <div class="theme-selector">
+            <h3>Тема оформления</h3>
+            <div class="theme-options">
+              <button class="theme-button" data-theme="system">
+                <i class="ri-computer-line"></i>
+                <span>Системная</span>
+              </button>
+              <button class="theme-button" data-theme="light">
+                <i class="ri-sun-line"></i>
+                <span>Светлая</span>
+              </button>
+              <button class="theme-button" data-theme="dark">
+                <i class="ri-moon-line"></i>
+                <span>Темная</span>
+              </button>
+            </div>
+          </div>
           <div class="setting-item">
             <label class="switch-label">
               <span>Показывать допущения</span>
@@ -221,6 +238,7 @@
       </section>
     </main>
     <script src="https://unpkg.com/dexie@latest/dist/modern/dexie.min.mjs" type="module"></script>
+    <script src="js/theme.js" type="module"></script>
     <script src="js/app.js" type="module"></script>
     <script>
       if ("serviceWorker" in navigator) {
