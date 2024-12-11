@@ -11,9 +11,14 @@ export async function getAllBehaviors() {
 }
 
 // Функция для добавления нового поведения
-export async function addBehavior(name) {
+export async function addBehavior(name, type) {
     try {
-        const id = await db.behaviors.add({ name });
+        // Проверяем корректность типа
+        if (!['scale', 'text', 'boolean'].includes(type)) {
+            throw new Error('Неверный тип оценки поведения');
+        }
+        
+        const id = await db.behaviors.add({ name, type });
         return id;
     } catch (error) {
         console.error('Ошибка при добавлении поведения:', error);

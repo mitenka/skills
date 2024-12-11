@@ -4,8 +4,15 @@ import { getAllBehaviors, addBehavior, deleteBehavior } from './behaviors.js';
 function createBehaviorCard(behavior) {
     const card = document.createElement('div');
     card.className = 'behavior-card';
+    const typeLabel = {
+        'scale': 'Шкала (0-5)',
+        'text': 'Текст',
+        'boolean': 'Было/не было'
+    }[behavior.type];
+    
     card.innerHTML = `
         <h3>${behavior.name}</h3>
+        <p class="behavior-type">${typeLabel}</p>
     `;
     return card;
 }
@@ -25,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('addBehaviorModal');
     const addButton = document.querySelector('.add-behavior-button');
     const input = document.getElementById('behaviorInput');
+    const typeSelect = document.getElementById('behaviorType');
     const saveButton = modal.querySelector('.save-button');
     const cancelButton = modal.querySelector('.cancel-button');
 
@@ -43,8 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Сохранение нового поведения
     async function saveBehavior() {
         const name = input.value.trim();
+        const type = typeSelect.value;
         if (name) {
-            await addBehavior(name);
+            await addBehavior(name, type);
             await displayBehaviors();
             closeModal();
         }

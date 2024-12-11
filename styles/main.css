@@ -549,6 +549,21 @@ input:checked + .slider:before {
   transform: translateY(-2px);
 }
 
+.behavior-type-select {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.behavior-type {
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
 /* Кнопка добавления */
 .add-behavior-button {
   position: fixed;
