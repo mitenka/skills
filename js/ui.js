@@ -129,7 +129,6 @@ function openEditModal(behavior) {
     // Заполняем поля данными поведения
     input.value = behavior.name;
     typeSelect.value = behavior.type;
-    typeSelect.disabled = true; // Запрещаем менять тип при редактировании
     
     // Меняем заголовок и текст кнопки
     modalTitle.textContent = 'Редактировать поведение';
@@ -170,8 +169,6 @@ function openModal() {
 // Функция для закрытия модального окна
 function closeModal() {
     const modal = document.getElementById('addBehaviorModal');
-    const typeSelect = document.getElementById('behaviorType');
-    typeSelect.disabled = false;
     modal.style.display = 'none';
 }
 
@@ -187,29 +184,20 @@ async function saveBehavior() {
             type: typeSelect.value
         };
         
-        if (modal.dataset.editId) {
-            // Редактирование существующего поведения
-            behaviorData.id = parseInt(modal.dataset.editId);
-            console.log('Updating behavior:', behaviorData);
-            try {
+        try {
+            if (modal.dataset.editId) {
+                // Редактирование существующего поведения
+                behaviorData.id = parseInt(modal.dataset.editId);
                 await updateBehavior(behaviorData);
-                console.log('Behavior updated successfully');
-            } catch (error) {
-                console.error('Failed to update behavior:', error);
-            }
-        } else {
-            // Добавление нового поведения
-            console.log('Adding new behavior:', behaviorData);
-            try {
+            } else {
+                // Добавление нового поведения
                 await addBehavior(behaviorData);
-                console.log('Behavior added successfully');
-            } catch (error) {
-                console.error('Failed to add behavior:', error);
             }
+            closeModal();
+            await displayBehaviors();
+        } catch (error) {
+            console.error('Ошибка при сохранении поведения:', error);
         }
-        
-        closeModal();
-        await displayBehaviors();
     }
 }
 
@@ -228,9 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelButton.addEventListener('click', closeModal);
     saveButton.addEventListener('click', saveBehavior);
     typeSelect.addEventListener('change', showTypeHint);
-    typeSelect.addEventListener('change', (e) => {
-        console.log('Type changed to:', e.target.value);
-    });
 
     // Закрытие модального окна при клике вне его
     modal.addEventListener('click', (e) => {
