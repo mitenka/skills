@@ -1,4 +1,4 @@
-const CACHE_NAME = "dpt-skills-v7";
+const CACHE_NAME = "dpt-skills-v8";
 
 // При установке воркера
 self.addEventListener("install", (event) => {
@@ -23,14 +23,30 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Network First стратегия для всех запросов
+// Отдельная стратегия для CSS файлов - StaleWhileRevalidate
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
+  // Для CSS файлов используем StaleWhileRevalidate
+  if (event.request.url.endsWith('.css')) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          const fetchPromise = fetch(event.request).then((networkResponse) => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          });
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
+
+  // Для остальных ресурсов используем Network First
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Кэшируем успешные ответы
         if (response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -40,7 +56,6 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() => {
-        // При ошибке сети используем кэш
         return caches.match(event.request);
       })
   );
