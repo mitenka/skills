@@ -221,8 +221,8 @@ function renderAxioms(data) {
           <i class="ri-refresh-line"></i>
         </button>
       </div>
-      <div class="assumption-text">${randomAssumption.text}</div>
       <div class="assumption-title">${randomAssumption.title}</div>
+      <div class="assumption-text">${randomAssumption.text}</div>
     </div>
   `;
 
