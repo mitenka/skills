@@ -183,21 +183,51 @@ function renderTheoryBlocks(data) {
   });
 }
 
+// Храним предыдущий индекс
+let previousAssumptionIndex = -1;
+
+function getRandomAssumption(assumptions) {
+  if (!assumptions || assumptions.length === 0) return null;
+  
+  // Если в массиве только одно допущение, возвращаем его
+  if (assumptions.length === 1) return assumptions[0];
+  
+  // Выбираем случайный индекс, исключая предыдущий
+  let newIndex;
+  do {
+    newIndex = Math.floor(Math.random() * assumptions.length);
+  } while (newIndex === previousAssumptionIndex);
+  
+  // Сохраняем новый индекс как предыдущий
+  previousAssumptionIndex = newIndex;
+  return assumptions[newIndex];
+}
+
 // Отображение случайного допущения
 function renderAxioms(data) {
   const container = document.querySelector(".axioms-list");
   if (!container || !data.assumptions || data.assumptions.length === 0) return;
 
-  // Выбираем случайное допущение
-  const randomIndex = Math.floor(Math.random() * data.assumptions.length);
-  const randomAssumption = data.assumptions[randomIndex];
+  const randomAssumption = getRandomAssumption(data.assumptions);
+  if (!randomAssumption) return;
 
   container.innerHTML = `
     <div class="assumption-card">
+      <div class="assumption-header">
+        <button class="refresh-button" aria-label="Показать следующее допущение">
+          <i class="ri-refresh-line"></i>
+        </button>
+      </div>
       <div class="assumption-text">${randomAssumption.text}</div>
       <div class="assumption-title">${randomAssumption.title}</div>
     </div>
   `;
+
+  // Добавляем обработчик для кнопки обновления
+  const refreshButton = container.querySelector('.refresh-button');
+  refreshButton.addEventListener('click', () => {
+    renderAxioms(data);
+  });
 }
 
 // Сообщение об офлайн режиме

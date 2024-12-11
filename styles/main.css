@@ -161,16 +161,31 @@ h1 {
   width: 100%;
 }
 
-.assumption-card::before {
-  content: "";
+.assumption-header {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 8px;
-  background: #4A90E2;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
+  top: 12px;
+  right: 12px;
+}
+
+.refresh-button {
+  background: none;
+  border: none;
+  color: #4A90E2;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refresh-button:hover {
+  background-color: rgba(74, 144, 226, 0.1);
+}
+
+.refresh-button i {
+  font-size: 1.2rem;
 }
 
 .assumption-text {
@@ -178,12 +193,20 @@ h1 {
   line-height: 1.5;
   color: #333;
   margin-bottom: 1rem;
+  padding-right: 40px;
 }
 
 .assumption-title {
   font-size: 0.95rem;
   color: #666;
   font-style: italic;
+}
+
+.assumption-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .update-notification {
