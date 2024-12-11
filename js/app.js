@@ -240,9 +240,10 @@ function initSettings() {
 }
 
 // Инициализация приложения
+import './ui.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   initNavigation();
   loadTheoryData();
-  registerServiceWorker();
   initSettings();
 });

@@ -84,6 +84,27 @@
             <h3>Самоповреждения</h3>
           </div>
         </div>
+
+        <button class="add-behavior-button">
+          <i class="ri-add-line"></i>
+        </button>
+
+        <!-- Модальное окно для добавления поведения -->
+        <div class="modal" id="addBehaviorModal">
+          <div class="modal-content">
+            <h2>Добавить проблемное поведение</h2>
+            <input 
+              type="text" 
+              id="behaviorInput" 
+              placeholder="Введите название"
+              maxlength="100"
+            >
+            <div class="modal-buttons">
+              <button class="cancel-button">Отмена</button>
+              <button class="save-button">Сохранить</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="settings" class="page">
@@ -181,6 +202,7 @@
       </section>
     </main>
 
+    <script src="https://unpkg.com/dexie@latest/dist/modern/dexie.min.mjs" type="module"></script>
     <script src="js/app.js" type="module"></script>
     <script>
       if ("serviceWorker" in navigator) {
