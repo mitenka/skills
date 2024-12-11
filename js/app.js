@@ -239,6 +239,32 @@ function initSettings() {
   }
 }
 
+import { db } from './db.js';
+
+// Функция для очистки всех данных
+async function clearAllData() {
+    try {
+        // Очищаем IndexedDB
+        await db.delete();
+        
+        // Очищаем localStorage
+        localStorage.clear();
+        
+        // Перезагружаем страницу для пересоздания базы данных
+        window.location.reload();
+    } catch (error) {
+        console.error('Ошибка при очистке данных:', error);
+        alert('Произошла ошибка при удалении данных. Попробуйте еще раз.');
+    }
+}
+
+// Обработчик для кнопки очистки данных
+document.getElementById('clearDataBtn')?.addEventListener('click', () => {
+    if (confirm('Вы уверены, что хотите удалить все данные? Это действие нельзя отменить.')) {
+        clearAllData();
+    }
+});
+
 // Инициализация приложения
 import './ui.js';
 

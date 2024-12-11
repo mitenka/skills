@@ -1,24 +1,19 @@
 import { db } from './db.js';
 
-// Функция для получения всех проблемных поведений
+// Функция для получения всех поведений
 export async function getAllBehaviors() {
     try {
         return await db.behaviors.toArray();
     } catch (error) {
-        console.error('Ошибка при получении списка поведений:', error);
+        console.error('Ошибка при получении поведений:', error);
         return [];
     }
 }
 
 // Функция для добавления нового поведения
-export async function addBehavior(name, type) {
+export async function addBehavior(behavior) {
     try {
-        // Проверяем корректность типа
-        if (!['scale', 'text', 'boolean'].includes(type)) {
-            throw new Error('Неверный тип оценки поведения');
-        }
-        
-        const id = await db.behaviors.add({ name, type });
+        const id = await db.behaviors.add(behavior);
         return id;
     } catch (error) {
         console.error('Ошибка при добавлении поведения:', error);

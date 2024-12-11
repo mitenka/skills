@@ -73,17 +73,7 @@
 
       <section id="diary" class="page">
         <h1>Дневник</h1>
-        <div class="behavior-cards">
-          <div class="behavior-card">
-            <h3>Прекращение терапии</h3>
-          </div>
-          <div class="behavior-card">
-            <h3>Употребление алкоголя</h3>
-          </div>
-          <div class="behavior-card">
-            <h3>Самоповреждения</h3>
-          </div>
-        </div>
+        <div class="behavior-cards"></div>
 
         <button class="ios-action-button" id="addBehaviorBtn">
           <span class="ios-button-icon">+</span>
@@ -129,6 +119,16 @@
                 <span class="slider"></span>
               </label>
             </label>
+          </div>
+          <div class="setting-item danger-zone">
+            <p class="danger-description">
+              Это действие удалит все ваши данные из приложения, включая записи поведений и настройки.
+              Отменить это действие будет невозможно.
+            </p>
+            <button id="clearDataBtn" class="danger-button">
+              <i class="ri-delete-bin-7-line"></i>
+              Удалить все мои данные
+            </button>
           </div>
         </div>
 
