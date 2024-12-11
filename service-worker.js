@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dpt-skills-v4';
+const CACHE_NAME = 'dpt-skills-v5';
 const ASSETS_TO_CACHE = [
     './',
     'index.html',
@@ -6,6 +6,8 @@ const ASSETS_TO_CACHE = [
     'js/app.js',
     'js/db.js',
     'js/behaviors.js',
+    'js/ui.js',
+    'js/theme.js',
     'manifest.json',
     'data/theory.json',
     'data/assumptions.json',
