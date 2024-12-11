@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dpt-skills-v3';
+const CACHE_NAME = 'dpt-skills-v4';
 const ASSETS_TO_CACHE = [
     './',
     'index.html',

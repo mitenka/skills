@@ -29,18 +29,21 @@ function registerServiceWorker() {
     navigator.serviceWorker
       .register("/service-worker.js")
       .then((registration) => {
-        // Проверяем обновления при загрузке страницы
-        registration.update();
+        // Проверяем обновления каждые 60 минут
+        setInterval(() => {
+          registration.update();
+        }, 1000 * 60 * 60);
 
         // Отслеживаем обновления
         registration.addEventListener("updatefound", () => {
           const newWorker = registration.installing;
 
           newWorker.addEventListener("statechange", () => {
-            // Когда новый Service Worker активирован
-            if (newWorker.state === "activated") {
-              // Показываем уведомление об обновлении
-              showUpdateNotification();
+            if (newWorker.state === "installed") {
+              if (navigator.serviceWorker.controller) {
+                // Новый Service Worker установлен, показываем уведомление
+                showUpdateNotification();
+              }
             }
           });
         });
@@ -301,5 +304,6 @@ import './ui.js';
 document.addEventListener("DOMContentLoaded", () => {
   initNavigation();
   loadTheoryData();
+  registerServiceWorker();
   initSettings();
 });
