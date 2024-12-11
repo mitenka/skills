@@ -30,7 +30,7 @@ async function displayBehaviors() {
 document.addEventListener('DOMContentLoaded', () => {
     // Получаем необходимые элементы DOM
     const modal = document.getElementById('addBehaviorModal');
-    const addButton = document.querySelector('.add-behavior-button');
+    const addButton = document.getElementById('addBehaviorBtn');
     const input = document.getElementById('behaviorInput');
     const typeSelect = document.getElementById('behaviorType');
     const saveButton = modal.querySelector('.save-button');
