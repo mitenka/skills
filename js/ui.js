@@ -36,11 +36,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveButton = modal.querySelector('.save-button');
     const cancelButton = modal.querySelector('.cancel-button');
 
+    // Показ подсказок при выборе типа поведения
+    function showTypeHint() {
+        // Скрываем все подсказки
+        document.querySelectorAll('.behavior-type-hint').forEach(hint => {
+            hint.classList.remove('active');
+        });
+        // Показываем подсказку для выбранного типа
+        const selectedType = typeSelect.value;
+        const hint = document.getElementById(`${selectedType}Hint`);
+        if (hint) {
+            hint.classList.add('active');
+        }
+    }
+
     // Открытие модального окна
     function openModal() {
         modal.classList.add('active');
         input.value = '';
         input.focus();
+        showTypeHint(); // Показываем подсказку для начального значения
     }
 
     // Закрытие модального окна
@@ -63,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addButton.addEventListener('click', openModal);
     cancelButton.addEventListener('click', closeModal);
     saveButton.addEventListener('click', saveBehavior);
+    typeSelect.addEventListener('change', showTypeHint);
 
     // Закрытие модального окна при клике вне его
     modal.addEventListener('click', (e) => {

@@ -101,10 +101,13 @@
               maxlength="100"
             >
             <select id="behaviorType" class="behavior-type-select">
-              <option value="scale">Шкала (0-5)</option>
-              <option value="text">Текст</option>
               <option value="boolean">Было/не было</option>
+              <option value="scale">Шкала (от нуля до пяти)</option>
+              <option value="text">Текст</option>
             </select>
+            <div class="behavior-type-hint" id="booleanHint">Простой способ отметить, было ли определенное поведение</div>
+            <div class="behavior-type-hint" id="scaleHint">Оценка интенсивности поведения от нуля (отсутствует) до пяти (максимально)</div>
+            <div class="behavior-type-hint" id="textHint">Свободное описание ситуации своими словами</div>
             <div class="modal-buttons">
               <button class="cancel-button">Отмена</button>
               <button class="save-button">Сохранить</button>

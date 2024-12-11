@@ -551,17 +551,36 @@ input:checked + .slider:before {
 
 .behavior-type-select {
   width: 100%;
-  padding: 8px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.8rem;
+  margin-bottom: 0.3rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   background-color: white;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 16px;
 }
 
-.behavior-type {
+.behavior-type-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
+}
+
+.behavior-type-hint {
+  font-size: 0.85rem;
   color: #666;
-  font-size: 0.9em;
-  margin-top: 5px;
+  margin: 0 0 0.8rem 0.2rem;
+  display: none;
+  line-height: 1.3;
+}
+
+.behavior-type-hint.active {
+  display: block;
 }
 
 .ios-action-button {
@@ -644,9 +663,9 @@ input:checked + .slider:before {
 .modal-content input {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: white;
   color: var(--text-color);
   margin-bottom: 1rem;
 }
@@ -654,6 +673,7 @@ input:checked + .slider:before {
 .modal-content input:focus {
   outline: none;
   border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
 }
 
 .modal-buttons {
