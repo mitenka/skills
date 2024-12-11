@@ -1011,3 +1011,65 @@ input:checked + .slider:before {
 .button.secondary:hover {
   background: var(--hover-background);
 }
+
+.settings-section {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.settings-section h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: var(--text-color);
+}
+
+.app-info {
+  color: var(--text-color);
+}
+
+.app-info p {
+  margin-bottom: 12px;
+}
+
+.app-info ul {
+  list-style: none;
+  margin-bottom: 16px;
+  padding-left: 0;
+}
+
+.app-info ul li {
+  margin-bottom: 12px;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 28px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.app-info ul li::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+}
+
+.warning-box {
+  background: rgba(255, 149, 0, 0.1);
+  border: 1px solid rgba(255, 149, 0, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  color: var(--text-color);
+}
+
+.warning-box i {
+  color: #FF9500;
+  margin-right: 8px;
+}
