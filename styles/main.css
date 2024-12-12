@@ -148,10 +148,6 @@ main {
   padding-bottom: calc(var(--nav-height) + 20px);
   max-width: 800px;
   margin: 0 auto;
-  position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - var(--nav-height));
 }
 
 .page {
@@ -1436,88 +1432,4 @@ input:checked + .slider:before {
 .behavior-value:focus {
   outline: none;
   border-color: var(--primary-color);
-}
-
-.update-notification {
-  position: fixed;
-  bottom: calc(var(--nav-height) + 20px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--card-background);
-  padding: 12px 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 1px solid var(--border-color);
-  z-index: 1000;
-  animation: slideUp 0.3s ease-out;
-}
-
-.update-notification p {
-  margin: 0;
-  color: var(--text-color);
-  font-size: 15px;
-}
-
-.update-notification button {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.update-notification button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 20px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-.pull-to-refresh {
-  position: absolute;
-  top: -60px;
-  left: 0;
-  right: 0;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-color-secondary);
-  font-size: 14px;
-  transform-origin: center bottom;
-}
-
-.pull-to-refresh i {
-  font-size: 20px;
-  margin-right: 8px;
-  transition: transform 0.2s ease;
-}
-
-.pull-to-refresh.pulling i {
-  transform: rotate(180deg);
-}
-
-.pull-to-refresh.refreshing i {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
