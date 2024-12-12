@@ -7,64 +7,66 @@ function createBehaviorCard(behavior) {
     
     // Создаем контрол в зависимости от типа
     let controlHtml = '';
-    switch (behavior.type) {
-        case 'boolean':
-            controlHtml = `
-                <div class="boolean-control">
-                    <button class="boolean-button" data-value="true" data-id="${behavior.id}">
-                        <i class="ri-check-line"></i>
-                    </button>
-                    <button class="boolean-button" data-value="false" data-id="${behavior.id}">
-                        <i class="ri-close-line"></i>
-                    </button>
-                </div>
-            `;
-            break;
-        case 'scale':
-            controlHtml = `
-                <div class="scale-control">
-                    <div class="scale-buttons">
-                        <button class="scale-button" data-value="0" data-id="${behavior.id}">0</button>
-                        <button class="scale-button" data-value="1" data-id="${behavior.id}">1</button>
-                        <button class="scale-button" data-value="2" data-id="${behavior.id}">2</button>
-                        <button class="scale-button" data-value="3" data-id="${behavior.id}">3</button>
-                        <button class="scale-button" data-value="4" data-id="${behavior.id}">4</button>
-                        <button class="scale-button" data-value="5" data-id="${behavior.id}">5</button>
+    if (isFillingMode) {
+        switch (behavior.type) {
+            case 'boolean':
+                controlHtml = `
+                    <div class="boolean-control">
+                        <button class="boolean-button" data-value="true" data-id="${behavior.id}">
+                            <i class="ri-check-line"></i>
+                        </button>
+                        <button class="boolean-button" data-value="false" data-id="${behavior.id}">
+                            <i class="ri-close-line"></i>
+                        </button>
                     </div>
-                </div>
-            `;
-            break;
-        case 'text':
-            controlHtml = `
-                <div class="text-control">
-                    <textarea 
-                        class="behavior-value" 
-                        data-id="${behavior.id}"
-                        placeholder="Опишите ситуацию..."
-                        rows="3"
-                    ></textarea>
-                </div>
-            `;
-            break;
+                `;
+                break;
+            case 'scale':
+                controlHtml = `
+                    <div class="scale-control">
+                        <div class="scale-buttons">
+                            <button class="scale-button" data-value="0" data-id="${behavior.id}">0</button>
+                            <button class="scale-button" data-value="1" data-id="${behavior.id}">1</button>
+                            <button class="scale-button" data-value="2" data-id="${behavior.id}">2</button>
+                            <button class="scale-button" data-value="3" data-id="${behavior.id}">3</button>
+                            <button class="scale-button" data-value="4" data-id="${behavior.id}">4</button>
+                            <button class="scale-button" data-value="5" data-id="${behavior.id}">5</button>
+                        </div>
+                    </div>
+                `;
+                break;
+            case 'text':
+                controlHtml = `
+                    <div class="text-control">
+                        <textarea 
+                            class="behavior-value" 
+                            data-id="${behavior.id}"
+                            placeholder="Опишите ситуацию..."
+                            rows="3"
+                        ></textarea>
+                    </div>
+                `;
+                break;
+        }
     }
     
     card.innerHTML = `
         <div class="behavior-header">
-            <h3>${behavior.name}</h3>
+            <span class="behavior-name">${behavior.name}</span>
             <div class="behavior-actions">
-                <button class="edit-behavior" data-id="${behavior.id}">
+                <button class="edit-btn" data-id="${behavior.id}">
                     <i class="ri-edit-line"></i>
                 </button>
-                <button class="delete-behavior" data-id="${behavior.id}">
+                <button class="delete-btn" data-id="${behavior.id}">
                     <i class="ri-delete-bin-line"></i>
                 </button>
             </div>
         </div>
-        ${controlHtml}
+        ${isFillingMode ? controlHtml : ''}
     `;
 
     // Добавляем обработчик для удаления
-    const deleteButton = card.querySelector('.delete-behavior');
+    const deleteButton = card.querySelector('.delete-btn');
     if (deleteButton) {
         deleteButton.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -76,7 +78,7 @@ function createBehaviorCard(behavior) {
     }
 
     // Добавляем обработчик для редактирования
-    const editButton = card.querySelector('.edit-behavior');
+    const editButton = card.querySelector('.edit-btn');
     if (editButton) {
         editButton.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -91,9 +93,23 @@ function createBehaviorCard(behavior) {
 async function displayBehaviors() {
     const behaviorCards = document.querySelector('.behavior-cards');
     const behaviors = await getAllBehaviors();
+    const fillDiaryButton = document.getElementById('fillDiaryBtn');
     behaviorCards.innerHTML = ''; // Очищаем текущий список
     
+    // Управляем состоянием кнопки заполнения дневника
+    if (fillDiaryButton) {
+        fillDiaryButton.disabled = behaviors.length === 0;
+        fillDiaryButton.title = behaviors.length === 0 ? 
+            'Сначала добавьте хотя бы одно поведение' : 
+            'Заполнить дневник';
+    }
+    
     if (behaviors.length === 0) {
+        // Если режим заполнения был активен, выключаем его
+        if (isFillingMode) {
+            cleanupDiaryMode();
+        }
+        
         const emptyState = document.createElement('div');
         emptyState.className = 'empty-state';
         emptyState.innerHTML = `
@@ -261,21 +277,50 @@ async function saveBehavior() {
     }
 }
 
+// Состояние режима заполнения дневника
+let isFillingMode = false;
+
+// Функция очистки режима заполнения дневника
+function cleanupDiaryMode() {
+    if (isFillingMode) {
+        isFillingMode = false;
+        document.getElementById('fillDiaryBtn')?.classList.remove('active');
+        displayBehaviors();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Получаем необходимые элементы DOM
     const modal = document.getElementById('addBehaviorModal');
     const addButton = document.getElementById('addBehaviorBtn');
-    const cancelButton = modal.querySelector('.cancel-button');
-    const saveButton = modal.querySelector('.save-button');
-    const input = document.getElementById('behaviorInput');
-    const typeSelect = document.getElementById('behaviorType');
-    const modalTitle = modal.querySelector('h2');
+    const fillDiaryButton = document.getElementById('fillDiaryBtn');
+
+    // Обработчик для кнопки заполнения дневника
+    fillDiaryButton?.addEventListener('click', () => {
+        isFillingMode = !isFillingMode;
+        fillDiaryButton.classList.toggle('active', isFillingMode);
+        displayBehaviors();
+    });
+
+    // Добавляем слушатель на изменение хэша URL
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash !== '#diary') {
+            cleanupDiaryMode();
+        }
+    });
+
+    // Также очищаем режим при прямом клике на другие пункты навигации
+    document.querySelectorAll('.main-nav a').forEach(link => {
+        if (link.getAttribute('href') !== '#diary') {
+            link.addEventListener('click', cleanupDiaryMode);
+        }
+    });
 
     // Добавляем обработчики событий
     addButton.addEventListener('click', openModal);
-    cancelButton.addEventListener('click', closeModal);
-    saveButton.addEventListener('click', saveBehavior);
-    typeSelect.addEventListener('change', showTypeHint);
+    modal.querySelector('.cancel-button').addEventListener('click', closeModal);
+    modal.querySelector('.save-button').addEventListener('click', saveBehavior);
+    document.getElementById('behaviorType').addEventListener('change', showTypeHint);
 
     // Закрытие модального окна при клике вне его
     modal.addEventListener('click', (e) => {
@@ -285,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Обработка нажатия Enter в поле ввода
-    input.addEventListener('keypress', (e) => {
+    document.getElementById('behaviorInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             saveBehavior();
         }

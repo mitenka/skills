@@ -81,12 +81,17 @@
 
       <section id="diary" class="page">
         <h1>Дневник</h1>
+        <div class="diary-actions">
+          <button class="ios-action-button" id="fillDiaryBtn">
+            <span class="ios-button-icon"><i class="ri-edit-line"></i></span>
+            <span class="ios-button-label">Заполнить дневник</span>
+          </button>
+          <button class="ios-action-button" id="addBehaviorBtn">
+            <span class="ios-button-icon">+</span>
+            <span class="ios-button-label">Поведение</span>
+          </button>
+        </div>
         <div class="behavior-cards"></div>
-
-        <button class="ios-action-button" id="addBehaviorBtn">
-          <span class="ios-button-icon">+</span>
-          <span class="ios-button-label">Поведение</span>
-        </button>
 
         <!-- Модальное окно для добавления поведения -->
         <div class="modal" id="addBehaviorModal">

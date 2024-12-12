@@ -294,9 +294,6 @@ html[data-theme="dark"] .glass-header {
 }
 
 .ios-action-button {
-  position: fixed;
-  bottom: calc(var(--nav-height) + 20px);
-  right: 20px;
   display: none;
   align-items: center;
   background: var(--card-background);
@@ -310,6 +307,12 @@ html[data-theme="dark"] .glass-header {
   transition: all 0.2s ease;
   border: 1px solid var(--border-color);
   color: var(--primary-color);
+}
+
+.page > .ios-action-button {
+  position: fixed;
+  bottom: calc(var(--nav-height) + 20px);
+  right: 20px;
   z-index: 900;
 }
 
@@ -337,6 +340,18 @@ html[data-theme="dark"] .glass-header {
   .ios-action-button:hover {
     background: rgba(0, 122, 255, 0.1);
   }
+}
+
+.ios-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ios-action-button:disabled:hover,
+.ios-action-button:disabled:active {
+  background: var(--card-background);
+  transform: none;
 }
 
 /* Модальное окно */
@@ -1217,4 +1232,16 @@ input:checked + .slider:before {
   color: var(--text-color-secondary);
   font-size: 0.9rem;
   margin-top: 0.8rem;
+}
+
+/* Стили для контейнера кнопок в дневнике */
+.diary-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.diary-actions .ios-action-button {
+  flex: 1;
 }
