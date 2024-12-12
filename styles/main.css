@@ -1433,3 +1433,51 @@ input:checked + .slider:before {
   outline: none;
   border-color: var(--primary-color);
 }
+
+/* Стили для карточки с кнопкой сохранения */
+.save-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.save-diary-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: transform 0.2s ease;
+}
+
+.save-diary-btn i {
+  font-size: 20px;
+}
+
+.save-diary-btn:hover {
+  transform: translateY(-2px);
+}
+
+.save-diary-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

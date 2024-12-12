@@ -166,6 +166,28 @@ async function displayBehaviors() {
     behaviors.forEach(behavior => {
         behaviorCards.appendChild(createBehaviorCard(behavior));
     });
+
+    // Добавляем карточку с кнопкой сохранения в режиме редактирования
+    if (isFillingMode) {
+        const saveCard = document.createElement('div');
+        saveCard.className = 'behavior-card save-card';
+        saveCard.innerHTML = `
+            <button class="save-diary-btn">
+                <i class="ri-save-line"></i>
+                <span>Сохранить дневник</span>
+            </button>
+        `;
+
+        // Добавляем обработчик для кнопки сохранения
+        const saveButton = saveCard.querySelector('.save-diary-btn');
+        saveButton.addEventListener('click', () => {
+            cleanupDiaryMode();
+            isFillingMode = false;
+            displayBehaviors();
+        });
+
+        behaviorCards.appendChild(saveCard);
+    }
 }
 
 // Функция для добавления примеров поведений
