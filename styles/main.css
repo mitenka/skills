@@ -1212,3 +1212,9 @@ input:checked + .slider:before {
 .create-demo-card i {
   font-size: 1.2rem;
 }
+
+.demo-note {
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+}

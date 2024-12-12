@@ -100,9 +100,17 @@ async function displayBehaviors() {
             <p>Здесь будут отображаться ваши записи о поведении</p>
             <button class="create-demo-card">
                 <i class="ri-add-line"></i>
-                Создать тестовую карточку
+                Добавить примеры проблемного поведения
             </button>
+            <p class="demo-note">Позднее вы сможете их отредактировать или удалить</p>
         `;
+        
+        // Добавляем обработчик для кнопки создания примеров
+        const demoButton = emptyState.querySelector('.create-demo-card');
+        if (demoButton) {
+            demoButton.addEventListener('click', addExampleBehaviors);
+        }
+        
         behaviorCards.appendChild(emptyState);
         return;
     }
@@ -110,6 +118,38 @@ async function displayBehaviors() {
     behaviors.forEach(behavior => {
         behaviorCards.appendChild(createBehaviorCard(behavior));
     });
+}
+
+// Функция для добавления примеров поведений
+async function addExampleBehaviors() {
+    const examples = [
+        {
+            name: 'Пропуск сессии или тренинга',
+            type: 'boolean'
+        },
+        {
+            name: 'Импульсивные траты (такси, рестораны, подарки)',
+            type: 'boolean'
+        },
+        {
+            name: 'Необдуманные обещания',
+            type: 'boolean'
+        },
+        {
+            name: 'Денежные долги',
+            type: 'boolean'
+        },
+        {
+            name: 'Проявление агрессии',
+            type: 'scale'
+        }
+    ];
+
+    for (const example of examples) {
+        await addBehavior(example);
+    }
+    
+    await displayBehaviors();
 }
 
 // Показ подсказок при выборе типа поведения
@@ -155,15 +195,23 @@ function openEditModal(behavior) {
 }
 
 // Функция для открытия модального окна для добавления
-function openModal() {
+async function openModal() {
     const modal = document.getElementById('addBehaviorModal');
     const input = document.getElementById('behaviorInput');
     const typeSelect = document.getElementById('behaviorType');
     const modalTitle = modal.querySelector('h2');
     
-    // Очищаем поля
-    input.value = '';
-    typeSelect.value = 'boolean';
+    // Проверяем, есть ли уже добавленные поведения
+    const behaviors = await getAllBehaviors();
+    if (behaviors.length === 0) {
+        input.value = 'Пропуск сессии или тренинга';
+        typeSelect.value = 'boolean';
+    } else {
+        // Очищаем поля
+        input.value = '';
+        typeSelect.value = 'boolean';
+    }
+    
     typeSelect.disabled = false;
     
     // Возвращаем исходный заголовок и текст кнопки
