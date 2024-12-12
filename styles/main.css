@@ -678,7 +678,7 @@ html[data-theme="dark"] .modal-content select {
   padding: 0.8rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: white;
+  background: var(--card-background);
   color: var(--text-color);
   font-size: 0.95rem;
   resize: vertical;

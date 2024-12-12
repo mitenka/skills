@@ -87,6 +87,12 @@ async function loadTheoryData() {
     const showAssumptions = localStorage.getItem('showAssumptions') !== 'false';
     if (showAssumptions) {
       renderAxioms(axiomsData);
+    } else {
+      // Удаляем существующую карточку допущения, если она есть
+      const assumptionCard = document.querySelector('.assumption-card');
+      if (assumptionCard) {
+        assumptionCard.remove();
+      }
     }
   } catch (error) {
     console.error("Ошибка при загрузке данных:", error);
@@ -270,13 +276,15 @@ function initSettings() {
       localStorage.setItem('showAssumptions', showAssumptions);
       
       // Обновляем отображение допущений
-      const assumptionsContainer = document.querySelector('.axioms-list');
-      if (assumptionsContainer) {
+      const assumptionCard = document.querySelector('.assumption-card');
+      if (assumptionCard) {
         if (showAssumptions) {
           loadTheoryData(); // Перезагружаем данные для отображения допущения
         } else {
-          assumptionsContainer.innerHTML = ''; // Очищаем контейнер
+          assumptionCard.remove(); // Удаляем карточку допущения
         }
+      } else if (showAssumptions) {
+        loadTheoryData(); // Если карточки нет, но включили показ - загружаем данные
       }
     });
   }
