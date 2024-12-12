@@ -167,8 +167,32 @@ async function displayBehaviors() {
         behaviorCards.appendChild(createBehaviorCard(behavior));
     });
 
-    // Добавляем карточку с кнопкой сохранения в режиме редактирования
+    // В режиме редактирования добавляем карточки с кнопками
     if (isFillingMode) {
+        // Карточка с кнопками выбора даты (добавляем в начало)
+        const dateCard = document.createElement('div');
+        dateCard.className = 'behavior-card date-card';
+        dateCard.innerHTML = `
+            <div class="date-buttons">
+                <button class="date-btn active">Сегодня</button>
+                <button class="date-btn">Вчера</button>
+                <button class="date-btn">Позавчера</button>
+            </div>
+        `;
+
+        // Добавляем обработчики для кнопок выбора даты
+        const dateButtons = dateCard.querySelectorAll('.date-btn');
+        dateButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                dateButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+
+        // Вставляем карточку с датами в начало списка
+        behaviorCards.insertBefore(dateCard, behaviorCards.firstChild);
+
+        // Карточка с кнопкой сохранения (в конец)
         const saveCard = document.createElement('div');
         saveCard.className = 'behavior-card save-card';
         saveCard.innerHTML = `
@@ -178,7 +202,6 @@ async function displayBehaviors() {
             </button>
         `;
 
-        // Добавляем обработчик для кнопки сохранения
         const saveButton = saveCard.querySelector('.save-diary-btn');
         saveButton.addEventListener('click', () => {
             cleanupDiaryMode();
