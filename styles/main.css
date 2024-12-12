@@ -1110,15 +1110,16 @@ input:checked + .slider:before {
 .boolean-control {
   display: flex;
   gap: 0.5rem;
-  justify-content: flex-start;
+  justify-content: stretch;
+  width: 100%;
 }
 
 .boolean-button {
   background: var(--card-background);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  width: 40px;
   height: 40px;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
