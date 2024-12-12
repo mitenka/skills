@@ -10,29 +10,26 @@ function createBehaviorCard(behavior) {
     switch (behavior.type) {
         case 'boolean':
             controlHtml = `
-                <label class="toggle-control">
-                    <input type="checkbox" class="behavior-value" data-id="${behavior.id}">
-                    <span class="toggle-switch"></span>
-                </label>
+                <div class="boolean-control">
+                    <button class="boolean-button" data-value="true" data-id="${behavior.id}">
+                        <i class="ri-check-line"></i>
+                    </button>
+                    <button class="boolean-button" data-value="false" data-id="${behavior.id}">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
             `;
             break;
         case 'scale':
             controlHtml = `
                 <div class="scale-control">
-                    <input type="range" 
-                        class="behavior-value" 
-                        data-id="${behavior.id}"
-                        min="0" 
-                        max="5" 
-                        value="0"
-                    >
-                    <div class="scale-labels">
-                        <span>0</span>
-                        <span>1</span>
-                        <span>2</span>
-                        <span>3</span>
-                        <span>4</span>
-                        <span>5</span>
+                    <div class="scale-buttons">
+                        <button class="scale-button" data-value="0" data-id="${behavior.id}">0</button>
+                        <button class="scale-button" data-value="1" data-id="${behavior.id}">1</button>
+                        <button class="scale-button" data-value="2" data-id="${behavior.id}">2</button>
+                        <button class="scale-button" data-value="3" data-id="${behavior.id}">3</button>
+                        <button class="scale-button" data-value="4" data-id="${behavior.id}">4</button>
+                        <button class="scale-button" data-value="5" data-id="${behavior.id}">5</button>
                     </div>
                 </div>
             `;
