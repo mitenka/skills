@@ -1,4 +1,4 @@
-const CACHE_NAME = "dpt-skills-v8";
+const CACHE_NAME = "dpt-skills-v9";
 
 // При установке воркера
 self.addEventListener("install", (event) => {
@@ -21,6 +21,13 @@ self.addEventListener("activate", (event) => {
       })
       .then(() => self.clients.claim())
   );
+});
+
+// Обработка сообщений от клиента
+self.addEventListener('message', (event) => {
+  if (event.data.type === 'CHECK_UPDATES') {
+    self.registration.update();
+  }
 });
 
 // Отдельная стратегия для CSS файлов - StaleWhileRevalidate
