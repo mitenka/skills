@@ -5,43 +5,48 @@ function createBehaviorCard(behavior) {
     const card = document.createElement('div');
     card.className = 'behavior-card';
     
-    // Создаем контрол в зависимости от типа
-    let controlHtml = '';
+    // Создаем контрол в зависимости от типа поведения
+    let actionControlHtml = '';
     if (isFillingMode) {
         switch (behavior.type) {
             case 'boolean':
-                controlHtml = `
-                    <div class="boolean-control">
-                        <button class="boolean-button" data-value="true" data-id="${behavior.id}">
-                            <i class="ri-check-line"></i>
-                        </button>
-                        <button class="boolean-button" data-value="false" data-id="${behavior.id}">
-                            <i class="ri-close-line"></i>
-                        </button>
+                actionControlHtml = `
+                    <div class="control-group">
+                        <div class="boolean-control">
+                            <button class="boolean-button" data-value="true" data-id="${behavior.id}" data-field="action">
+                                <i class="ri-check-line"></i>
+                            </button>
+                            <button class="boolean-button" data-value="false" data-id="${behavior.id}" data-field="action">
+                                <i class="ri-close-line"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
                 break;
             case 'scale':
-                controlHtml = `
-                    <div class="scale-control">
-                        <div class="scale-buttons">
-                            <button class="scale-button" data-value="0" data-id="${behavior.id}">0</button>
-                            <button class="scale-button" data-value="1" data-id="${behavior.id}">1</button>
-                            <button class="scale-button" data-value="2" data-id="${behavior.id}">2</button>
-                            <button class="scale-button" data-value="3" data-id="${behavior.id}">3</button>
-                            <button class="scale-button" data-value="4" data-id="${behavior.id}">4</button>
-                            <button class="scale-button" data-value="5" data-id="${behavior.id}">5</button>
+                actionControlHtml = `
+                    <div class="control-group">
+                        <div class="scale-control">
+                            <div class="scale-buttons">
+                                <button class="scale-button" data-value="0" data-id="${behavior.id}" data-field="action">0</button>
+                                <button class="scale-button" data-value="1" data-id="${behavior.id}" data-field="action">1</button>
+                                <button class="scale-button" data-value="2" data-id="${behavior.id}" data-field="action">2</button>
+                                <button class="scale-button" data-value="3" data-id="${behavior.id}" data-field="action">3</button>
+                                <button class="scale-button" data-value="4" data-id="${behavior.id}" data-field="action">4</button>
+                                <button class="scale-button" data-value="5" data-id="${behavior.id}" data-field="action">5</button>
+                            </div>
                         </div>
                     </div>
                 `;
                 break;
             case 'text':
-                controlHtml = `
-                    <div class="text-control">
+                actionControlHtml = `
+                    <div class="control-group">
                         <textarea 
                             class="behavior-value" 
                             data-id="${behavior.id}"
-                            placeholder="Опишите ситуацию..."
+                            data-field="action"
+                            placeholder="Опишите действие..."
                             rows="3"
                         ></textarea>
                     </div>
@@ -49,6 +54,22 @@ function createBehaviorCard(behavior) {
                 break;
         }
     }
+
+    // Создаем шкалу для желания (всегда шкала от 0 до 5)
+    const desireControlHtml = isFillingMode ? `
+        <div class="control-group">
+            <div class="scale-control">
+                <div class="scale-buttons">
+                    <button class="scale-button" data-value="0" data-id="${behavior.id}" data-field="desire">0</button>
+                    <button class="scale-button" data-value="1" data-id="${behavior.id}" data-field="desire">1</button>
+                    <button class="scale-button" data-value="2" data-id="${behavior.id}" data-field="desire">2</button>
+                    <button class="scale-button" data-value="3" data-id="${behavior.id}" data-field="desire">3</button>
+                    <button class="scale-button" data-value="4" data-id="${behavior.id}" data-field="desire">4</button>
+                    <button class="scale-button" data-value="5" data-id="${behavior.id}" data-field="desire">5</button>
+                </div>
+            </div>
+        </div>
+    ` : '';
     
     card.innerHTML = `
         <div class="behavior-header">
@@ -62,7 +83,18 @@ function createBehaviorCard(behavior) {
                 </button>
             </div>
         </div>
-        ${isFillingMode ? controlHtml : ''}
+        ${isFillingMode ? `
+            <div class="behavior-controls">
+                <div class="control-section">
+                    <label class="control-label">Желание</label>
+                    ${desireControlHtml}
+                </div>
+                <div class="control-section">
+                    <label class="control-label">Действие</label>
+                    ${actionControlHtml}
+                </div>
+            </div>
+        ` : ''}
     `;
 
     // Добавляем обработчик для удаления
