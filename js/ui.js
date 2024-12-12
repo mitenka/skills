@@ -316,7 +316,7 @@ let isFillingMode = false;
 function cleanupDiaryMode() {
     if (isFillingMode) {
         isFillingMode = false;
-        document.getElementById('fillDiaryBtn')?.classList.remove('active');
+        document.body.classList.remove('diary-filling-mode');
         displayBehaviors();
     }
 }
@@ -330,13 +330,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Обработчик для кнопки заполнения дневника
     fillDiaryButton?.addEventListener('click', () => {
         isFillingMode = !isFillingMode;
-        fillDiaryButton.classList.toggle('active', isFillingMode);
+        document.body.classList.toggle('diary-filling-mode', isFillingMode);
+        document.querySelector('.main-nav a[href="#diary"]').click();
         displayBehaviors();
     });
 
     // Добавляем слушатель на изменение хэша URL
     window.addEventListener('hashchange', () => {
-        if (window.location.hash !== '#diary') {
+        const hash = window.location.hash;
+        if (hash && hash !== '#diary' && isFillingMode) {
             cleanupDiaryMode();
         }
     });

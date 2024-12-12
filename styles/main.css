@@ -10,6 +10,7 @@
   --content-height: 500px;
   --hover-background: rgba(0, 0, 0, 0.05);
   --shadow-color: rgba(0, 0, 0, 0.1);
+  --diary-mode-overlay: rgba(0, 0, 0, 0.2);
 }
 
 html[data-theme="dark"] {
@@ -20,6 +21,7 @@ html[data-theme="dark"] {
   --border-color: rgba(255, 255, 255, 0.1);
   --hover-background: rgba(255, 255, 255, 0.05);
   --shadow-color: rgba(0, 0, 0, 0.3);
+  --diary-mode-overlay: rgba(255, 255, 255, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,6 +33,7 @@ html[data-theme="dark"] {
     --border-color: rgba(255, 255, 255, 0.1);
     --hover-background: rgba(255, 255, 255, 0.05);
     --shadow-color: rgba(0, 0, 0, 0.3);
+    --diary-mode-overlay: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -49,6 +52,34 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   font-weight: 400;
+  transition: background-color 0.3s ease;
+}
+
+/* Diary filling mode styles */
+body.diary-filling-mode {
+  background-color: var(--background-color);
+}
+
+body.diary-filling-mode::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--diary-mode-overlay);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.diary-filling-mode .behavior-card {
+  position: relative;
+  z-index: 2;
+}
+
+body.diary-filling-mode #fillDiaryBtn {
+  background: var(--primary-color);
+  color: white;
 }
 
 .main-nav {
@@ -1171,67 +1202,70 @@ input:checked + .slider:before {
 }
 
 .scale-button {
-  background: var(--card-background);
-  border: 1px solid var(--border-color);
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 8px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid var(--border-color);
+  background: var(--card-background);
+  color: var(--text-color);
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--text-color-secondary);
-  font-size: 1rem;
 }
 
 .scale-button:hover {
-  background: var(--hover-background);
-  color: var(--primary-color);
+  background: var(--background-color);
 }
 
-/* Стили для пустого состояния */
-.empty-state {
-  text-align: center;
-  padding: 2rem;
-  background: var(--card-background);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  margin: 1rem 0;
-}
-
-.empty-state p {
-  color: var(--text-color-secondary);
-  margin-bottom: 1rem;
-}
-
-.create-demo-card {
-  background: var(--card-background);
-  border: 2px dashed var(--border-color);
-  border-radius: 8px;
-  padding: 0.8rem 1.2rem;
-  color: var(--primary-color);
-  font-size: 1rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.create-demo-card:hover {
-  background: var(--hover-background);
+.scale-button.active {
+  background: var(--primary-color);
+  color: white;
   border-color: var(--primary-color);
 }
 
-.create-demo-card i {
-  font-size: 1.2rem;
+.boolean-control {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
 
-.demo-note {
-  color: var(--text-color-secondary);
+.boolean-button {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--card-background);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.boolean-button:hover {
+  background: var(--background-color);
+}
+
+.boolean-button.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.behavior-value {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--card-background);
+  color: var(--text-color);
   font-size: 0.9rem;
-  margin-top: 0.8rem;
+  resize: vertical;
+  min-height: 2.5rem;
+}
+
+.behavior-value:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 /* Стили для контейнера кнопок в дневнике */
@@ -1351,4 +1385,48 @@ input:checked + .slider:before {
 .behavior-value:focus {
   outline: none;
   border-color: var(--primary-color);
+}
+
+/* Стили для пустого состояния */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.empty-state p {
+  color: var(--text-color-secondary);
+  margin-bottom: 1rem;
+}
+
+.create-demo-card {
+  background: var(--card-background);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.create-demo-card:hover {
+  background: var(--hover-background);
+  border-color: var(--primary-color);
+}
+
+.create-demo-card i {
+  font-size: 1.2rem;
+}
+
+.demo-note {
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
 }
