@@ -2,11 +2,17 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <meta name="theme-color" content="#ffffff" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>ДПТ Навыки</title>
     <link rel="manifest" href="manifest.json" />
     <link
@@ -64,12 +70,20 @@
         <h1>Теория ДПТ</h1>
         <div class="assumption-card">
           <div class="assumption-header">
-            <button class="refresh-button" aria-label="Показать следующее допущение">
+            <button
+              class="refresh-button"
+              aria-label="Показать следующее допущение"
+            >
               <i class="ri-refresh-line"></i>
             </button>
           </div>
-          <div class="assumption-title">Все люди хотят чувствовать себя лучше</div>
-          <div class="assumption-text">Общая для всех людей характеристика – то, что люди хотят улучшать свои жизни и быть счастливыми</div>
+          <div class="assumption-title">
+            Все люди хотят чувствовать себя лучше
+          </div>
+          <div class="assumption-text">
+            Общая для всех людей характеристика – то, что люди хотят улучшать
+            свои жизни и быть счастливыми
+          </div>
         </div>
         <div class="blocks-container"></div>
       </section>
@@ -97,20 +111,27 @@
         <div class="modal" id="addBehaviorModal">
           <div class="modal-content">
             <h2>Добавить проблемное поведение</h2>
-            <input 
-              type="text" 
-              id="behaviorInput" 
+            <input
+              type="text"
+              id="behaviorInput"
               placeholder="Введите название"
               maxlength="100"
-            >
+            />
             <select id="behaviorType" class="behavior-type-select">
               <option value="boolean">Было/не было</option>
               <option value="scale">Шкала (от нуля до пяти)</option>
               <option value="text">Текст</option>
             </select>
-            <div class="behavior-type-hint" id="booleanHint">Простой способ отметить, было ли определенное поведение</div>
-            <div class="behavior-type-hint" id="scaleHint">Оценка интенсивности поведения от нуля (отсутствует) до пяти (максимально)</div>
-            <div class="behavior-type-hint" id="textHint">Свободное описание ситуации своими словами</div>
+            <div class="behavior-type-hint" id="booleanHint">
+              Простой способ отметить, было ли определенное поведение
+            </div>
+            <div class="behavior-type-hint" id="scaleHint">
+              Оценка интенсивности поведения от нуля (отсутствует) до пяти
+              (максимально)
+            </div>
+            <div class="behavior-type-hint" id="textHint">
+              Свободное описание ситуации своими словами
+            </div>
             <div class="modal-buttons">
               <button class="cancel-button">Отмена</button>
               <button class="save-button">Сохранить</button>
@@ -168,7 +189,9 @@
             <h3>iOS (Chrome)</h3>
             <ol>
               <li>Нажмите на три точки в верхнем правом углу</li>
-              <li>Прокрутите меню вниз и выберите «Добавить на экран «Домой»</li>
+              <li>
+                Прокрутите меню вниз и выберите «Добавить на экран «Домой»
+              </li>
               <li>Нажмите «Добавить»</li>
             </ol>
             <h3>Android (Chrome)</h3>
@@ -185,21 +208,42 @@
           <div class="app-info">
             <p>Это приложение разработано с учетом вашей приватности:</p>
             <ul>
-              <li>Все ваши данные хранятся только локально на вашем устройстве</li>
+              <li>
+                Все ваши данные хранятся только локально на вашем устройстве
+              </li>
               <li>Приложение работает без подключения к интернету</li>
               <li>Никакие данные не отправляются на сервер</li>
-              <li>Исходный код приложения опубликован на GitHub и доступен для проверки</li>
+              <li>
+                Исходный код приложения опубликован на GitHub и доступен для
+                проверки
+              </li>
             </ul>
             <div class="warning-box">
               <i class="ri-error-warning-line"></i>
-              <span>Важно: все данные хранятся локально в браузере. При очистке данных браузера ваши записи будут удалены.</span>
+              <span
+                >Важно: все данные хранятся локально в браузере. При очистке
+                данных браузера ваши записи будут удалены.</span
+              >
             </div>
           </div>
           <div class="about-links">
             <div class="link-item">
-              <a href="https://github.com/mitenka/skills" target="_blank" rel="noopener noreferrer" class="link-button">
-                <svg class="link-icon" viewBox="0 0 24 24" width="24" height="24">
-                  <path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+              <a
+                href="https://github.com/mitenka/skills"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-button"
+              >
+                <svg
+                  class="link-icon"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                  />
                 </svg>
                 <span>Исходный код на GitHub</span>
               </a>
@@ -222,8 +266,8 @@
           <h2>Опасная зона</h2>
           <div class="setting-item danger-zone">
             <p class="danger-description">
-              Это действие удалит все ваши данные из приложения, включая записи поведений и настройки.
-              Отменить это действие будет невозможно.
+              Это действие удалит все ваши данные из приложения, включая записи
+              поведений и настройки. Отменить это действие будет невозможно.
             </p>
             <button id="clearDataBtn" class="danger-button">
               <i class="ri-delete-bin-7-line"></i>
@@ -233,7 +277,17 @@
         </div>
       </section>
     </main>
-    <script src="https://unpkg.com/dexie@latest/dist/modern/dexie.min.mjs" type="module"></script>
+    <!-- Контейнер для воодушевляющего сообщения -->
+    <div class="success-message" id="successMessage">
+      <div class="success-content">
+        <i></i>
+        <span class="message-text"></span>
+      </div>
+    </div>
+    <script
+      src="https://unpkg.com/dexie@latest/dist/modern/dexie.min.mjs"
+      type="module"
+    ></script>
     <script src="js/theme.js" type="module"></script>
     <script src="js/app.js" type="module"></script>
     <script>

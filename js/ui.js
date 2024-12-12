@@ -1,16 +1,21 @@
-import { getAllBehaviors, addBehavior, deleteBehavior, updateBehavior } from './behaviors.js';
+import {
+  getAllBehaviors,
+  addBehavior,
+  deleteBehavior,
+  updateBehavior,
+} from "./behaviors.js";
 
 // Функция для создания карточки поведения
 function createBehaviorCard(behavior) {
-    const card = document.createElement('div');
-    card.className = 'behavior-card';
-    
-    // Создаем контрол в зависимости от типа поведения
-    let actionControlHtml = '';
-    if (isFillingMode) {
-        switch (behavior.type) {
-            case 'boolean':
-                actionControlHtml = `
+  const card = document.createElement("div");
+  card.className = "behavior-card";
+
+  // Создаем контрол в зависимости от типа поведения
+  let actionControlHtml = "";
+  if (isFillingMode) {
+    switch (behavior.type) {
+      case "boolean":
+        actionControlHtml = `
                     <div class="control-group">
                         <div class="boolean-control">
                             <button class="boolean-button" data-value="true" data-id="${behavior.id}" data-field="action">
@@ -22,9 +27,9 @@ function createBehaviorCard(behavior) {
                         </div>
                     </div>
                 `;
-                break;
-            case 'scale':
-                actionControlHtml = `
+        break;
+      case "scale":
+        actionControlHtml = `
                     <div class="control-group">
                         <div class="scale-control">
                             <div class="scale-buttons">
@@ -38,9 +43,9 @@ function createBehaviorCard(behavior) {
                         </div>
                     </div>
                 `;
-                break;
-            case 'text':
-                actionControlHtml = `
+        break;
+      case "text":
+        actionControlHtml = `
                     <div class="control-group">
                         <textarea 
                             class="behavior-value" 
@@ -51,12 +56,13 @@ function createBehaviorCard(behavior) {
                         ></textarea>
                     </div>
                 `;
-                break;
-        }
+        break;
     }
+  }
 
-    // Создаем шкалу для желания (всегда шкала от 0 до 5)
-    const desireControlHtml = isFillingMode ? `
+  // Создаем шкалу для желания (всегда шкала от 0 до 5)
+  const desireControlHtml = isFillingMode
+    ? `
         <div class="control-group">
             <div class="scale-control">
                 <div class="scale-buttons">
@@ -69,9 +75,10 @@ function createBehaviorCard(behavior) {
                 </div>
             </div>
         </div>
-    ` : '';
-    
-    card.innerHTML = `
+    `
+    : "";
+
+  card.innerHTML = `
         <div class="behavior-header">
             <span class="behavior-name">${behavior.name}</span>
             <div class="behavior-actions">
@@ -83,7 +90,9 @@ function createBehaviorCard(behavior) {
                 </button>
             </div>
         </div>
-        ${isFillingMode ? `
+        ${
+          isFillingMode
+            ? `
             <div class="behavior-controls">
                 <div class="control-section">
                     <label class="control-label">Желание</label>
@@ -94,57 +103,60 @@ function createBehaviorCard(behavior) {
                     ${actionControlHtml}
                 </div>
             </div>
-        ` : ''}
+        `
+            : ""
+        }
     `;
 
-    // Добавляем обработчик для удаления
-    const deleteButton = card.querySelector('.delete-btn');
-    if (deleteButton) {
-        deleteButton.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            if (confirm('Удалить это поведение?')) {
-                await deleteBehavior(behavior.id);
-                await displayBehaviors();
-            }
-        });
-    }
+  // Добавляем обработчик для удаления
+  const deleteButton = card.querySelector(".delete-btn");
+  if (deleteButton) {
+    deleteButton.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (confirm("Удалить это поведение?")) {
+        await deleteBehavior(behavior.id);
+        await displayBehaviors();
+      }
+    });
+  }
 
-    // Добавляем обработчик для редактирования
-    const editButton = card.querySelector('.edit-btn');
-    if (editButton) {
-        editButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openEditModal(behavior);
-        });
-    }
+  // Добавляем обработчик для редактирования
+  const editButton = card.querySelector(".edit-btn");
+  if (editButton) {
+    editButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openEditModal(behavior);
+    });
+  }
 
-    return card;
+  return card;
 }
 
 // Функция для отображения всех поведений
 async function displayBehaviors() {
-    const behaviorCards = document.querySelector('.behavior-cards');
-    const behaviors = await getAllBehaviors();
-    const fillDiaryButton = document.getElementById('fillDiaryBtn');
-    behaviorCards.innerHTML = ''; // Очищаем текущий список
-    
-    // Управляем состоянием кнопки заполнения дневника
-    if (fillDiaryButton) {
-        fillDiaryButton.disabled = behaviors.length === 0;
-        fillDiaryButton.title = behaviors.length === 0 ? 
-            'Сначала добавьте хотя бы одно поведение' : 
-            'Заполнить дневник';
+  const behaviorCards = document.querySelector(".behavior-cards");
+  const behaviors = await getAllBehaviors();
+  const fillDiaryButton = document.getElementById("fillDiaryBtn");
+  behaviorCards.innerHTML = ""; // Очищаем текущий список
+
+  // Управляем состоянием кнопки заполнения дневника
+  if (fillDiaryButton) {
+    fillDiaryButton.disabled = behaviors.length === 0;
+    fillDiaryButton.title =
+      behaviors.length === 0
+        ? "Сначала добавьте хотя бы одно поведение"
+        : "Заполнить дневник";
+  }
+
+  if (behaviors.length === 0) {
+    // Если режим заполнения был активен, выключаем его
+    if (isFillingMode) {
+      cleanupDiaryMode();
     }
-    
-    if (behaviors.length === 0) {
-        // Если режим заполнения был активен, выключаем его
-        if (isFillingMode) {
-            cleanupDiaryMode();
-        }
-        
-        const emptyState = document.createElement('div');
-        emptyState.className = 'empty-state';
-        emptyState.innerHTML = `
+
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+    emptyState.innerHTML = `
             <p>Здесь будут отображаться ваши записи о поведении</p>
             <button class="create-demo-card">
                 <i class="ri-add-line"></i>
@@ -152,27 +164,27 @@ async function displayBehaviors() {
             </button>
             <p class="demo-note">Позднее вы сможете их отредактировать или удалить</p>
         `;
-        
-        // Добавляем обработчик для кнопки создания примеров
-        const demoButton = emptyState.querySelector('.create-demo-card');
-        if (demoButton) {
-            demoButton.addEventListener('click', addExampleBehaviors);
-        }
-        
-        behaviorCards.appendChild(emptyState);
-        return;
+
+    // Добавляем обработчик для кнопки создания примеров
+    const demoButton = emptyState.querySelector(".create-demo-card");
+    if (demoButton) {
+      demoButton.addEventListener("click", addExampleBehaviors);
     }
 
-    behaviors.forEach(behavior => {
-        behaviorCards.appendChild(createBehaviorCard(behavior));
-    });
+    behaviorCards.appendChild(emptyState);
+    return;
+  }
 
-    // В режиме редактирования добавляем карточки с кнопками
-    if (isFillingMode) {
-        // Карточка с кнопками выбора даты (добавляем в начало)
-        const dateCard = document.createElement('div');
-        dateCard.className = 'behavior-card date-card';
-        dateCard.innerHTML = `
+  behaviors.forEach((behavior) => {
+    behaviorCards.appendChild(createBehaviorCard(behavior));
+  });
+
+  // В режиме редактирования добавляем карточки с кнопками
+  if (isFillingMode) {
+    // Карточка с кнопками выбора даты (добавляем в начало)
+    const dateCard = document.createElement("div");
+    dateCard.className = "behavior-card date-card";
+    dateCard.innerHTML = `
             <div class="date-buttons">
                 <button class="date-btn active">Сегодня</button>
                 <button class="date-btn">Вчера</button>
@@ -180,178 +192,230 @@ async function displayBehaviors() {
             </div>
         `;
 
-        // Добавляем обработчики для кнопок выбора даты
-        const dateButtons = dateCard.querySelectorAll('.date-btn');
-        dateButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                dateButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-            });
-        });
+    // Добавляем обработчики для кнопок выбора даты
+    const dateButtons = dateCard.querySelectorAll(".date-btn");
+    dateButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        dateButtons.forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
+      });
+    });
 
-        // Вставляем карточку с датами в начало списка
-        behaviorCards.insertBefore(dateCard, behaviorCards.firstChild);
+    // Вставляем карточку с датами в начало списка
+    behaviorCards.insertBefore(dateCard, behaviorCards.firstChild);
 
-        // Карточка с кнопкой сохранения (в конец)
-        const saveCard = document.createElement('div');
-        saveCard.className = 'behavior-card save-card';
-        saveCard.innerHTML = `
+    // Карточка с кнопкой сохранения (в конец)
+    const saveCard = document.createElement("div");
+    saveCard.className = "behavior-card save-card";
+    saveCard.innerHTML = `
             <button class="save-diary-btn">
                 <i class="ri-save-line"></i>
                 <span>Сохранить дневник</span>
             </button>
         `;
 
-        const saveButton = saveCard.querySelector('.save-diary-btn');
-        saveButton.addEventListener('click', () => {
-            cleanupDiaryMode();
-            isFillingMode = false;
-            displayBehaviors();
-        });
+    const saveButton = saveCard.querySelector(".save-diary-btn");
+    saveButton.addEventListener("click", () => {
+      showEncouragingMessage();
+      setTimeout(() => {
+        cleanupDiaryMode();
+        isFillingMode = false;
+        displayBehaviors();
+      }, 2000); // Задержка перед закрытием режима редактирования
+    });
 
-        behaviorCards.appendChild(saveCard);
-    }
+    behaviorCards.appendChild(saveCard);
+  }
 }
 
 // Функция для добавления примеров поведений
 async function addExampleBehaviors() {
-    const examples = [
-        {
-            name: 'Пропуск сессии или тренинга',
-            type: 'boolean'
-        },
-        {
-            name: 'Импульсивные траты (такси, рестораны, подарки)',
-            type: 'boolean'
-        },
-        {
-            name: 'Необдуманные обещания',
-            type: 'boolean'
-        },
-        {
-            name: 'Денежные долги',
-            type: 'boolean'
-        },
-        {
-            name: 'Проявление агрессии',
-            type: 'scale'
-        }
-    ];
+  const examples = [
+    {
+      name: "Пропуск сессии или тренинга",
+      type: "boolean",
+    },
+    {
+      name: "Импульсивные траты (такси, рестораны, подарки)",
+      type: "boolean",
+    },
+    {
+      name: "Необдуманные обещания",
+      type: "boolean",
+    },
+    {
+      name: "Денежные долги",
+      type: "boolean",
+    },
+    {
+      name: "Проявление агрессии",
+      type: "scale",
+    },
+  ];
 
-    for (const example of examples) {
-        await addBehavior(example);
-    }
-    
-    await displayBehaviors();
+  for (const example of examples) {
+    await addBehavior(example);
+  }
+
+  await displayBehaviors();
 }
 
 // Показ подсказок при выборе типа поведения
 function showTypeHint() {
-    const typeSelect = document.getElementById('behaviorType');
-    const hints = {
-        boolean: document.getElementById('booleanHint'),
-        scale: document.getElementById('scaleHint'),
-        text: document.getElementById('textHint')
-    };
-    
-    // Скрываем все подсказки
-    Object.values(hints).forEach(hint => {
-        if (hint) hint.style.display = 'none';
-    });
-    
-    // Показываем подсказку для выбранного типа
-    const selectedHint = hints[typeSelect.value];
-    if (selectedHint) selectedHint.style.display = 'block';
+  const typeSelect = document.getElementById("behaviorType");
+  const hints = {
+    boolean: document.getElementById("booleanHint"),
+    scale: document.getElementById("scaleHint"),
+    text: document.getElementById("textHint"),
+  };
+
+  // Скрываем все подсказки
+  Object.values(hints).forEach((hint) => {
+    if (hint) hint.style.display = "none";
+  });
+
+  // Показываем подсказку для выбранного типа
+  const selectedHint = hints[typeSelect.value];
+  if (selectedHint) selectedHint.style.display = "block";
 }
 
 // Функция для открытия модального окна для редактирования
 function openEditModal(behavior) {
-    const modal = document.getElementById('addBehaviorModal');
-    const input = document.getElementById('behaviorInput');
-    const typeSelect = document.getElementById('behaviorType');
-    const modalTitle = modal.querySelector('h2');
+  const modal = document.getElementById("addBehaviorModal");
+  const input = document.getElementById("behaviorInput");
+  const typeSelect = document.getElementById("behaviorType");
+  const modalTitle = modal.querySelector("h2");
 
-    // Заполняем поля данными поведения
-    input.value = behavior.name;
-    typeSelect.value = behavior.type;
-    
-    // Меняем заголовок и текст кнопки
-    modalTitle.textContent = 'Редактировать поведение';
-    const saveButton = modal.querySelector('.save-button');
-    saveButton.textContent = 'Сохранить изменения';
-    
-    // Сохраняем ID редактируемого поведения
-    modal.dataset.editId = behavior.id;
-    
-    showTypeHint();
-    modal.style.display = 'flex';
+  // Заполняем поля данными поведения
+  input.value = behavior.name;
+  typeSelect.value = behavior.type;
+
+  // Меняем заголовок и текст кнопки
+  modalTitle.textContent = "Редактировать поведение";
+  const saveButton = modal.querySelector(".save-button");
+  saveButton.textContent = "Сохранить изменения";
+
+  // Сохраняем ID редактируемого поведения
+  modal.dataset.editId = behavior.id;
+
+  showTypeHint();
+  modal.style.display = "flex";
 }
 
 // Функция для открытия модального окна для добавления
 async function openModal() {
-    const modal = document.getElementById('addBehaviorModal');
-    const input = document.getElementById('behaviorInput');
-    const typeSelect = document.getElementById('behaviorType');
-    const modalTitle = modal.querySelector('h2');
-    
-    // Проверяем, есть ли уже добавленные поведения
-    const behaviors = await getAllBehaviors();
-    if (behaviors.length === 0) {
-        input.value = 'Пропуск сессии или тренинга';
-        typeSelect.value = 'boolean';
-    } else {
-        // Очищаем поля
-        input.value = '';
-        typeSelect.value = 'boolean';
-    }
-    
-    typeSelect.disabled = false;
-    
-    // Возвращаем исходный заголовок и текст кнопки
-    modalTitle.textContent = 'Добавить проблемное поведение';
-    const saveButton = modal.querySelector('.save-button');
-    saveButton.textContent = 'Добавить';
-    
-    // Удаляем ID редактируемого поведения
-    delete modal.dataset.editId;
-    
-    showTypeHint();
-    modal.style.display = 'flex';
+  const modal = document.getElementById("addBehaviorModal");
+  const input = document.getElementById("behaviorInput");
+  const typeSelect = document.getElementById("behaviorType");
+  const modalTitle = modal.querySelector("h2");
+
+  // Проверяем, есть ли уже добавленные поведения
+  const behaviors = await getAllBehaviors();
+  if (behaviors.length === 0) {
+    input.value = "Пропуск сессии или тренинга";
+    typeSelect.value = "boolean";
+  } else {
+    // Очищаем поля
+    input.value = "";
+    typeSelect.value = "boolean";
+  }
+
+  typeSelect.disabled = false;
+
+  // Возвращаем исходный заголовок и текст кнопки
+  modalTitle.textContent = "Добавить проблемное поведение";
+  const saveButton = modal.querySelector(".save-button");
+  saveButton.textContent = "Добавить";
+
+  // Удаляем ID редактируемого поведения
+  delete modal.dataset.editId;
+
+  showTypeHint();
+  modal.style.display = "flex";
 }
 
 // Функция для закрытия модального окна
 function closeModal() {
-    const modal = document.getElementById('addBehaviorModal');
-    modal.style.display = 'none';
+  const modal = document.getElementById("addBehaviorModal");
+  modal.style.display = "none";
 }
 
 // Функция для сохранения поведения
 async function saveBehavior() {
-    const modal = document.getElementById('addBehaviorModal');
-    const input = document.getElementById('behaviorInput');
-    const typeSelect = document.getElementById('behaviorType');
-    
-    if (input.value.trim()) {
-        const behaviorData = {
-            name: input.value.trim(),
-            type: typeSelect.value
-        };
-        
-        try {
-            if (modal.dataset.editId) {
-                // Редактирование существующего поведения
-                behaviorData.id = parseInt(modal.dataset.editId);
-                await updateBehavior(behaviorData);
-            } else {
-                // Добавление нового поведения
-                await addBehavior(behaviorData);
-            }
-            closeModal();
-            await displayBehaviors();
-        } catch (error) {
-            console.error('Ошибка при сохранении поведения:', error);
-        }
+  const modal = document.getElementById("addBehaviorModal");
+  const input = document.getElementById("behaviorInput");
+  const typeSelect = document.getElementById("behaviorType");
+
+  if (input.value.trim()) {
+    const behaviorData = {
+      name: input.value.trim(),
+      type: typeSelect.value,
+    };
+
+    try {
+      if (modal.dataset.editId) {
+        // Редактирование существующего поведения
+        behaviorData.id = parseInt(modal.dataset.editId);
+        await updateBehavior(behaviorData);
+      } else {
+        // Добавление нового поведения
+        await addBehavior(behaviorData);
+      }
+      closeModal();
+      await displayBehaviors();
+    } catch (error) {
+      console.error("Ошибка при сохранении поведения:", error);
     }
+  }
+}
+
+// Массив воодушевляющих сообщений
+const encouragingMessages = [
+  "Спасибо",
+  "Заебись",
+  "Вы — молодец",
+  "Всё в порядке",
+  "Отличная работа",
+  "Изменения сохранены",
+];
+
+// Массив иконок для сообщений
+const messageIcons = [
+  "ri-heart-line",
+  "ri-star-line",
+  "ri-sun-line",
+  "ri-rainbow-line",
+  "ri-plant-line",
+  "ri-leaf-line",
+  "ri-sparkling-line",
+  "ri-award-line",
+];
+
+// Функция для показа воодушевляющего сообщения
+function showEncouragingMessage() {
+  const messageContainer = document.getElementById("successMessage");
+  const messageText = messageContainer.querySelector(".message-text");
+  const messageIcon = messageContainer.querySelector("i");
+
+  // Выбираем случайное сообщение и иконку
+  const randomMessage =
+    encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+  const randomIcon =
+    messageIcons[Math.floor(Math.random() * messageIcons.length)];
+
+  messageText.textContent = randomMessage;
+  messageIcon.className = randomIcon; // Заменяем класс иконки на случайный
+
+  // Показываем сообщение
+  messageContainer.classList.add("show");
+
+  // Скрываем сообщение через 3 секунды
+  setTimeout(() => {
+    messageContainer.classList.remove("show");
+    setTimeout(() => {
+      cleanupDiaryMode();
+    }, 400); // Даем время на анимацию исчезновения
+  }, 3000);
 }
 
 // Состояние режима заполнения дневника
@@ -359,62 +423,64 @@ let isFillingMode = false;
 
 // Функция очистки режима заполнения дневника
 function cleanupDiaryMode() {
-    if (isFillingMode) {
-        isFillingMode = false;
-        document.body.classList.remove('diary-filling-mode');
-        displayBehaviors();
-    }
+  if (isFillingMode) {
+    isFillingMode = false;
+    document.body.classList.remove("diary-filling-mode");
+    displayBehaviors();
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Получаем необходимые элементы DOM
-    const modal = document.getElementById('addBehaviorModal');
-    const addButton = document.getElementById('addBehaviorBtn');
-    const fillDiaryButton = document.getElementById('fillDiaryBtn');
+document.addEventListener("DOMContentLoaded", () => {
+  // Получаем необходимые элементы DOM
+  const modal = document.getElementById("addBehaviorModal");
+  const addButton = document.getElementById("addBehaviorBtn");
+  const fillDiaryButton = document.getElementById("fillDiaryBtn");
 
-    // Обработчик для кнопки заполнения дневника
-    fillDiaryButton?.addEventListener('click', () => {
-        isFillingMode = !isFillingMode;
-        document.body.classList.toggle('diary-filling-mode', isFillingMode);
-        document.querySelector('.main-nav a[href="#diary"]').click();
-        displayBehaviors();
-    });
-
-    // Добавляем слушатель на изменение хэша URL
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash;
-        if (hash && hash !== '#diary' && isFillingMode) {
-            cleanupDiaryMode();
-        }
-    });
-
-    // Также очищаем режим при прямом клике на другие пункты навигации
-    document.querySelectorAll('.main-nav a').forEach(link => {
-        if (link.getAttribute('href') !== '#diary') {
-            link.addEventListener('click', cleanupDiaryMode);
-        }
-    });
-
-    // Добавляем обработчики событий
-    addButton.addEventListener('click', openModal);
-    modal.querySelector('.cancel-button').addEventListener('click', closeModal);
-    modal.querySelector('.save-button').addEventListener('click', saveBehavior);
-    document.getElementById('behaviorType').addEventListener('change', showTypeHint);
-
-    // Закрытие модального окна при клике вне его
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-
-    // Обработка нажатия Enter в поле ввода
-    document.getElementById('behaviorInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            saveBehavior();
-        }
-    });
-
-    // Инициализация: отображаем существующие поведения
+  // Обработчик для кнопки заполнения дневника
+  fillDiaryButton?.addEventListener("click", () => {
+    isFillingMode = !isFillingMode;
+    document.body.classList.toggle("diary-filling-mode", isFillingMode);
+    document.querySelector('.main-nav a[href="#diary"]').click();
     displayBehaviors();
+  });
+
+  // Добавляем слушатель на изменение хэша URL
+  window.addEventListener("hashchange", () => {
+    const hash = window.location.hash;
+    if (hash && hash !== "#diary" && isFillingMode) {
+      cleanupDiaryMode();
+    }
+  });
+
+  // Также очищаем режим при прямом клике на другие пункты навигации
+  document.querySelectorAll(".main-nav a").forEach((link) => {
+    if (link.getAttribute("href") !== "#diary") {
+      link.addEventListener("click", cleanupDiaryMode);
+    }
+  });
+
+  // Добавляем обработчики событий
+  addButton.addEventListener("click", openModal);
+  modal.querySelector(".cancel-button").addEventListener("click", closeModal);
+  modal.querySelector(".save-button").addEventListener("click", saveBehavior);
+  document
+    .getElementById("behaviorType")
+    .addEventListener("change", showTypeHint);
+
+  // Закрытие модального окна при клике вне его
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Обработка нажатия Enter в поле ввода
+  document.getElementById("behaviorInput").addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      saveBehavior();
+    }
+  });
+
+  // Инициализация: отображаем существующие поведения
+  displayBehaviors();
 });
