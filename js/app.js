@@ -321,19 +321,16 @@ function initPullToRefresh() {
   const main = document.querySelector('main');
   const pullToRefresh = document.createElement('div');
   pullToRefresh.className = 'pull-to-refresh';
-  pullToRefresh.innerHTML = `<i class="ri-arrow-down-line"></i><span>Потяните для проверки обновлений</span>`;
+  pullToRefresh.innerHTML = `<i class="ri-arrow-down-line"></i><span>Потяните для обновления</span>`;
   main.insertBefore(pullToRefresh, main.firstChild);
 
   let startY = 0;
-  let currentPull = 0;
   let pulling = false;
-  let refreshing = false;
 
   main.addEventListener('touchstart', (e) => {
-    if (main.scrollTop === 0 && !refreshing) {
+    if (main.scrollTop === 0) {
       startY = e.touches[0].clientY;
       pulling = true;
-      currentPull = 0;
     }
   });
 
@@ -341,54 +338,45 @@ function initPullToRefresh() {
     if (!pulling) return;
     
     const currentY = e.touches[0].clientY;
-    currentPull = Math.min(Math.max(0, currentY - startY), 90);
+    const diff = currentY - startY;
     
-    if (currentPull > 0) {
-      e.preventDefault();
-      main.style.transform = `translateY(${currentPull}px)`;
-      pullToRefresh.style.transform = `translateY(calc(${currentPull}px - 100%))`;
+    if (diff > 0 && diff < 90) {
+      main.style.transform = `translateY(${diff}px)`;
+      pullToRefresh.classList.add('pulling');
       
-      const rotation = Math.min(180, (currentPull / 60) * 180);
-      pullToRefresh.querySelector('i').style.transform = `rotate(${rotation}deg)`;
-      
-      if (currentPull > 60) {
-        pullToRefresh.querySelector('span').textContent = 'Отпустите для проверки обновлений';
+      if (diff > 60) {
+        pullToRefresh.innerHTML = `<i class="ri-refresh-line"></i><span>Отпустите для обновления</span>`;
       } else {
-        pullToRefresh.querySelector('span').textContent = 'Потяните для проверки обновлений';
+        pullToRefresh.innerHTML = `<i class="ri-arrow-down-line"></i><span>Потяните для обновления</span>`;
       }
     }
-  }, { passive: false });
+  });
 
-  main.addEventListener('touchend', () => {
+  main.addEventListener('touchend', (e) => {
     if (!pulling) return;
     pulling = false;
     
-    if (currentPull > 60 && !refreshing) {
-      refreshing = true;
-      
-      main.style.transform = `translateY(60px)`;
-      pullToRefresh.style.transform = `translateY(calc(60px - 100%))`;
-      
+    const currentY = e.changedTouches[0].clientY;
+    const diff = currentY - startY;
+    
+    main.style.transform = '';
+    pullToRefresh.classList.remove('pulling');
+    
+    if (diff > 60) {
       pullToRefresh.classList.add('refreshing');
-      pullToRefresh.innerHTML = `<i class="ri-refresh-line"></i><span>Проверка обновлений...</span>`;
+      pullToRefresh.innerHTML = `<i class="ri-refresh-line"></i><span>Обновление...</span>`;
       
+      // Проверяем обновления
       if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller.postMessage({ type: 'CHECK_UPDATES' });
       }
       
+      // Имитируем задержку для плавности анимации
       setTimeout(() => {
-        refreshing = false;
-        main.style.transform = '';
-        pullToRefresh.style.transform = '';
         pullToRefresh.classList.remove('refreshing');
-        pullToRefresh.innerHTML = `<i class="ri-arrow-down-line"></i><span>Потяните для проверки обновлений</span>`;
-      }, 1500);
-    } else {
-      main.style.transform = '';
-      pullToRefresh.style.transform = '';
+        pullToRefresh.innerHTML = `<i class="ri-arrow-down-line"></i><span>Потяните для обновления</span>`;
+      }, 1000);
     }
-    
-    currentPull = 0;
   });
 }
 
