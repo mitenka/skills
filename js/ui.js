@@ -92,6 +92,21 @@ async function displayBehaviors() {
     const behaviorCards = document.querySelector('.behavior-cards');
     const behaviors = await getAllBehaviors();
     behaviorCards.innerHTML = ''; // Очищаем текущий список
+    
+    if (behaviors.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.innerHTML = `
+            <p>Здесь будут отображаться ваши записи о поведении</p>
+            <button class="create-demo-card">
+                <i class="ri-add-line"></i>
+                Создать тестовую карточку
+            </button>
+        `;
+        behaviorCards.appendChild(emptyState);
+        return;
+    }
+
     behaviors.forEach(behavior => {
         behaviorCards.appendChild(createBehaviorCard(behavior));
     });

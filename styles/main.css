@@ -1174,3 +1174,41 @@ input:checked + .slider:before {
   background: var(--hover-background);
   color: var(--primary-color);
 }
+
+/* Стили для пустого состояния */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.empty-state p {
+  color: var(--text-color-secondary);
+  margin-bottom: 1rem;
+}
+
+.create-demo-card {
+  background: var(--card-background);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.create-demo-card:hover {
+  background: var(--hover-background);
+  border-color: var(--primary-color);
+}
+
+.create-demo-card i {
+  font-size: 1.2rem;
+}
