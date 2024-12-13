@@ -136,28 +136,36 @@ function renderTheoryBlocks(data) {
     <div class="theory-block">
       <h2>${block.title}</h2>
       <div class="skills-grid">
-        ${block.skills
-          .map(
-            (skill) => `
-          <div class="skill-card">
-            <div class="skill-header">
-              <div class="skill-title">
-                <h3>${skill.name}</h3>
-                ${
-                  skill.category
-                    ? `<span class="skill-category">${skill.category}</span>`
-                    : ""
-                }
-              </div>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="skill-details">
-              ${renderPoints(skill.points)}
-            </div>
-          </div>
-        `
-          )
-          .join("")}
+        ${
+          block.skills.length > 0
+            ? block.skills
+                .map(
+                  (skill) => `
+                <div class="skill-card">
+                  <div class="skill-header">
+                    <div class="skill-title">
+                      <h3>${skill.name}</h3>
+                      ${
+                        skill.category
+                          ? `<span class="skill-category">${skill.category}</span>`
+                          : ""
+                      }
+                    </div>
+                    <span class="arrow">▼</span>
+                  </div>
+                  <div class="skill-details">
+                    ${renderPoints(skill.points)}
+                  </div>
+                </div>
+              `
+                )
+                .join("")
+            : `
+                <div class="empty-skills-message">
+                  <i class="ri-lock-line"></i> Информация будет доступна по мере прохождения тренинга
+                </div>
+              `
+        }
       </div>
     </div>
   `

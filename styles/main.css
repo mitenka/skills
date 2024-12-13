@@ -55,31 +55,6 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* Diary filling mode styles */
-body.diary-filling-mode {
-  background-color: var(--background-color);
-}
-
-body.diary-filling-mode::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--diary-mode-overlay);
-  pointer-events: none;
-  z-index: 1;
-}
-
-body.diary-filling-mode .behavior-card,
-body.diary-filling-mode .ios-action-button {
-  position: relative;
-  z-index: 2;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
 body.diary-filling-mode #fillDiaryBtn {
   background: var(--primary-color);
   color: white;
@@ -322,9 +297,28 @@ html[data-theme="dark"] .glass-header {
   background: linear-gradient(135deg, var(--primary-color), #5856D6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   text-align: center;
+  font-family: -apple-system, "SF Pro Display", "SF Pro", "Helvetica Neue", sans-serif;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  text-transform: none;
+  position: relative;
+  padding: 0.2em 0;
+}
+
+.app-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(135deg, var(--primary-color), #5856D6);
+  border-radius: 2px;
+  opacity: 0.7;
+  width: 100%;
 }
 
 .ios-action-button {
@@ -1637,4 +1631,28 @@ input:checked + .slider:before {
   animation: fadeInUp 0.4s ease forwards;
   animation-delay: 0.1s;
   opacity: 0;
+}
+
+.empty-skills-message {
+  text-align: center;
+  padding: 2rem;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.empty-skills-message i {
+  font-size: 1.1rem;
+  opacity: 0.7;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.empty-skills-message p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
