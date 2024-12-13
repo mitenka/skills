@@ -834,12 +834,36 @@ html[data-theme="dark"] .theme-button:not(.active):hover {
 
 @media (min-width: 768px) {
   .main-nav {
-    top: 0;
+    top: 90px;
+    left: 20px;
     bottom: auto;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    padding: 8px;
+  }
+
+  .main-nav ul {
+    flex-direction: column;
+    padding: 0;
+    max-width: none;
+    gap: 8px;
+  }
+
+  .main-nav a {
+    flex-direction: row;
+    padding: 8px 16px;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .main-nav i {
+    margin-bottom: 0;
+    font-size: 18px;
   }
 
   main {
-    padding-top: calc(var(--nav-height) + 20px);
+    padding-left: 20px;
     padding-bottom: 20px;
   }
 }
