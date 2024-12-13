@@ -1496,8 +1496,10 @@ input:checked + .slider:before {
 
 /* Стили для группы кнопок выбора даты */
 .date-buttons {
-  display: inline-flex;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
   background: var(--card-background);
   border-radius: 16px;
   padding: 4px;
