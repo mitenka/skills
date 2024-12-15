@@ -18,10 +18,10 @@ function createBehaviorCard(behavior) {
         actionControlHtml = `
                     <div class="control-group">
                         <div class="boolean-control">
-                            <button class="boolean-button" data-value="true" data-id="${behavior.id}" data-field="action">
+                            <button class="scale-button boolean-button diary-button" data-value="true" data-id="${behavior.id}" data-field="action">
                                 <i class="ri-check-line"></i>
                             </button>
-                            <button class="boolean-button" data-value="false" data-id="${behavior.id}" data-field="action">
+                            <button class="scale-button boolean-button diary-button" data-value="false" data-id="${behavior.id}" data-field="action">
                                 <i class="ri-close-line"></i>
                             </button>
                         </div>
@@ -33,12 +33,12 @@ function createBehaviorCard(behavior) {
                     <div class="control-group">
                         <div class="scale-control">
                             <div class="scale-buttons">
-                                <button class="scale-button" data-value="0" data-id="${behavior.id}" data-field="action">0</button>
-                                <button class="scale-button" data-value="1" data-id="${behavior.id}" data-field="action">1</button>
-                                <button class="scale-button" data-value="2" data-id="${behavior.id}" data-field="action">2</button>
-                                <button class="scale-button" data-value="3" data-id="${behavior.id}" data-field="action">3</button>
-                                <button class="scale-button" data-value="4" data-id="${behavior.id}" data-field="action">4</button>
-                                <button class="scale-button" data-value="5" data-id="${behavior.id}" data-field="action">5</button>
+                                <button class="scale-button diary-button" data-value="0" data-id="${behavior.id}" data-field="action">0</button>
+                                <button class="scale-button diary-button" data-value="1" data-id="${behavior.id}" data-field="action">1</button>
+                                <button class="scale-button diary-button" data-value="2" data-id="${behavior.id}" data-field="action">2</button>
+                                <button class="scale-button diary-button" data-value="3" data-id="${behavior.id}" data-field="action">3</button>
+                                <button class="scale-button diary-button" data-value="4" data-id="${behavior.id}" data-field="action">4</button>
+                                <button class="scale-button diary-button" data-value="5" data-id="${behavior.id}" data-field="action">5</button>
                             </div>
                         </div>
                     </div>
@@ -66,12 +66,12 @@ function createBehaviorCard(behavior) {
         <div class="control-group">
             <div class="scale-control">
                 <div class="scale-buttons">
-                    <button class="scale-button" data-value="0" data-id="${behavior.id}" data-field="desire">0</button>
-                    <button class="scale-button" data-value="1" data-id="${behavior.id}" data-field="desire">1</button>
-                    <button class="scale-button" data-value="2" data-id="${behavior.id}" data-field="desire">2</button>
-                    <button class="scale-button" data-value="3" data-id="${behavior.id}" data-field="desire">3</button>
-                    <button class="scale-button" data-value="4" data-id="${behavior.id}" data-field="desire">4</button>
-                    <button class="scale-button" data-value="5" data-id="${behavior.id}" data-field="desire">5</button>
+                    <button class="scale-button diary-button" data-value="0" data-id="${behavior.id}" data-field="desire">0</button>
+                    <button class="scale-button diary-button" data-value="1" data-id="${behavior.id}" data-field="desire">1</button>
+                    <button class="scale-button diary-button" data-value="2" data-id="${behavior.id}" data-field="desire">2</button>
+                    <button class="scale-button diary-button" data-value="3" data-id="${behavior.id}" data-field="desire">3</button>
+                    <button class="scale-button diary-button" data-value="4" data-id="${behavior.id}" data-field="desire">4</button>
+                    <button class="scale-button diary-button" data-value="5" data-id="${behavior.id}" data-field="desire">5</button>
                 </div>
             </div>
         </div>
@@ -103,12 +103,37 @@ function createBehaviorCard(behavior) {
                     ${actionControlHtml}
                 </div>
             </div>
-        `
+            `
             : ""
         }
     `;
 
-  // Добавляем обработчик для удаления
+  // Добавляем обработчики для кнопок
+  if (isFillingMode) {
+    // Обработчики для кнопок желания
+    const desireButtons = card.querySelectorAll('.scale-button[data-field="desire"]');
+    desireButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Убираем active у всех кнопок желания в этой карточке
+        desireButtons.forEach(btn => btn.classList.remove('active'));
+        // Добавляем active к нажатой кнопке
+        button.classList.add('active');
+      });
+    });
+
+    // Обработчики для кнопок действия
+    const actionButtons = card.querySelectorAll('.scale-button[data-field="action"]');
+    actionButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Убираем active у всех кнопок действия в этой карточке
+        actionButtons.forEach(btn => btn.classList.remove('active'));
+        // Добавляем active к нажатой кнопке
+        button.classList.add('active');
+      });
+    });
+  }
+
+  // Добавляем обработчики для кнопок удаления и редактирования
   const deleteButton = card.querySelector(".delete-btn");
   if (deleteButton) {
     deleteButton.addEventListener("click", async (e) => {
@@ -120,7 +145,6 @@ function createBehaviorCard(behavior) {
     });
   }
 
-  // Добавляем обработчик для редактирования
   const editButton = card.querySelector(".edit-btn");
   if (editButton) {
     editButton.addEventListener("click", (e) => {
