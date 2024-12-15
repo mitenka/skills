@@ -587,6 +587,9 @@ async function collectDiaryData() {
   const isFilledToday = document.querySelector(".toggle-control input").checked;
   const skillUsageRadio = document.querySelector('input[name="skill-usage"]:checked');
 
+  // Получаем все поведения для определения их типов
+  const allBehaviors = await getAllBehaviors();
+
   // Только дата обязательна, так как это ключ
   if (!dateButton) {
     console.error("Не выбрана дата");
@@ -605,20 +608,30 @@ async function collectDiaryData() {
     const behaviorHeader = card.querySelector(".behavior-header");
     const behaviorId = parseInt(behaviorHeader.querySelector("button").dataset.id);
     const behaviorName = behaviorHeader.querySelector(".behavior-name").textContent.trim();
+    const behavior = allBehaviors.find(b => b.id === behaviorId);
     const desireButton = card.querySelector('.scale-button[data-field="desire"].active');
     const actionControl = card.querySelector('.scale-button[data-field="action"].active, .behavior-value[data-field="action"]');
 
     // Если хотя бы одно поле заполнено, добавляем запись
     if (desireButton || (actionControl && actionControl.value)) {
+      // Форматируем действие в зависимости от типа
+      let action = null;
+      if (actionControl) {
+        if (behavior.type === 'boolean') {
+          action = actionControl.dataset.value === 'true' ? 'да' : 'нет';
+        } else if (behavior.type === 'scale') {
+          action = parseInt(actionControl.dataset.value);  // оставляем как число
+        } else if (behavior.type === 'text') {
+          action = actionControl.value.trim();
+        }
+      }
+
       behaviors.push({
         behaviorId,
         name: behaviorName,
+        type: behavior.type,
         desire: desireButton ? parseInt(desireButton.dataset.value) : null,
-        action: actionControl ? (
-          actionControl.tagName === 'TEXTAREA' 
-            ? actionControl.value 
-            : actionControl.dataset.value
-        ) : null
+        action
       });
     }
   });
