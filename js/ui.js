@@ -132,6 +132,49 @@ function createBehaviorCard(behavior) {
   return card;
 }
 
+// Функция для получения дат недели
+function getWeekDates() {
+  const dates = [];
+  const today = new Date();
+  
+  // Получаем даты для последних 7 дней
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+    dates.push(date);
+  }
+  
+  return dates;
+}
+
+// Функция для создания карточки с датами
+function createDateCard() {
+  const dateCard = document.createElement("div");
+  dateCard.className = "behavior-card date-card";
+  
+  const weekDates = getWeekDates();
+  const dateButtons = weekDates.map(date => {
+    const dayName = date.toLocaleDateString('ru-RU', { weekday: 'short' });
+    const dayNumber = date.getDate();
+    const isToday = date.toDateString() === new Date().toDateString();
+    
+    return `
+      <button class="date-btn ${isToday ? 'active' : ''}" data-date="${date.toISOString().split('T')[0]}">
+        <span class="day-name">${dayName}</span>
+        <span class="day-number">${dayNumber}</span>
+      </button>
+    `;
+  }).join('');
+
+  dateCard.innerHTML = `
+    <div class="date-buttons">
+      ${dateButtons}
+    </div>
+  `;
+
+  return dateCard;
+}
+
 // Функция для отображения всех поведений
 async function displayBehaviors() {
   const behaviorCards = document.querySelector(".behavior-cards");
@@ -182,15 +225,7 @@ async function displayBehaviors() {
   // В режиме редактирования добавляем карточки с кнопками
   if (isFillingMode) {
     // Карточка с кнопками выбора даты (добавляем в начало)
-    const dateCard = document.createElement("div");
-    dateCard.className = "behavior-card date-card";
-    dateCard.innerHTML = `
-            <div class="date-buttons">
-                <button class="date-btn active">Сегодня</button>
-                <button class="date-btn">Вчера</button>
-                <button class="date-btn">Позавчера</button>
-            </div>
-        `;
+    const dateCard = createDateCard();
 
     // Добавляем обработчики для кнопок выбора даты
     const dateButtons = dateCard.querySelectorAll(".date-btn");

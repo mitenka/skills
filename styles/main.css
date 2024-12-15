@@ -1521,35 +1521,49 @@ input:checked + .slider:before {
 
 /* Стили для группы кнопок выбора даты */
 .date-buttons {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-  width: 100%;
-  background: var(--card-background);
-  border-radius: 16px;
-  padding: 4px;
+  padding: 12px;
 }
 
 .date-btn {
-  background: transparent;
-  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
   border: none;
-  border-radius: 12px;
-  padding: 8px 16px;
-  font-size: 15px;
-  font-weight: 500;
+  border-radius: 8px;
+  background: var(--card-background);
+  color: var(--text-color);
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 90px;
+  width: 100%;
 }
 
-.date-btn:hover:not(.active) {
-  background: var(--hover-background);
+.date-btn .day-name {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  color: var(--text-secondary);
+}
+
+.date-btn .day-number {
+  font-size: 1em;
+  font-weight: 500;
+}
+
+.date-btn:hover {
+  background: var(--hover-color);
 }
 
 .date-btn.active {
   background: var(--primary-color);
   color: white;
+}
+
+.date-btn.active .day-name {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Стили для кнопки сохранения */
