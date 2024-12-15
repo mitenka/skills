@@ -132,6 +132,41 @@ function createBehaviorCard(behavior) {
   return card;
 }
 
+// Функция для создания карточки с использованием навыков
+function createSkillUsageCard() {
+  const card = document.createElement("div");
+  card.className = "behavior-card skill-usage-card";
+  
+  const options = [
+    "Не думал о навыках и не использовал",
+    "Думал о навыках, не хотел применять, не использовал",
+    "Думал о навыках, хотел применить, но не использовал",
+    "Старался, но не смог применить навыки",
+    "Старался, смог применить навыки, но они не помогли",
+    "Старался, смог применить навыки, они помогли",
+    "Использовал навыки, не стараясь (автоматически), они не помогли",
+    "Использовал навыки, не стараясь (автоматически), они помогли"
+  ];
+
+  const radioButtons = options.map((option, index) => `
+    <label class="radio-control">
+      <input type="radio" name="skill-usage" value="${index}">
+      <span class="radio-custom"></span>
+      <span class="radio-label">${option.charAt(0).toUpperCase() + option.slice(1)}</span>
+    </label>
+  `).join('');
+
+  card.innerHTML = `
+    <div class="skill-usage-wrapper">
+      <div class="skill-usage-options">
+        ${radioButtons}
+      </div>
+    </div>
+  `;
+
+  return card;
+}
+
 // Функция для получения дат недели
 function getWeekDates() {
   const dates = [];
@@ -257,6 +292,10 @@ async function displayBehaviors() {
 
     // Вставляем карточку с датами в начало списка
     behaviorCards.insertBefore(dateCard, behaviorCards.firstChild);
+
+    // Карточка с использованием навыков
+    const skillUsageCard = createSkillUsageCard();
+    behaviorCards.appendChild(skillUsageCard);
 
     // Карточка с кнопкой сохранения (в конец)
     const saveCard = document.createElement("div");
