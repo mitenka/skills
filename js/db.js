@@ -8,11 +8,25 @@ class BehaviorDatabase extends Dexie {
         super('behaviorDB');
         
         // Определяем схему базы данных
-        // ++id означает автоинкрементное поле
-        // name - это поле для хранения названия проблемного поведения
+        // Таблица behaviors - индексируются все поля:
+        // ++id - автоинкрементное поле
+        // name - название проблемного поведения
         // type - тип оценки поведения (scale, text, boolean)
+        //
+        // Таблица diaryEntries - индексируются только:
+        // date - дата записи (первичный ключ)
+        // isFilledToday - отметка о заполнении дневника в этот день
+        // skillUsage - текстовое описание использования навыков
+        //
+        // Остальные поля хранятся как JSON:
+        // behaviors - массив записей о поведениях:
+        //   - behaviorId - ID поведения
+        //   - name - название поведения на момент записи
+        //   - desire - уровень желания
+        //   - action - предпринятое действие
         this.version(1).stores({
-            behaviors: '++id, name, type'
+            behaviors: '++id, name, type',
+            diaryEntries: 'date, isFilledToday, skillUsage'
         });
     }
 }

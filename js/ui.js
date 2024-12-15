@@ -3,6 +3,7 @@ import {
   addBehavior,
   deleteBehavior,
   updateBehavior,
+  saveDiaryEntries,
 } from "./behaviors.js";
 
 // Функция для создания карточки поведения
@@ -153,7 +154,26 @@ function createBehaviorCard(behavior) {
     });
   }
 
+  addBehaviorCardHandlers(card);
   return card;
+}
+
+// Функция для добавления обработчиков кнопок в карточке поведения
+function addBehaviorCardHandlers(card) {
+  // Обработчики для кнопок шкалы и булевых значений
+  card.querySelectorAll('.scale-button').forEach(button => {
+    button.addEventListener('click', () => {
+      // Находим все кнопки в той же группе
+      const field = button.dataset.field;
+      const group = card.querySelectorAll(`.scale-button[data-field="${field}"]`);
+      
+      // Убираем активный класс у всех кнопок в группе
+      group.forEach(btn => btn.classList.remove('active'));
+      
+      // Добавляем активный класс нажатой кнопке
+      button.classList.add('active');
+    });
+  });
 }
 
 // Функция для создания карточки с использованием навыков
@@ -172,9 +192,9 @@ function createSkillUsageCard() {
     "Использовал навыки, не стараясь (автоматически), они помогли"
   ];
 
-  const radioButtons = options.map((option, index) => `
+  const radioButtons = options.map((option) => `
     <label class="radio-control">
-      <input type="radio" name="skill-usage" value="${index}">
+      <input type="radio" name="skill-usage" value="${option}">
       <span class="radio-custom"></span>
       <span class="radio-label">${option.charAt(0).toUpperCase() + option.slice(1)}</span>
     </label>
@@ -332,13 +352,25 @@ async function displayBehaviors() {
         `;
 
     const saveButton = saveCard.querySelector(".save-diary-btn");
-    saveButton.addEventListener("click", () => {
-      showEncouragingMessage();
-      setTimeout(() => {
-        cleanupDiaryMode();
-        isFillingMode = false;
-        displayBehaviors();
-      }, 2000); // Задержка перед закрытием режима редактирования
+    saveButton.addEventListener("click", async () => {
+      const data = await collectDiaryData();
+      
+      if (data) {
+        try {
+          await saveDiaryEntries(data.date, data);
+          showEncouragingMessage();
+          setTimeout(() => {
+            cleanupDiaryMode();
+            isFillingMode = false;
+            displayBehaviors();
+          }, 2000);
+        } catch (error) {
+          console.error("Ошибка при сохранении дневника:", error);
+          alert("Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз.");
+        }
+      } else {
+        alert("Пожалуйста, заполните все поля дневника перед сохранением.");
+      }
     });
 
     behaviorCards.appendChild(saveCard);
@@ -545,6 +577,58 @@ function cleanupDiaryMode() {
     document.body.classList.remove("diary-filling-mode");
     displayBehaviors();
   }
+}
+
+// Функция для сбора данных дневника
+async function collectDiaryData() {
+  const behaviors = [];
+  const cards = document.querySelectorAll(".behavior-card");
+  const dateButton = document.querySelector(".date-btn.active");
+  const isFilledToday = document.querySelector(".toggle-control input").checked;
+  const skillUsageRadio = document.querySelector('input[name="skill-usage"]:checked');
+
+  // Только дата обязательна, так как это ключ
+  if (!dateButton) {
+    console.error("Не выбрана дата");
+    return null;
+  }
+
+  // Собираем данные с каждой карточки поведения
+  cards.forEach(card => {
+    // Пропускаем служебные карточки
+    if (card.classList.contains("date-card") || 
+        card.classList.contains("skill-usage-card") || 
+        card.classList.contains("save-card")) {
+      return;
+    }
+
+    const behaviorHeader = card.querySelector(".behavior-header");
+    const behaviorId = parseInt(behaviorHeader.querySelector("button").dataset.id);
+    const behaviorName = behaviorHeader.querySelector(".behavior-name").textContent.trim();
+    const desireButton = card.querySelector('.scale-button[data-field="desire"].active');
+    const actionControl = card.querySelector('.scale-button[data-field="action"].active, .behavior-value[data-field="action"]');
+
+    // Если хотя бы одно поле заполнено, добавляем запись
+    if (desireButton || (actionControl && actionControl.value)) {
+      behaviors.push({
+        behaviorId,
+        name: behaviorName,
+        desire: desireButton ? parseInt(desireButton.dataset.value) : null,
+        action: actionControl ? (
+          actionControl.tagName === 'TEXTAREA' 
+            ? actionControl.value 
+            : actionControl.dataset.value
+        ) : null
+      });
+    }
+  });
+
+  return {
+    date: dateButton.dataset.date,
+    isFilledToday,
+    skillUsage: skillUsageRadio ? skillUsageRadio.value : null,
+    behaviors
+  };
 }
 
 document.addEventListener("DOMContentLoaded", () => {
