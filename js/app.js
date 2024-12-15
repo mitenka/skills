@@ -272,7 +272,7 @@ function showOfflineMessage() {
 
 // Инициализация настроек
 function initSettings() {
-  const showAssumptionsToggle = document.getElementById('show-assumptions');
+  const showAssumptionsToggle = document.getElementById('showAssumptions');
   if (showAssumptionsToggle) {
     // Устанавливаем начальное состояние
     const showAssumptions = localStorage.getItem('showAssumptions') !== 'false';
@@ -289,10 +289,35 @@ function initSettings() {
         if (showAssumptions) {
           loadTheoryData(); // Перезагружаем данные для отображения допущения
         } else {
-          assumptionCard.remove(); // Удаляем карточку допущения
+          assumptionCard.style.display = 'none'; // Скрываем карточку допущения
         }
       } else if (showAssumptions) {
         loadTheoryData(); // Если карточки нет, но включили показ - загружаем данные
+      }
+    });
+  }
+
+  const showInstallButtonToggle = document.getElementById('showInstallButton');
+  if (showInstallButtonToggle) {
+    // Устанавливаем начальное состояние
+    const showInstallButton = localStorage.getItem('showInstallButton') !== 'false';
+    showInstallButtonToggle.checked = showInstallButton;
+    
+    // Применяем текущее состояние
+    const installButton = document.getElementById('installButton');
+    if (installButton) {
+      installButton.style.display = showInstallButton ? 'flex' : 'none';
+    }
+
+    // Добавляем обработчик изменений
+    showInstallButtonToggle.addEventListener('change', (e) => {
+      const showInstallButton = e.target.checked;
+      localStorage.setItem('showInstallButton', showInstallButton);
+      
+      // Обновляем отображение кнопки установки
+      const installButton = document.getElementById('installButton');
+      if (installButton) {
+        installButton.style.display = showInstallButton ? 'flex' : 'none';
       }
     });
   }
