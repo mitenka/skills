@@ -1701,3 +1701,28 @@ input:checked + .slider:before {
   margin-bottom: 8px;
   line-height: 1.2;
 }
+
+.install-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px auto;
+  padding: 12px 24px;
+  background: var(--accent-color);
+  color: var(--on-accent-color);
+  border: none;
+  border-radius: 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.install-button:hover {
+  transform: scale(1.05);
+  background: var(--accent-color-hover);
+}
+
+.install-button .install-icon {
+  width: 24px;
+  height: 24px;
+}

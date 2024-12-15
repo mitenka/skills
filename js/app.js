@@ -324,6 +324,57 @@ document.getElementById('clearDataBtn')?.addEventListener('click', () => {
     }
 });
 
+let deferredPrompt;
+
+// Обработка события beforeinstallprompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Предотвращаем показ стандартного баннера установки
+  e.preventDefault();
+  // Сохраняем событие для последующего использования
+  deferredPrompt = e;
+});
+
+// Инициализация кнопки установки
+function initInstallButton() {
+  const installButton = document.getElementById('installButton');
+  if (!installButton) return;
+
+  installButton.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      // Браузер поддерживает установку
+      try {
+        // Показываем диалог установки
+        const result = await deferredPrompt.prompt();
+        // Ждем ответа пользователя
+        await deferredPrompt.userChoice;
+        // Очищаем сохраненное событие
+        deferredPrompt = null;
+      } catch (err) {
+        console.error('Ошибка при установке:', err);
+      }
+    } else {
+      // Браузер не поддерживает установку или приложение уже установлено
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+      
+      let message = 'Чтобы установить приложение:\n\n';
+      
+      if (isIOS) {
+        message += '1. Нажмите кнопку "Поделиться" (квадрат со стрелкой)\n';
+        message += '2. Прокрутите вниз и выберите "На экран «Домой»"';
+      } else if (isAndroid) {
+        message += '1. Откройте меню браузера (три точки)\n';
+        message += '2. Выберите "Установить приложение" или "Добавить на главный экран"';
+      } else {
+        message += '1. Откройте меню браузера\n';
+        message += '2. Найдите опцию "Установить приложение" или "Добавить на рабочий стол"';
+      }
+      
+      alert(message);
+    }
+  });
+}
+
 // Инициализация приложения
 import './ui.js';
 
@@ -332,4 +383,5 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTheoryData();
   registerServiceWorker();
   initSettings();
+  initInstallButton();
 });
