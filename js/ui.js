@@ -167,10 +167,38 @@ function createDateCard() {
   }).join('');
 
   dateCard.innerHTML = `
-    <div class="date-buttons">
-      ${dateButtons}
+    <div class="date-card-wrapper">
+      <div class="date-buttons">
+        ${dateButtons}
+      </div>
+      <div class="diary-status-wrapper">
+        <label class="toggle-control">
+          <input type="checkbox" checked>
+          <span class="toggle-switch"></span>
+          <span class="toggle-label">Дневник заполнен сегодня</span>
+        </label>
+      </div>
     </div>
   `;
+
+  // Добавляем обработчики для кнопок выбора даты
+  const dateButtonsElement = dateCard.querySelectorAll(".date-btn");
+  const toggleInput = dateCard.querySelector(".toggle-control input");
+  
+  dateButtonsElement.forEach((button) => {
+    button.addEventListener("click", () => {
+      dateButtonsElement.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      
+      // Проверяем, является ли выбранная дата сегодняшней
+      const selectedDate = new Date(button.dataset.date);
+      const today = new Date();
+      const isToday = selectedDate.toDateString() === today.toDateString();
+      
+      // Обновляем состояние свитчера
+      toggleInput.checked = isToday;
+    });
+  });
 
   return dateCard;
 }
@@ -226,15 +254,6 @@ async function displayBehaviors() {
   if (isFillingMode) {
     // Карточка с кнопками выбора даты (добавляем в начало)
     const dateCard = createDateCard();
-
-    // Добавляем обработчики для кнопок выбора даты
-    const dateButtons = dateCard.querySelectorAll(".date-btn");
-    dateButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        dateButtons.forEach((btn) => btn.classList.remove("active"));
-        button.classList.add("active");
-      });
-    });
 
     // Вставляем карточку с датами в начало списка
     behaviorCards.insertBefore(dateCard, behaviorCards.firstChild);

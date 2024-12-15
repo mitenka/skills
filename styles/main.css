@@ -1740,3 +1740,21 @@ input:checked + .slider:before {
   width: 24px;
   height: 24px;
 }
+
+/* Стили для свитчера в карточке с датами */
+.diary-status-wrapper {
+  padding: 8px 12px;
+}
+
+.diary-status-wrapper .toggle-control {
+  gap: 12px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.diary-status-wrapper .toggle-label {
+  font-size: 0.9em;
+  color: var(--text-color);
+  font-weight: 500;
+  order: -1;
+}
