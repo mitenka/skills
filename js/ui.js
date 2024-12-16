@@ -671,6 +671,11 @@ async function loadExistingDiaryEntry(date) {
       existingNotification.remove();
     }
 
+    // Проверяем, является ли выбранная дата сегодняшней
+    const selectedDate = new Date(date);
+    const today = new Date();
+    const isToday = selectedDate.toDateString() === today.toDateString();
+
     const entry = await getDiaryEntriesByDate(date);
     if (entry) {
       // Показываем уведомление о редактировании
@@ -734,10 +739,10 @@ async function loadExistingDiaryEntry(date) {
       });
     } else {
       // Если записи нет, сбрасываем все значения
-      // Сбрасываем переключатель заполнения
+      // Устанавливаем переключатель заполнения в зависимости от даты
       const toggleInput = document.querySelector(".toggle-control input");
       if (toggleInput) {
-        toggleInput.checked = false;
+        toggleInput.checked = isToday; // Включаем только для сегодняшней даты
       }
 
       // Сбрасываем радио-кнопки использования навыков
