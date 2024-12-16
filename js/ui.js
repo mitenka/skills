@@ -212,21 +212,6 @@ function createSkillUsageCard() {
   return card;
 }
 
-// Функция для получения дат недели
-function getWeekDates() {
-  const dates = [];
-  const today = new Date();
-  
-  // Получаем даты для последних 7 дней
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(today.getDate() - i);
-    dates.push(date);
-  }
-  
-  return dates;
-}
-
 // Функция для создания карточки с датами
 function createDateCard() {
   const dateCard = document.createElement("div");
@@ -266,7 +251,7 @@ function createDateCard() {
   const toggleInput = dateCard.querySelector(".toggle-control input");
   
   dateButtonsElement.forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       dateButtonsElement.forEach((btn) => btn.classList.remove("active"));
       button.classList.add("active");
       
@@ -279,113 +264,196 @@ function createDateCard() {
       toggleInput.checked = isToday;
 
       // Загружаем существующие данные дневника
-      loadExistingDiaryEntry(button.dataset.date);
+      if (isFillingMode) {
+        await loadExistingDiaryEntry(button.dataset.date);
+      }
     });
   });
 
   return dateCard;
 }
 
+// Функция для создания карточки с состоянием
+function createStateCard() {
+  const card = document.createElement("div");
+  card.className = "behavior-card state-card";
+
+  const states = [
+    { id: 'emotional', name: 'Эмоциональное страдание', description: 'Оцените уровень эмоционального страдания' },
+    { id: 'physical', name: 'Физическое страдание', description: 'Оцените уровень физического страдания' },
+    { id: 'pleasure', name: 'Удовольствие', description: 'Оцените уровень удовольствия' }
+  ];
+
+  const stateInputs = states.map(state => {
+    const buttons = Array.from({ length: 6 }, (_, i) => `
+      <button class="scale-button" data-field="${state.id}" data-value="${i}" title="${i}">
+        <span class="scale-value">${i}</span>
+      </button>
+    `).join('');
+
+    return `
+      <div class="state-row behavior-scale">
+        <div class="behavior-info">
+          <span class="behavior-name">${state.name}</span>
+          <span class="behavior-description">${state.description}</span>
+        </div>
+        <div class="scale-buttons">
+          ${buttons}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  card.innerHTML = `
+    <div class="state-card-wrapper">
+      ${stateInputs}
+    </div>
+  `;
+
+  // Добавляем обработчики для кнопок
+  states.forEach(state => {
+    const buttons = card.querySelectorAll(`.scale-button[data-field="${state.id}"]`);
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+      });
+    });
+  });
+
+  return card;
+}
+
+// Функция для получения дат недели
+function getWeekDates() {
+  const dates = [];
+  const today = new Date();
+  
+  // Получаем даты для последних 7 дней
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+    dates.push(date);
+  }
+  
+  return dates;
+}
+
 // Функция для отображения всех поведений
 async function displayBehaviors() {
   const behaviorCards = document.querySelector(".behavior-cards");
-  const behaviors = await getAllBehaviors();
-  const fillDiaryButton = document.getElementById("fillDiaryBtn");
-  behaviorCards.innerHTML = ""; // Очищаем текущий список
+  behaviorCards.innerHTML = "";
 
-  // Управляем состоянием кнопки заполнения дневника
-  if (fillDiaryButton) {
+  try {
+    // Карточка с датами (в начало)
+    const dateCard = createDateCard();
+    behaviorCards.appendChild(dateCard);
+
+    // Получаем все поведения
+    const behaviors = await getAllBehaviors();
+    const fillDiaryButton = document.getElementById("fillDiaryBtn");
+
     fillDiaryButton.disabled = behaviors.length === 0;
     fillDiaryButton.title =
       behaviors.length === 0
         ? "Сначала добавьте хотя бы одно поведение"
         : "Заполнить дневник";
-  }
 
-  if (behaviors.length === 0) {
-    // Если режим заполнения был активен, выключаем его
-    if (isFillingMode) {
-      cleanupDiaryMode();
-    }
+    if (behaviors.length === 0) {
+      // Если режим заполнения был активен, выключаем его
+      if (isFillingMode) {
+        cleanupDiaryMode();
+      }
 
-    const emptyState = document.createElement("div");
-    emptyState.className = "empty-state";
-    emptyState.innerHTML = `
+      const emptyState = document.createElement("div");
+      emptyState.className = "empty-state";
+      emptyState.innerHTML = `
             <p>Здесь будут отображаться ваши записи о поведении</p>
             <button class="create-demo-card">
                 <i class="ri-add-line"></i>
-                Добавить примеры проблемного поведения
+                Создать примеры поведения
             </button>
             <p class="demo-note">Позднее вы сможете их отредактировать или удалить</p>
         `;
 
-    // Добавляем обработчик для кнопки создания примеров
-    const demoButton = emptyState.querySelector(".create-demo-card");
-    if (demoButton) {
-      demoButton.addEventListener("click", addExampleBehaviors);
+      // Добавляем обработчик для кнопки создания примеров
+      const demoButton = emptyState.querySelector(".create-demo-card");
+      if (demoButton) {
+        demoButton.addEventListener("click", addExampleBehaviors);
+      }
+
+      behaviorCards.appendChild(emptyState);
+      return;
     }
 
-    behaviorCards.appendChild(emptyState);
-    return;
-  }
+    behaviors.forEach((behavior) => {
+      behaviorCards.appendChild(createBehaviorCard(behavior));
+    });
 
-  behaviors.forEach((behavior) => {
-    behaviorCards.appendChild(createBehaviorCard(behavior));
-  });
+    // В режиме редактирования добавляем карточки с кнопками
+    if (isFillingMode) {
+      // Карточка с состоянием (сразу после дат)
+      const stateCard = createStateCard();
+      behaviorCards.appendChild(stateCard);
 
-  // В режиме редактирования добавляем карточки с кнопками
-  if (isFillingMode) {
-    // Карточка с кнопками выбора даты (добавляем в начало)
-    const dateCard = createDateCard();
+      // Перемещаем все карточки поведения после карточки состояния
+      const behaviorElements = Array.from(behaviorCards.querySelectorAll('.behavior-card')).filter(card => 
+        !card.classList.contains('date-card') && 
+        !card.classList.contains('state-card')
+      );
+      
+      behaviorElements.forEach(card => {
+        behaviorCards.appendChild(card);
+      });
 
-    // Вставляем карточку с датами в начало списка
-    behaviorCards.insertBefore(dateCard, behaviorCards.firstChild);
+      // Карточка с использованием навыков
+      const skillUsageCard = createSkillUsageCard();
+      behaviorCards.appendChild(skillUsageCard);
 
-    // Карточка с использованием навыков
-    const skillUsageCard = createSkillUsageCard();
-    behaviorCards.appendChild(skillUsageCard);
-
-    // Карточка с кнопкой сохранения (в конец)
-    const saveCard = document.createElement("div");
-    saveCard.className = "behavior-card save-card";
-    saveCard.innerHTML = `
+      // Карточка с кнопкой сохранения (в конец)
+      const saveCard = document.createElement("div");
+      saveCard.className = "behavior-card save-card";
+      saveCard.innerHTML = `
             <button class="save-diary-btn">
                 <i class="ri-save-line"></i>
                 <span>Сохранить дневник</span>
             </button>
         `;
 
-    const saveButton = saveCard.querySelector(".save-diary-btn");
-    saveButton.addEventListener("click", async () => {
-      const data = await collectDiaryData();
-      
-      if (data) {
-        try {
-          const result = await saveDiaryEntries(data.date, data);
-          if (result?.wasOverwritten) {
-            const confirmOverwrite = confirm(
-              "За этот день уже есть запись в дневнике. Хотите перезаписать её новыми данными?"
-            );
-            if (!confirmOverwrite) {
-              return;
+      const saveButton = saveCard.querySelector(".save-diary-btn");
+      saveButton.addEventListener("click", async () => {
+        const data = await collectDiaryData();
+        
+        if (data) {
+          try {
+            const result = await saveDiaryEntries(data.date, data);
+            if (result?.wasOverwritten) {
+              const confirmOverwrite = confirm(
+                "За этот день уже есть запись в дневнике. Хотите перезаписать её новыми данными?"
+              );
+              if (!confirmOverwrite) {
+                return;
+              }
             }
+            showEncouragingMessage();
+            setTimeout(() => {
+              cleanupDiaryMode();
+              isFillingMode = false;
+              displayBehaviors();
+            }, 2000);
+          } catch (error) {
+            console.error("Ошибка при сохранении дневника:", error);
+            alert("Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
           }
-          showEncouragingMessage();
-          setTimeout(() => {
-            cleanupDiaryMode();
-            isFillingMode = false;
-            displayBehaviors();
-          }, 2000);
-        } catch (error) {
-          console.error("Ошибка при сохранении дневника:", error);
-          alert("Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
+        } else {
+          alert("Нет данных для сохранения. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
         }
-      } else {
-        alert("Нет данных для сохранения. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
-      }
-    });
+      });
 
-    behaviorCards.appendChild(saveCard);
+      behaviorCards.appendChild(saveCard);
+    }
+  } catch (error) {
+    console.error("Ошибка при отображении поведений:", error);
   }
 }
 
@@ -593,7 +661,7 @@ function cleanupDiaryMode() {
 
 // Функция для сбора данных дневника
 async function collectDiaryData() {
-  const behaviors = [];
+  console.log('Collecting diary data...');
   const cards = document.querySelectorAll(".behavior-card");
   const dateButton = document.querySelector(".date-btn.active");
   const isFilledToday = document.querySelector(".toggle-control input").checked;
@@ -601,11 +669,32 @@ async function collectDiaryData() {
 
   // Получаем все поведения для определения их типов
   const allBehaviors = await getAllBehaviors();
+  const behaviors = [];
 
-  // Только дата обязательна, так как это ключ
   if (!dateButton) {
-    console.error("Не выбрана дата");
     return null;
+  }
+
+  // Собираем данные состояния
+  const stateCard = document.querySelector('.state-card');
+  const states = {
+    emotional: null,
+    physical: null,
+    pleasure: null
+  };
+
+  if (stateCard) {
+    console.log('Found state card, collecting state values...');
+    ['emotional', 'physical', 'pleasure'].forEach(stateId => {
+      const activeButton = stateCard.querySelector(`.scale-button[data-field="${stateId}"].active`);
+      console.log(`State ${stateId} active button:`, activeButton);
+      if (activeButton) {
+        states[stateId] = parseInt(activeButton.dataset.value);
+      }
+    });
+    console.log('Collected states:', states);
+  } else {
+    console.log('State card not found');
   }
 
   // Собираем данные с каждой карточки поведения
@@ -613,11 +702,15 @@ async function collectDiaryData() {
     // Пропускаем служебные карточки
     if (card.classList.contains("date-card") || 
         card.classList.contains("skill-usage-card") || 
-        card.classList.contains("save-card")) {
+        card.classList.contains("save-card") ||
+        card.classList.contains("state-card")) {
       return;
     }
 
+    // Получаем заголовок поведения
     const behaviorHeader = card.querySelector(".behavior-header");
+    if (!behaviorHeader) return;
+
     const behaviorId = parseInt(behaviorHeader.querySelector("button").dataset.id);
     const behaviorName = behaviorHeader.querySelector(".behavior-name").textContent.trim();
     const behavior = allBehaviors.find(b => b.id === behaviorId);
@@ -626,13 +719,12 @@ async function collectDiaryData() {
 
     // Если хотя бы одно поле заполнено, добавляем запись
     if (desireButton || (actionControl && (actionControl.value || actionControl.dataset.value))) {
-      // Форматируем действие в зависимости от типа
       let action = null;
       if (actionControl) {
         if (behavior.type === 'boolean') {
-          action = actionControl.dataset.value === 'true'; // сохраняем как настоящий boolean
+          action = actionControl.dataset.value === 'true';
         } else if (behavior.type === 'scale') {
-          action = parseInt(actionControl.dataset.value);  // оставляем как число
+          action = parseInt(actionControl.dataset.value);
         } else if (behavior.type === 'text') {
           action = actionControl.value.trim();
         }
@@ -649,34 +741,41 @@ async function collectDiaryData() {
   });
 
   // Проверяем, есть ли хоть какие-то данные для сохранения
-  const hasData = behaviors.length > 0 || skillUsageRadio || isFilledToday;
+  const hasStates = Object.values(states).some(value => value !== null);
+  const hasData = behaviors.length > 0 || skillUsageRadio?.value || isFilledToday || hasStates;
+
   if (!hasData) {
+    console.log('No data to save');
     return null;
   }
 
-  return {
+  const diaryData = {
     date: dateButton.dataset.date,
     isFilledToday,
     skillUsage: skillUsageRadio ? skillUsageRadio.value : null,
-    behaviors
+    behaviors,
+    states
   };
+
+  console.log('Collected diary data:', diaryData);
+  return diaryData;
 }
 
 // Функция для загрузки существующих данных дневника
 async function loadExistingDiaryEntry(date) {
   try {
+    console.log('Loading diary entry for date:', date);
+    
     // Удаляем предыдущее уведомление, если оно есть
     const existingNotification = document.querySelector(".diary-edit-notification");
     if (existingNotification) {
       existingNotification.remove();
     }
 
-    // Проверяем, является ли выбранная дата сегодняшней
-    const selectedDate = new Date(date);
-    const today = new Date();
-    const isToday = selectedDate.toDateString() === today.toDateString();
-
+    // Загружаем существующую запись
     const entry = await getDiaryEntriesByDate(date);
+    console.log('Loaded entry:', entry);
+
     if (entry) {
       // Показываем уведомление о редактировании
       const notification = document.createElement("div");
@@ -690,10 +789,8 @@ async function loadExistingDiaryEntry(date) {
       behaviorCards.insertBefore(notification, behaviorCards.firstChild);
 
       // Устанавливаем значение переключателя заполнения
-      const toggleInput = document.querySelector(".toggle-control input");
-      if (toggleInput) {
-        toggleInput.checked = entry.isFilledToday;
-      }
+      const filledToggle = document.querySelector(".toggle-control input");
+      filledToggle.checked = entry.isFilledToday;
 
       // Устанавливаем значение использования навыков
       if (entry.skillUsage) {
@@ -703,27 +800,75 @@ async function loadExistingDiaryEntry(date) {
         }
       }
 
+      // Устанавливаем значения состояний
+      if (entry.states) {
+        console.log('Setting states:', entry.states);
+        const stateCard = document.querySelector('.state-card');
+        console.log('Found state card:', stateCard);
+        
+        if (stateCard) {
+          ['emotional', 'physical', 'pleasure'].forEach(stateId => {
+            console.log(`Setting state ${stateId}:`, entry.states[stateId]);
+            if (entry.states[stateId] !== null && entry.states[stateId] !== undefined) {
+              const stateButton = stateCard.querySelector(`.scale-button[data-field="${stateId}"][data-value="${entry.states[stateId]}"]`);
+              console.log(`Found button for ${stateId}:`, stateButton);
+              
+              if (stateButton) {
+                // Сначала убираем active у всех кнопок этого состояния
+                const allButtons = stateCard.querySelectorAll(`.scale-button[data-field="${stateId}"]`);
+                console.log(`Removing active from ${allButtons.length} buttons`);
+                allButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Затем добавляем active нужной кнопке
+                stateButton.classList.add('active');
+                console.log(`Added active class to button for ${stateId}`);
+              }
+            }
+          });
+        } else {
+          console.log('State card not found. Current cards:', 
+            document.querySelectorAll('.behavior-card').length,
+            Array.from(document.querySelectorAll('.behavior-card')).map(card => card.className)
+          );
+        }
+      }
+
       // Устанавливаем значения для каждого поведения
       entry.behaviors.forEach(behaviorEntry => {
         const card = document.querySelector(`.behavior-card button[data-id="${behaviorEntry.behaviorId}"]`)?.closest('.behavior-card');
         if (!card) return;
 
         // Устанавливаем значение desire если есть
-        if (behaviorEntry.desire !== null) {
+        if (behaviorEntry.desire !== null && behaviorEntry.desire !== undefined) {
+          // Сначала убираем active у всех кнопок desire
+          card.querySelectorAll('.scale-button[data-field="desire"]').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          // Затем добавляем active нужной кнопке
           const desireButton = card.querySelector(`.scale-button[data-field="desire"][data-value="${behaviorEntry.desire}"]`);
           if (desireButton) {
             desireButton.classList.add('active');
           }
         }
 
-        // Устанавливаем значение action в зависимости от типа
-        if (behaviorEntry.action !== null) {
+        // Устанавливаем значение action если есть
+        if (behaviorEntry.action !== null && behaviorEntry.action !== undefined) {
           if (behaviorEntry.type === 'boolean') {
-            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${behaviorEntry.action.toString()}"]`);
+            // Сначала убираем active у всех кнопок action
+            card.querySelectorAll('.scale-button[data-field="action"]').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            // Затем добавляем active нужной кнопке
+            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`);
             if (actionButton) {
               actionButton.classList.add('active');
             }
           } else if (behaviorEntry.type === 'scale') {
+            // Сначала убираем active у всех кнопок action
+            card.querySelectorAll('.scale-button[data-field="action"]').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            // Затем добавляем active нужной кнопке
             const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`);
             if (actionButton) {
               actionButton.classList.add('active');
@@ -736,21 +881,26 @@ async function loadExistingDiaryEntry(date) {
           }
         }
       });
+
     } else {
+      console.log('No entry found for date:', date);
       // Если записи нет, сбрасываем все значения
       // Устанавливаем переключатель заполнения в зависимости от даты
-      const toggleInput = document.querySelector(".toggle-control input");
-      if (toggleInput) {
-        toggleInput.checked = isToday; // Включаем только для сегодняшней даты
-      }
+      const filledToggle = document.querySelector(".toggle-control input");
+      filledToggle.checked = new Date(date).toDateString() === new Date().toDateString();
 
       // Сбрасываем радио-кнопки использования навыков
       document.querySelectorAll('input[name="skill-usage"]').forEach(radio => {
         radio.checked = false;
       });
 
-      // Сбрасываем все активные кнопки
-      document.querySelectorAll('.scale-button.active').forEach(button => {
+      // Сбрасываем все активные кнопки состояний
+      document.querySelectorAll('.state-card .scale-button.active').forEach(button => {
+        button.classList.remove('active');
+      });
+
+      // Сбрасываем все активные кнопки поведений
+      document.querySelectorAll('.behavior-card .scale-button.active').forEach(button => {
         button.classList.remove('active');
       });
 
@@ -771,11 +921,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const fillDiaryButton = document.getElementById("fillDiaryBtn");
 
   // Обработчик для кнопки заполнения дневника
-  fillDiaryButton?.addEventListener("click", () => {
-    isFillingMode = !isFillingMode;
-    document.body.classList.toggle("diary-filling-mode", isFillingMode);
-    document.querySelector('.main-nav a[href="#diary"]').click();
-    displayBehaviors();
+  fillDiaryButton?.addEventListener("click", async () => {
+    await activateFillDiaryMode();
   });
 
   // Добавляем слушатель на изменение хэша URL
@@ -818,3 +965,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Инициализация: отображаем существующие поведения
   displayBehaviors();
 });
+
+// Функция для активации режима заполнения дневника
+async function activateFillDiaryMode() {
+  isFillingMode = true;
+  await displayBehaviors();
+
+  // После отображения всех карточек загружаем данные для текущей даты
+  const activeDate = document.querySelector(".date-btn.active");
+  if (activeDate) {
+    await loadExistingDiaryEntry(activeDate.dataset.date);
+  }
+}

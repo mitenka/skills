@@ -54,7 +54,8 @@ export async function saveDiaryEntries(date, entries) {
         date,
         isFilledToday: entries.isFilledToday,
         skillUsage: entries.skillUsage,
-        behaviors: entries.behaviors
+        behaviors: entries.behaviors,
+        states: entries.states
       };
 
       // Сохраняем запись
