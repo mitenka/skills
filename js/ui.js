@@ -775,7 +775,7 @@ async function collectDiaryData() {
   return {
     date: dateButton.dataset.date,
     isFilledToday,
-    skillUsage: skillUsageRadio ? skillUsageRadio.value : null,
+    skillUsage: skillUsageRadio ? parseInt(skillUsageRadio.value) : null,
     behaviors,
     states
   };
@@ -830,6 +830,14 @@ async function loadExistingDiaryEntry(date) {
               }
             }
           });
+        }
+      }
+
+      // Устанавливаем значение использования навыков
+      if (entry.skillUsage !== undefined && entry.skillUsage !== null) {
+        const skillRadio = document.querySelector(`input[name="skill-usage"][value="${entry.skillUsage}"]`);
+        if (skillRadio) {
+          skillRadio.checked = true;
         }
       }
 
