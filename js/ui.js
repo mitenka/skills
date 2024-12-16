@@ -829,7 +829,7 @@ async function loadExistingDiaryEntry(date) {
       // Устанавливаем значение переключателя заполнения
       const filledToggle = document.querySelector(".toggle-control input");
       if (filledToggle) {
-        filledToggle.checked = entry.filled || false;
+        filledToggle.checked = entry.isFilledToday || false;
       }
 
       // Загружаем состояния
