@@ -279,9 +279,9 @@ function createStateCard() {
   card.className = "behavior-card state-card";
 
   const states = [
-    { id: 'emotional', name: 'Эмоциональное страдание', description: 'Оцените уровень эмоционального страдания' },
-    { id: 'physical', name: 'Физическое страдание', description: 'Оцените уровень физического страдания' },
-    { id: 'pleasure', name: 'Удовольствие', description: 'Оцените уровень удовольствия' }
+    { id: 'emotional', name: 'Эмоциональное страдание' },
+    { id: 'physical', name: 'Физическое страдание' },
+    { id: 'pleasure', name: 'Удовольствие' }
   ];
 
   const stateInputs = states.map(state => {
@@ -295,7 +295,6 @@ function createStateCard() {
       <div class="state-row behavior-scale">
         <div class="behavior-info">
           <span class="behavior-name">${state.name}</span>
-          <span class="behavior-description">${state.description}</span>
         </div>
         <div class="scale-buttons">
           ${buttons}
@@ -748,39 +747,35 @@ async function collectDiaryData() {
 async function loadExistingDiaryEntry(date) {
   try {
     // Удаляем предыдущее уведомление, если оно есть
-    const existingNotification = document.querySelector(".diary-edit-notification");
+    const existingNotification = document.querySelector(".edit-notification");
     if (existingNotification) {
       existingNotification.remove();
     }
 
-    // Загружаем существующую запись
     const entry = await getDiaryEntriesByDate(date);
-
+    
     if (entry) {
       // Показываем уведомление о редактировании
       const notification = document.createElement("div");
-      notification.className = "diary-edit-notification";
+      notification.className = "edit-notification";
+      const formattedDate = new Date(date);
       notification.innerHTML = `
         <i class="ri-edit-line"></i>
-        <span>Редактирование записи за ${new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</span>
+        <span>Вы редактируете существующую запись за ${formatDate(formattedDate)}</span>
       `;
       
-      const behaviorCards = document.querySelector(".behavior-cards");
-      behaviorCards.insertBefore(notification, behaviorCards.firstChild);
+      document.querySelector(".behavior-cards").insertBefore(
+        notification,
+        document.querySelector(".behavior-cards").firstChild
+      );
 
       // Устанавливаем значение переключателя заполнения
       const filledToggle = document.querySelector(".toggle-control input");
-      filledToggle.checked = entry.isFilledToday;
-
-      // Устанавливаем значение использования навыков
-      if (entry.skillUsage) {
-        const skillRadio = document.querySelector(`input[name="skill-usage"][value="${entry.skillUsage}"]`);
-        if (skillRadio) {
-          skillRadio.checked = true;
-        }
+      if (filledToggle) {
+        filledToggle.checked = entry.filled || false;
       }
 
-      // Устанавливаем значения состояний
+      // Загружаем состояния
       if (entry.states) {
         const stateCard = document.querySelector('.state-card');
         if (stateCard) {
@@ -947,3 +942,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Инициализация: отображаем существующие поведения
   displayBehaviors();
 });
+
+function formatDate(date) {
+  const day = date.getDate();
+  const month = date.toLocaleString('ru-RU', { month: 'long' });
+  return `${day} ${month}`;
+}

@@ -148,22 +148,22 @@
 }
 
 /* Стили для уведомления о редактировании */
-.diary-edit-notification {
+.edit-notification {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: var(--card-background);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-  font-size: 0.9em;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  border-radius: 0.5rem;
+  font-weight: 500;
 }
 
-.diary-edit-notification i {
-  color: var(--primary-color);
-  font-size: 1.2em;
+.edit-notification i {
+  font-size: 1.25rem;
+  color: #856404;
 }
 
 /* Стили для карточки состояния */
@@ -171,16 +171,20 @@
   padding: 1rem;
 }
 
-.state-row.behavior-scale {
+.state-card .state-row {
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-color);
 }
 
-.state-row.behavior-scale:last-child {
-  border-bottom: none;
+.state-card .state-row:last-child {
+  margin-bottom: 0;
+}
+
+.state-row.behavior-scale {
+  border: none;
+  padding: 0;
 }
 
 .state-row .behavior-info {
