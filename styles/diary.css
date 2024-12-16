@@ -147,55 +147,6 @@
   line-height: 1.4;
 }
 
-.skill-usage-card .gender-toggle {
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.skill-usage-card .gender-toggle .toggle-control {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.skill-usage-card .gender-toggle .toggle-label {
-  color: var(--text-color);
-  font-size: 0.9em;
-  font-weight: 400;
-}
-
-.skill-usage-card .gender-toggle .toggle-switch {
-  width: 36px;
-  height: 20px;
-  background: var(--border-color);
-  border-radius: 34px;
-}
-
-.skill-usage-card .gender-toggle .toggle-switch:before {
-  width: 16px;
-  height: 16px;
-  background-color: white;
-  border-radius: 50%;
-  left: 2px;
-  bottom: 2px;
-}
-
-.skill-usage-card .gender-toggle input:checked + .toggle-switch {
-  background-color: #3b82f6;
-}
-
-.skill-usage-card .gender-toggle input:checked + .toggle-switch:before {
-  transform: translateX(16px);
-}
-
-.skill-usage-card .gender-toggle {
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
 .skill-usage-option {
   display: flex;
   align-items: flex-start;
