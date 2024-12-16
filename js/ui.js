@@ -937,6 +937,32 @@ async function activateFillDiaryMode() {
   }
 }
 
+// Функция для проверки, нужно ли показывать кнопку экспорта
+function checkExportButtonVisibility() {
+  const submissionDay = parseInt(localStorage.getItem('diarySubmissionDay') || '0');
+  const today = new Date();
+  const isSubmissionDay = today.getDay() === submissionDay;
+  
+  // Создаем или получаем кнопку
+  let exportButton = document.querySelector('.floating-export-button');
+  if (!exportButton) {
+    exportButton = document.createElement('button');
+    exportButton.className = 'floating-export-button';
+    exportButton.innerHTML = `
+      <i class="ri-download-2-line"></i>
+      <span>Выгрузить дневник</span>
+    `;
+    document.body.appendChild(exportButton);
+  }
+
+  // Показываем или скрываем кнопку
+  if (isSubmissionDay) {
+    setTimeout(() => exportButton.classList.add('visible'), 100);
+  } else {
+    exportButton.classList.remove('visible');
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   // Получаем необходимые элементы DOM
   const modal = document.getElementById("addBehaviorModal");
@@ -958,6 +984,30 @@ document.addEventListener("DOMContentLoaded", () => {
       updateSkillOptions(gender);
     });
   }
+
+  // Инициализация выбора дня сдачи
+  const submissionDaySelect = document.getElementById('diarySubmissionDay');
+  if (submissionDaySelect) {
+    submissionDaySelect.value = localStorage.getItem('diarySubmissionDay') || '0';
+    submissionDaySelect.addEventListener('change', (e) => {
+      localStorage.setItem('diarySubmissionDay', e.target.value);
+      checkExportButtonVisibility();
+    });
+  }
+
+  // Проверяем видимость кнопки экспорта при загрузке
+  checkExportButtonVisibility();
+
+  // Проверяем видимость кнопки каждый день в полночь
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const timeUntilMidnight = tomorrow - now;
+  
+  setTimeout(() => {
+    checkExportButtonVisibility();
+    // Далее проверяем каждые 24 часа
+    setInterval(checkExportButtonVisibility, 24 * 60 * 60 * 1000);
+  }, timeUntilMidnight);
 
   // Добавляем слушатель на изменение хэша URL
   window.addEventListener("hashchange", () => {
