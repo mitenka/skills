@@ -45,7 +45,10 @@ export async function deleteBehavior(id) {
 export async function saveDiaryEntries(date, entries) {
   try {
     // Начинаем транзакцию
-    await db.transaction("rw", db.diaryEntries, async () => {
+    const result = await db.transaction("rw", db.diaryEntries, async () => {
+      // Проверяем, существует ли уже запись за этот день
+      const existingEntry = await db.diaryEntries.get(date);
+      
       // Создаем запись дневника, сохраняя все поля как есть
       const diaryEntry = {
         date,
@@ -54,9 +57,15 @@ export async function saveDiaryEntries(date, entries) {
         behaviors: entries.behaviors
       };
 
-      // Сохраняем или обновляем запись
+      // Сохраняем запись
       await db.diaryEntries.put(diaryEntry);
+
+      // Возвращаем информацию о том, была ли это перезапись
+      return { wasOverwritten: !!existingEntry };
     });
+
+    return result; // Возвращаем результат транзакции
+
   } catch (error) {
     console.error("Ошибка при сохранении записей дневника:", error);
     throw error;

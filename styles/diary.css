@@ -146,3 +146,22 @@
   font-size: 0.9em;
   line-height: 1.4;
 }
+
+/* Стили для уведомления о редактировании */
+.diary-edit-notification {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--card-background);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-size: 0.9em;
+}
+
+.diary-edit-notification i {
+  color: var(--primary-color);
+  font-size: 1.2em;
+}

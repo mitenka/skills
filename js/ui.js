@@ -4,6 +4,7 @@ import {
   deleteBehavior,
   updateBehavior,
   saveDiaryEntries,
+  getDiaryEntriesByDate
 } from "./behaviors.js";
 
 // Функция для создания карточки поведения
@@ -276,6 +277,9 @@ function createDateCard() {
       
       // Обновляем состояние свитчера
       toggleInput.checked = isToday;
+
+      // Загружаем существующие данные дневника
+      loadExistingDiaryEntry(button.dataset.date);
     });
   });
 
@@ -357,7 +361,15 @@ async function displayBehaviors() {
       
       if (data) {
         try {
-          await saveDiaryEntries(data.date, data);
+          const result = await saveDiaryEntries(data.date, data);
+          if (result?.wasOverwritten) {
+            const confirmOverwrite = confirm(
+              "За этот день уже есть запись в дневнике. Хотите перезаписать её новыми данными?"
+            );
+            if (!confirmOverwrite) {
+              return;
+            }
+          }
           showEncouragingMessage();
           setTimeout(() => {
             cleanupDiaryMode();
@@ -636,12 +648,116 @@ async function collectDiaryData() {
     }
   });
 
+  // Проверяем, есть ли хоть какие-то данные для сохранения
+  const hasData = behaviors.length > 0 || skillUsageRadio || isFilledToday;
+  if (!hasData) {
+    return null;
+  }
+
   return {
     date: dateButton.dataset.date,
     isFilledToday,
     skillUsage: skillUsageRadio ? skillUsageRadio.value : null,
     behaviors
   };
+}
+
+// Функция для загрузки существующих данных дневника
+async function loadExistingDiaryEntry(date) {
+  try {
+    // Удаляем предыдущее уведомление, если оно есть
+    const existingNotification = document.querySelector(".diary-edit-notification");
+    if (existingNotification) {
+      existingNotification.remove();
+    }
+
+    const entry = await getDiaryEntriesByDate(date);
+    if (entry) {
+      // Показываем уведомление о редактировании
+      const notification = document.createElement("div");
+      notification.className = "diary-edit-notification";
+      notification.innerHTML = `
+        <i class="ri-edit-line"></i>
+        <span>Редактирование записи за ${new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</span>
+      `;
+      
+      const behaviorCards = document.querySelector(".behavior-cards");
+      behaviorCards.insertBefore(notification, behaviorCards.firstChild);
+
+      // Устанавливаем значение переключателя заполнения
+      const toggleInput = document.querySelector(".toggle-control input");
+      if (toggleInput) {
+        toggleInput.checked = entry.isFilledToday;
+      }
+
+      // Устанавливаем значение использования навыков
+      if (entry.skillUsage) {
+        const skillRadio = document.querySelector(`input[name="skill-usage"][value="${entry.skillUsage}"]`);
+        if (skillRadio) {
+          skillRadio.checked = true;
+        }
+      }
+
+      // Устанавливаем значения для каждого поведения
+      entry.behaviors.forEach(behaviorEntry => {
+        const card = document.querySelector(`.behavior-card button[data-id="${behaviorEntry.behaviorId}"]`)?.closest('.behavior-card');
+        if (!card) return;
+
+        // Устанавливаем значение desire если есть
+        if (behaviorEntry.desire !== null) {
+          const desireButton = card.querySelector(`.scale-button[data-field="desire"][data-value="${behaviorEntry.desire}"]`);
+          if (desireButton) {
+            desireButton.classList.add('active');
+          }
+        }
+
+        // Устанавливаем значение action в зависимости от типа
+        if (behaviorEntry.action !== null) {
+          if (behaviorEntry.type === 'boolean') {
+            const actionValue = behaviorEntry.action === 'да' ? 'true' : 'false';
+            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${actionValue}"]`);
+            if (actionButton) {
+              actionButton.classList.add('active');
+            }
+          } else if (behaviorEntry.type === 'scale') {
+            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`);
+            if (actionButton) {
+              actionButton.classList.add('active');
+            }
+          } else if (behaviorEntry.type === 'text') {
+            const actionInput = card.querySelector('.behavior-value[data-field="action"]');
+            if (actionInput) {
+              actionInput.value = behaviorEntry.action;
+            }
+          }
+        }
+      });
+    } else {
+      // Если записи нет, сбрасываем все значения
+      // Сбрасываем переключатель заполнения
+      const toggleInput = document.querySelector(".toggle-control input");
+      if (toggleInput) {
+        toggleInput.checked = false;
+      }
+
+      // Сбрасываем радио-кнопки использования навыков
+      document.querySelectorAll('input[name="skill-usage"]').forEach(radio => {
+        radio.checked = false;
+      });
+
+      // Сбрасываем все активные кнопки
+      document.querySelectorAll('.scale-button.active').forEach(button => {
+        button.classList.remove('active');
+      });
+
+      // Очищаем текстовые поля
+      document.querySelectorAll('.behavior-value[data-field="action"]').forEach(input => {
+        input.value = '';
+      });
+    }
+  } catch (error) {
+    console.error("Ошибка при загрузке существующих данных:", error);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
