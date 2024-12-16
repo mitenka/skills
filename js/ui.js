@@ -378,10 +378,10 @@ async function displayBehaviors() {
           }, 2000);
         } catch (error) {
           console.error("Ошибка при сохранении дневника:", error);
-          alert("Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз.");
+          alert("Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
         }
       } else {
-        alert("Пожалуйста, заполните все поля дневника перед сохранением.");
+        alert("Нет данных для сохранения. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
       }
     });
 
@@ -625,7 +625,7 @@ async function collectDiaryData() {
     const actionControl = card.querySelector('.scale-button[data-field="action"].active, .behavior-value[data-field="action"]');
 
     // Если хотя бы одно поле заполнено, добавляем запись
-    if (desireButton || (actionControl && actionControl.value)) {
+    if (desireButton || (actionControl && (actionControl.value || actionControl.dataset.value))) {
       // Форматируем действие в зависимости от типа
       let action = null;
       if (actionControl) {
