@@ -177,12 +177,18 @@ function addBehaviorCardHandlers(card) {
   });
 }
 
-// Функция для создания карточки с использованием навыков
-function createSkillUsageCard() {
-  const card = document.createElement("div");
-  card.className = "behavior-card skill-usage-card";
-  
-  const options = [
+const skillOptionsTemplate = {
+  feminine: [
+    "Не думала о навыках и не использовала",
+    "Думала о навыках, не хотела применять, не использовала",
+    "Думала о навыках, хотела применить, но не использовала",
+    "Старалась, но не смогла применить навыки",
+    "Старалась, смогла применить навыки, но они не помогли",
+    "Старалась, смогла применить навыки, они помогли",
+    "Использовала навыки, не стараясь (автоматически), они не помогли",
+    "Использовала навыки, не стараясь (автоматически), они помогли"
+  ],
+  masculine: [
     "Не думал о навыках и не использовал",
     "Думал о навыках, не хотел применять, не использовал",
     "Думал о навыках, хотел применить, но не использовал",
@@ -191,23 +197,74 @@ function createSkillUsageCard() {
     "Старался, смог применить навыки, они помогли",
     "Использовал навыки, не стараясь (автоматически), они не помогли",
     "Использовал навыки, не стараясь (автоматически), они помогли"
-  ];
+  ]
+};
 
-  const radioButtons = options.map((option) => `
-    <label class="radio-control">
-      <input type="radio" name="skill-usage" value="${option}">
-      <span class="radio-custom"></span>
-      <span class="radio-label">${option.charAt(0).toUpperCase() + option.slice(1)}</span>
-    </label>
-  `).join('');
+function getPreferredGender() {
+  return localStorage.getItem('preferredGender') || 'feminine';
+}
 
-  card.innerHTML = `
-    <div class="skill-usage-wrapper">
-      <div class="skill-usage-options">
-        ${radioButtons}
-      </div>
+function setPreferredGender(gender) {
+  localStorage.setItem('preferredGender', gender);
+}
+
+function updateSkillOptions(gender) {
+  const radioButtons = document.querySelectorAll('input[name="skill-usage"]');
+  const labels = document.querySelectorAll('.skill-usage-option label');
+  
+  radioButtons.forEach((radio, index) => {
+    labels[index].textContent = skillOptionsTemplate[gender][index];
+  });
+}
+
+// Функция для создания карточки с использованием навыков
+function createSkillUsageCard() {
+  const card = document.createElement("div");
+  card.className = "behavior-card skill-usage-card";
+
+  const genderToggle = `
+    <div class="gender-toggle">
+      <label class="toggle-control">
+        <span class="toggle-label">Использовать женский род</span>
+        <input type="checkbox" ${getPreferredGender() === 'feminine' ? 'checked' : ''}>
+        <span class="toggle-switch"></span>
+      </label>
     </div>
   `;
+
+  const currentGender = getPreferredGender();
+  const options = skillOptionsTemplate[currentGender];
+
+  const radioButtons = options
+    .map(
+      (option, index) => `
+        <div class="skill-usage-option">
+          <input
+            type="radio"
+            id="skill-usage-${index}"
+            name="skill-usage"
+            value="${index}"
+          >
+          <label for="skill-usage-${index}">${option}</label>
+        </div>
+      `
+    )
+    .join("");
+
+  card.innerHTML = `
+    ${genderToggle}
+    <div class="skill-usage-options">
+      ${radioButtons}
+    </div>
+  `;
+
+  // Добавляем обработчик для переключателя рода
+  const toggle = card.querySelector('.gender-toggle input');
+  toggle.addEventListener('change', (e) => {
+    const gender = e.target.checked ? 'feminine' : 'masculine';
+    setPreferredGender(gender);
+    updateSkillOptions(gender);
+  });
 
   return card;
 }

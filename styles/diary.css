@@ -147,6 +147,33 @@
   line-height: 1.4;
 }
 
+.skill-usage-card .gender-toggle {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.skill-usage-card .gender-toggle .toggle-label {
+  margin-right: 0.5rem;
+  color: var(--text-color);
+}
+
+.skill-usage-option {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.skill-usage-option input[type="radio"] {
+  margin-top: 0.25rem;
+  margin-right: 0.5rem;
+}
+
+.skill-usage-option label {
+  color: var(--text-color);
+  cursor: pointer;
+}
+
 /* Стили для уведомления о редактировании */
 .edit-notification {
   display: flex;
