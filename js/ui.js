@@ -345,10 +345,6 @@ async function displayBehaviors() {
   behaviorCards.innerHTML = "";
 
   try {
-    // Карточка с датами (в начало)
-    const dateCard = createDateCard();
-    behaviorCards.appendChild(dateCard);
-
     // Получаем все поведения
     const behaviors = await getAllBehaviors();
     const fillDiaryButton = document.getElementById("fillDiaryBtn");
@@ -386,26 +382,23 @@ async function displayBehaviors() {
       return;
     }
 
+    // В режиме заполнения добавляем карточки с кнопками
+    if (isFillingMode) {
+      // Карточка с датами (в начало)
+      const dateCard = createDateCard();
+      behaviorCards.appendChild(dateCard);
+
+      // Карточка с состоянием (сразу после дат)
+      const stateCard = createStateCard();
+      behaviorCards.appendChild(stateCard);
+    }
+
     behaviors.forEach((behavior) => {
       behaviorCards.appendChild(createBehaviorCard(behavior));
     });
 
-    // В режиме редактирования добавляем карточки с кнопками
+    // В режиме заполнения добавляем оставшиеся карточки
     if (isFillingMode) {
-      // Карточка с состоянием (сразу после дат)
-      const stateCard = createStateCard();
-      behaviorCards.appendChild(stateCard);
-
-      // Перемещаем все карточки поведения после карточки состояния
-      const behaviorElements = Array.from(behaviorCards.querySelectorAll('.behavior-card')).filter(card => 
-        !card.classList.contains('date-card') && 
-        !card.classList.contains('state-card')
-      );
-      
-      behaviorElements.forEach(card => {
-        behaviorCards.appendChild(card);
-      });
-
       // Карточка с использованием навыков
       const skillUsageCard = createSkillUsageCard();
       behaviorCards.appendChild(skillUsageCard);
@@ -661,7 +654,6 @@ function cleanupDiaryMode() {
 
 // Функция для сбора данных дневника
 async function collectDiaryData() {
-  console.log('Collecting diary data...');
   const cards = document.querySelectorAll(".behavior-card");
   const dateButton = document.querySelector(".date-btn.active");
   const isFilledToday = document.querySelector(".toggle-control input").checked;
@@ -684,17 +676,12 @@ async function collectDiaryData() {
   };
 
   if (stateCard) {
-    console.log('Found state card, collecting state values...');
     ['emotional', 'physical', 'pleasure'].forEach(stateId => {
       const activeButton = stateCard.querySelector(`.scale-button[data-field="${stateId}"].active`);
-      console.log(`State ${stateId} active button:`, activeButton);
       if (activeButton) {
         states[stateId] = parseInt(activeButton.dataset.value);
       }
     });
-    console.log('Collected states:', states);
-  } else {
-    console.log('State card not found');
   }
 
   // Собираем данные с каждой карточки поведения
@@ -745,27 +732,21 @@ async function collectDiaryData() {
   const hasData = behaviors.length > 0 || skillUsageRadio?.value || isFilledToday || hasStates;
 
   if (!hasData) {
-    console.log('No data to save');
     return null;
   }
 
-  const diaryData = {
+  return {
     date: dateButton.dataset.date,
     isFilledToday,
     skillUsage: skillUsageRadio ? skillUsageRadio.value : null,
     behaviors,
     states
   };
-
-  console.log('Collected diary data:', diaryData);
-  return diaryData;
 }
 
-// Функция для загрузки существующих данных дневника
+// Функция для загрузки существующей записи дневника
 async function loadExistingDiaryEntry(date) {
   try {
-    console.log('Loading diary entry for date:', date);
-    
     // Удаляем предыдущее уведомление, если оно есть
     const existingNotification = document.querySelector(".diary-edit-notification");
     if (existingNotification) {
@@ -774,7 +755,6 @@ async function loadExistingDiaryEntry(date) {
 
     // Загружаем существующую запись
     const entry = await getDiaryEntriesByDate(date);
-    console.log('Loaded entry:', entry);
 
     if (entry) {
       // Показываем уведомление о редактировании
@@ -802,34 +782,21 @@ async function loadExistingDiaryEntry(date) {
 
       // Устанавливаем значения состояний
       if (entry.states) {
-        console.log('Setting states:', entry.states);
         const stateCard = document.querySelector('.state-card');
-        console.log('Found state card:', stateCard);
-        
         if (stateCard) {
           ['emotional', 'physical', 'pleasure'].forEach(stateId => {
-            console.log(`Setting state ${stateId}:`, entry.states[stateId]);
             if (entry.states[stateId] !== null && entry.states[stateId] !== undefined) {
               const stateButton = stateCard.querySelector(`.scale-button[data-field="${stateId}"][data-value="${entry.states[stateId]}"]`);
-              console.log(`Found button for ${stateId}:`, stateButton);
-              
               if (stateButton) {
                 // Сначала убираем active у всех кнопок этого состояния
-                const allButtons = stateCard.querySelectorAll(`.scale-button[data-field="${stateId}"]`);
-                console.log(`Removing active from ${allButtons.length} buttons`);
-                allButtons.forEach(btn => btn.classList.remove('active'));
-                
+                stateCard.querySelectorAll(`.scale-button[data-field="${stateId}"]`).forEach(btn => {
+                  btn.classList.remove('active');
+                });
                 // Затем добавляем active нужной кнопке
                 stateButton.classList.add('active');
-                console.log(`Added active class to button for ${stateId}`);
               }
             }
           });
-        } else {
-          console.log('State card not found. Current cards:', 
-            document.querySelectorAll('.behavior-card').length,
-            Array.from(document.querySelectorAll('.behavior-card')).map(card => card.className)
-          );
         }
       }
 
@@ -883,7 +850,6 @@ async function loadExistingDiaryEntry(date) {
       });
 
     } else {
-      console.log('No entry found for date:', date);
       // Если записи нет, сбрасываем все значения
       // Устанавливаем переключатель заполнения в зависимости от даты
       const filledToggle = document.querySelector(".toggle-control input");
@@ -911,6 +877,22 @@ async function loadExistingDiaryEntry(date) {
     }
   } catch (error) {
     console.error("Ошибка при загрузке существующих данных:", error);
+  }
+}
+
+// Функция для активации режима заполнения дневника
+async function activateFillDiaryMode() {
+  isFillingMode = !isFillingMode; // Переключаем режим
+  document.body.classList.toggle("diary-filling-mode", isFillingMode);
+  document.querySelector('.main-nav a[href="#diary"]').click();
+  await displayBehaviors();
+
+  // После отображения всех карточек загружаем данные для текущей даты
+  if (isFillingMode) {
+    const activeDate = document.querySelector(".date-btn.active");
+    if (activeDate) {
+      await loadExistingDiaryEntry(activeDate.dataset.date);
+    }
   }
 }
 
@@ -965,15 +947,3 @@ document.addEventListener("DOMContentLoaded", () => {
   // Инициализация: отображаем существующие поведения
   displayBehaviors();
 });
-
-// Функция для активации режима заполнения дневника
-async function activateFillDiaryMode() {
-  isFillingMode = true;
-  await displayBehaviors();
-
-  // После отображения всех карточек загружаем данные для текущей даты
-  const activeDate = document.querySelector(".date-btn.active");
-  if (activeDate) {
-    await loadExistingDiaryEntry(activeDate.dataset.date);
-  }
-}
