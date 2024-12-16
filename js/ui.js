@@ -19,11 +19,11 @@ function createBehaviorCard(behavior) {
         actionControlHtml = `
                     <div class="control-group">
                         <div class="boolean-control">
-                            <button class="scale-button boolean-button diary-button" data-value="true" data-id="${behavior.id}" data-field="action">
-                                <i class="ri-check-line"></i>
-                            </button>
                             <button class="scale-button boolean-button diary-button" data-value="false" data-id="${behavior.id}" data-field="action">
                                 <i class="ri-close-line"></i>
+                            </button>
+                            <button class="scale-button boolean-button diary-button" data-value="true" data-id="${behavior.id}" data-field="action">
+                                <i class="ri-check-line"></i>
                             </button>
                         </div>
                     </div>
