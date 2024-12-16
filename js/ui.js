@@ -944,7 +944,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function formatDate(date) {
-  const day = date.getDate();
-  const month = date.toLocaleString('ru-RU', { month: 'long' });
-  return `${day} ${month}`;
+  return date.toLocaleString('ru-RU', { 
+    day: 'numeric',
+    month: 'long',
+    monthDisplay: 'long'
+  }).replace(' г.', '');
 }
