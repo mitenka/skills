@@ -630,7 +630,7 @@ async function collectDiaryData() {
       let action = null;
       if (actionControl) {
         if (behavior.type === 'boolean') {
-          action = actionControl.dataset.value === 'true' ? 'да' : 'нет';
+          action = actionControl.dataset.value === 'true'; // сохраняем как настоящий boolean
         } else if (behavior.type === 'scale') {
           action = parseInt(actionControl.dataset.value);  // оставляем как число
         } else if (behavior.type === 'text') {
@@ -719,8 +719,7 @@ async function loadExistingDiaryEntry(date) {
         // Устанавливаем значение action в зависимости от типа
         if (behaviorEntry.action !== null) {
           if (behaviorEntry.type === 'boolean') {
-            const actionValue = behaviorEntry.action === 'да' ? 'true' : 'false';
-            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${actionValue}"]`);
+            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${behaviorEntry.action.toString()}"]`);
             if (actionButton) {
               actionButton.classList.add('active');
             }
