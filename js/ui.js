@@ -222,16 +222,6 @@ function createSkillUsageCard() {
   const card = document.createElement("div");
   card.className = "behavior-card skill-usage-card";
 
-  const genderToggle = `
-    <div class="gender-toggle">
-      <label class="toggle-control">
-        <span class="toggle-label">Глаголы в женском роде</span>
-        <input type="checkbox" ${getPreferredGender() === 'feminine' ? 'checked' : ''}>
-        <span class="toggle-switch"></span>
-      </label>
-    </div>
-  `;
-
   const currentGender = getPreferredGender();
   const options = skillOptionsTemplate[currentGender];
 
@@ -252,19 +242,10 @@ function createSkillUsageCard() {
     .join("");
 
   card.innerHTML = `
-    ${genderToggle}
     <div class="skill-usage-options">
       ${radioButtons}
     </div>
   `;
-
-  // Добавляем обработчик для переключателя рода
-  const toggle = card.querySelector('.gender-toggle input');
-  toggle.addEventListener('change', (e) => {
-    const gender = e.target.checked ? 'feminine' : 'masculine';
-    setPreferredGender(gender);
-    updateSkillOptions(gender);
-  });
 
   return card;
 }
@@ -958,6 +939,17 @@ document.addEventListener("DOMContentLoaded", () => {
   fillDiaryButton?.addEventListener("click", async () => {
     await activateFillDiaryMode();
   });
+
+  // Инициализация переключателя рода
+  const genderToggle = document.getElementById("preferredGender");
+  if (genderToggle) {
+    genderToggle.checked = getPreferredGender() === 'feminine';
+    genderToggle.addEventListener("change", (e) => {
+      const gender = e.target.checked ? 'feminine' : 'masculine';
+      setPreferredGender(gender);
+      updateSkillOptions(gender);
+    });
+  }
 
   // Добавляем слушатель на изменение хэша URL
   window.addEventListener("hashchange", () => {
