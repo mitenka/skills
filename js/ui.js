@@ -225,7 +225,7 @@ function createSkillUsageCard() {
   const genderToggle = `
     <div class="gender-toggle">
       <label class="toggle-control">
-        <span class="toggle-label">Использовать женский род</span>
+        <span class="toggle-label">Глаголы в женском роде</span>
         <input type="checkbox" ${getPreferredGender() === 'feminine' ? 'checked' : ''}>
         <span class="toggle-switch"></span>
       </label>
