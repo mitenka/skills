@@ -429,8 +429,8 @@ function formatDate(dateString) {
 
 // Функция для форматирования значения
 function formatValue(value) {
-  if (value === undefined) return "Отсутствует";
-  if (typeof value === "boolean") return value ? "Да" : "Нет";
+  if (value === undefined || value === null) return "?";
+  if (typeof value === "boolean") return value ? "✓" : "✕";
   return value;
 }
 
