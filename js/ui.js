@@ -4,7 +4,7 @@ import {
   deleteBehavior,
   updateBehavior,
   saveDiaryEntries,
-  getDiaryEntriesByDate
+  getDiaryEntriesByDate,
 } from "./behaviors.js";
 
 // Функция для создания карточки поведения
@@ -113,24 +113,28 @@ function createBehaviorCard(behavior) {
   // Добавляем обработчики для кнопок
   if (isFillingMode) {
     // Обработчики для кнопок желания
-    const desireButtons = card.querySelectorAll('.scale-button[data-field="desire"]');
-    desireButtons.forEach(button => {
-      button.addEventListener('click', () => {
+    const desireButtons = card.querySelectorAll(
+      '.scale-button[data-field="desire"]'
+    );
+    desireButtons.forEach((button) => {
+      button.addEventListener("click", () => {
         // Убираем active у всех кнопок желания в этой карточке
-        desireButtons.forEach(btn => btn.classList.remove('active'));
+        desireButtons.forEach((btn) => btn.classList.remove("active"));
         // Добавляем active к нажатой кнопке
-        button.classList.add('active');
+        button.classList.add("active");
       });
     });
 
     // Обработчики для кнопок действия
-    const actionButtons = card.querySelectorAll('.scale-button[data-field="action"]');
-    actionButtons.forEach(button => {
-      button.addEventListener('click', () => {
+    const actionButtons = card.querySelectorAll(
+      '.scale-button[data-field="action"]'
+    );
+    actionButtons.forEach((button) => {
+      button.addEventListener("click", () => {
         // Убираем active у всех кнопок действия в этой карточке
-        actionButtons.forEach(btn => btn.classList.remove('active'));
+        actionButtons.forEach((btn) => btn.classList.remove("active"));
         // Добавляем active к нажатой кнопке
-        button.classList.add('active');
+        button.classList.add("active");
       });
     });
   }
@@ -162,17 +166,19 @@ function createBehaviorCard(behavior) {
 // Функция для добавления обработчиков кнопок в карточке поведения
 function addBehaviorCardHandlers(card) {
   // Обработчики для кнопок шкалы и булевых значений
-  card.querySelectorAll('.scale-button').forEach(button => {
-    button.addEventListener('click', () => {
+  card.querySelectorAll(".scale-button").forEach((button) => {
+    button.addEventListener("click", () => {
       // Находим все кнопки в той же группе
       const field = button.dataset.field;
-      const group = card.querySelectorAll(`.scale-button[data-field="${field}"]`);
-      
+      const group = card.querySelectorAll(
+        `.scale-button[data-field="${field}"]`
+      );
+
       // Убираем активный класс у всех кнопок в группе
-      group.forEach(btn => btn.classList.remove('active'));
-      
+      group.forEach((btn) => btn.classList.remove("active"));
+
       // Добавляем активный класс нажатой кнопке
-      button.classList.add('active');
+      button.classList.add("active");
     });
   });
 }
@@ -186,7 +192,7 @@ const skillOptionsTemplate = {
     "Старалась, смогла применить навыки, но они не помогли",
     "Старалась, смогла применить навыки, они помогли",
     "Использовала навыки, не стараясь (автоматически), они не помогли",
-    "Использовала навыки, не стараясь (автоматически), они помогли"
+    "Использовала навыки, не стараясь (автоматически), они помогли",
   ],
   masculine: [
     "Не думал о навыках и не использовал",
@@ -196,22 +202,22 @@ const skillOptionsTemplate = {
     "Старался, смог применить навыки, но они не помогли",
     "Старался, смог применить навыки, они помогли",
     "Использовал навыки, не стараясь (автоматически), они не помогли",
-    "Использовал навыки, не стараясь (автоматически), они помогли"
-  ]
+    "Использовал навыки, не стараясь (автоматически), они помогли",
+  ],
 };
 
 function getPreferredGender() {
-  return localStorage.getItem('preferredGender') || 'feminine';
+  return localStorage.getItem("preferredGender") || "feminine";
 }
 
 function setPreferredGender(gender) {
-  localStorage.setItem('preferredGender', gender);
+  localStorage.setItem("preferredGender", gender);
 }
 
 function updateSkillOptions(gender) {
   const radioButtons = document.querySelectorAll('input[name="skill-usage"]');
-  const labels = document.querySelectorAll('.skill-usage-option label');
-  
+  const labels = document.querySelectorAll(".skill-usage-option label");
+
   radioButtons.forEach((radio, index) => {
     labels[index].textContent = skillOptionsTemplate[gender][index];
   });
@@ -254,20 +260,24 @@ function createSkillUsageCard() {
 function createDateCard() {
   const dateCard = document.createElement("div");
   dateCard.className = "behavior-card date-card";
-  
+
   const weekDates = getWeekDates();
-  const dateButtons = weekDates.map(date => {
-    const dayName = date.toLocaleDateString('ru-RU', { weekday: 'short' });
-    const dayNumber = date.getDate();
-    const isToday = date.toDateString() === new Date().toDateString();
-    
-    return `
-      <button class="date-btn ${isToday ? 'active' : ''}" data-date="${date.toISOString().split('T')[0]}">
+  const dateButtons = weekDates
+    .map((date) => {
+      const dayName = date.toLocaleDateString("ru-RU", { weekday: "short" });
+      const dayNumber = date.getDate();
+      const isToday = date.toDateString() === new Date().toDateString();
+
+      return `
+      <button class="date-btn ${isToday ? "active" : ""}" data-date="${
+        date.toISOString().split("T")[0]
+      }">
         <span class="day-name">${dayName}</span>
         <span class="day-number">${dayNumber}</span>
       </button>
     `;
-  }).join('');
+    })
+    .join("");
 
   dateCard.innerHTML = `
     <div class="date-card-wrapper">
@@ -287,17 +297,17 @@ function createDateCard() {
   // Добавляем обработчики для кнопок выбора даты
   const dateButtonsElement = dateCard.querySelectorAll(".date-btn");
   const toggleInput = dateCard.querySelector(".toggle-control input");
-  
+
   dateButtonsElement.forEach((button) => {
     button.addEventListener("click", async () => {
       dateButtonsElement.forEach((btn) => btn.classList.remove("active"));
       button.classList.add("active");
-      
+
       // Проверяем, является ли выбранная дата сегодняшней
       const selectedDate = new Date(button.dataset.date);
       const today = new Date();
       const isToday = selectedDate.toDateString() === today.toDateString();
-      
+
       // Обновляем состояние свитчера
       toggleInput.checked = isToday;
 
@@ -317,19 +327,23 @@ function createStateCard() {
   card.className = "behavior-card state-card";
 
   const states = [
-    { id: 'emotional', name: 'Эмоциональное страдание' },
-    { id: 'physical', name: 'Физическое страдание' },
-    { id: 'pleasure', name: 'Удовольствие' }
+    { id: "emotional", name: "Эмоциональное страдание" },
+    { id: "physical", name: "Физическое страдание" },
+    { id: "pleasure", name: "Удовольствие" },
   ];
 
-  const stateInputs = states.map(state => {
-    const buttons = Array.from({ length: 6 }, (_, i) => `
+  const stateInputs = states
+    .map((state) => {
+      const buttons = Array.from(
+        { length: 6 },
+        (_, i) => `
       <button class="scale-button" data-field="${state.id}" data-value="${i}" title="${i}">
         <span class="scale-value">${i}</span>
       </button>
-    `).join('');
+    `
+      ).join("");
 
-    return `
+      return `
       <div class="state-row behavior-scale">
         <div class="behavior-info">
           <span class="behavior-name">${state.name}</span>
@@ -339,7 +353,8 @@ function createStateCard() {
         </div>
       </div>
     `;
-  }).join('');
+    })
+    .join("");
 
   card.innerHTML = `
     <div class="state-card-wrapper">
@@ -348,12 +363,14 @@ function createStateCard() {
   `;
 
   // Добавляем обработчики для кнопок
-  states.forEach(state => {
-    const buttons = card.querySelectorAll(`.scale-button[data-field="${state.id}"]`);
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        buttons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
+  states.forEach((state) => {
+    const buttons = card.querySelectorAll(
+      `.scale-button[data-field="${state.id}"]`
+    );
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        buttons.forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
       });
     });
   });
@@ -365,14 +382,14 @@ function createStateCard() {
 function getWeekDates() {
   const dates = [];
   const today = new Date();
-  
+
   // Получаем даты для последних 7 дней
   for (let i = 6; i >= 0; i--) {
     const date = new Date();
     date.setDate(today.getDate() - i);
     dates.push(date);
   }
-  
+
   return dates;
 }
 
@@ -453,7 +470,7 @@ async function displayBehaviors() {
       const saveButton = saveCard.querySelector(".save-diary-btn");
       saveButton.addEventListener("click", async () => {
         const data = await collectDiaryData();
-        
+
         if (data) {
           try {
             const result = await saveDiaryEntries(data.date, data);
@@ -473,10 +490,14 @@ async function displayBehaviors() {
             }, 2000);
           } catch (error) {
             console.error("Ошибка при сохранении дневника:", error);
-            alert("Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
+            alert(
+              "Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков."
+            );
           }
         } else {
-          alert("Нет данных для сохранения. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков.");
+          alert(
+            "Нет данных для сохранения. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков."
+          );
         }
       });
 
@@ -694,7 +715,9 @@ async function collectDiaryData() {
   const cards = document.querySelectorAll(".behavior-card");
   const dateButton = document.querySelector(".date-btn.active");
   const isFilledToday = document.querySelector(".toggle-control input").checked;
-  const skillUsageRadio = document.querySelector('input[name="skill-usage"]:checked');
+  const skillUsageRadio = document.querySelector(
+    'input[name="skill-usage"]:checked'
+  );
 
   // Получаем все поведения для определения их типов
   const allBehaviors = await getAllBehaviors();
@@ -705,16 +728,18 @@ async function collectDiaryData() {
   }
 
   // Собираем данные состояния
-  const stateCard = document.querySelector('.state-card');
+  const stateCard = document.querySelector(".state-card");
   const states = {
     emotional: null,
     physical: null,
-    pleasure: null
+    pleasure: null,
   };
 
   if (stateCard) {
-    ['emotional', 'physical', 'pleasure'].forEach(stateId => {
-      const activeButton = stateCard.querySelector(`.scale-button[data-field="${stateId}"].active`);
+    ["emotional", "physical", "pleasure"].forEach((stateId) => {
+      const activeButton = stateCard.querySelector(
+        `.scale-button[data-field="${stateId}"].active`
+      );
       if (activeButton) {
         states[stateId] = parseInt(activeButton.dataset.value);
       }
@@ -722,12 +747,14 @@ async function collectDiaryData() {
   }
 
   // Собираем данные с каждой карточки поведения
-  cards.forEach(card => {
+  cards.forEach((card) => {
     // Пропускаем служебные карточки
-    if (card.classList.contains("date-card") || 
-        card.classList.contains("skill-usage-card") || 
-        card.classList.contains("save-card") ||
-        card.classList.contains("state-card")) {
+    if (
+      card.classList.contains("date-card") ||
+      card.classList.contains("skill-usage-card") ||
+      card.classList.contains("save-card") ||
+      card.classList.contains("state-card")
+    ) {
       return;
     }
 
@@ -735,21 +762,32 @@ async function collectDiaryData() {
     const behaviorHeader = card.querySelector(".behavior-header");
     if (!behaviorHeader) return;
 
-    const behaviorId = parseInt(behaviorHeader.querySelector("button").dataset.id);
-    const behaviorName = behaviorHeader.querySelector(".behavior-name").textContent.trim();
-    const behavior = allBehaviors.find(b => b.id === behaviorId);
-    const desireButton = card.querySelector('.scale-button[data-field="desire"].active');
-    const actionControl = card.querySelector('.scale-button[data-field="action"].active, .behavior-value[data-field="action"]');
+    const behaviorId = parseInt(
+      behaviorHeader.querySelector("button").dataset.id
+    );
+    const behaviorName = behaviorHeader
+      .querySelector(".behavior-name")
+      .textContent.trim();
+    const behavior = allBehaviors.find((b) => b.id === behaviorId);
+    const desireButton = card.querySelector(
+      '.scale-button[data-field="desire"].active'
+    );
+    const actionControl = card.querySelector(
+      '.scale-button[data-field="action"].active, .behavior-value[data-field="action"]'
+    );
 
     // Если хотя бы одно поле заполнено, добавляем запись
-    if (desireButton || (actionControl && (actionControl.value || actionControl.dataset.value))) {
+    if (
+      desireButton ||
+      (actionControl && (actionControl.value || actionControl.dataset.value))
+    ) {
       let action = null;
       if (actionControl) {
-        if (behavior.type === 'boolean') {
-          action = actionControl.dataset.value === 'true';
-        } else if (behavior.type === 'scale') {
+        if (behavior.type === "boolean") {
+          action = actionControl.dataset.value === "true";
+        } else if (behavior.type === "scale") {
           action = parseInt(actionControl.dataset.value);
-        } else if (behavior.type === 'text') {
+        } else if (behavior.type === "text") {
           action = actionControl.value.trim();
         }
       }
@@ -759,14 +797,18 @@ async function collectDiaryData() {
         name: behaviorName,
         type: behavior.type,
         desire: desireButton ? parseInt(desireButton.dataset.value) : null,
-        action
+        action,
       });
     }
   });
 
   // Проверяем, есть ли хоть какие-то данные для сохранения
-  const hasStates = Object.values(states).some(value => value !== null);
-  const hasData = behaviors.length > 0 || skillUsageRadio?.value || isFilledToday || hasStates;
+  const hasStates = Object.values(states).some((value) => value !== null);
+  const hasData =
+    behaviors.length > 0 ||
+    skillUsageRadio?.value ||
+    isFilledToday ||
+    hasStates;
 
   if (!hasData) {
     return null;
@@ -777,7 +819,7 @@ async function collectDiaryData() {
     isFilledToday,
     skillUsage: skillUsageRadio ? parseInt(skillUsageRadio.value) : null,
     behaviors,
-    states
+    states,
   };
 }
 
@@ -791,7 +833,7 @@ async function loadExistingDiaryEntry(date) {
     }
 
     const entry = await getDiaryEntriesByDate(date);
-    
+
     if (entry) {
       // Показываем уведомление о редактировании
       const notification = document.createElement("div");
@@ -799,13 +841,17 @@ async function loadExistingDiaryEntry(date) {
       const formattedDate = new Date(date);
       notification.innerHTML = `
         <i class="ri-edit-line"></i>
-        <span>Вы редактируете существующую запись за ${formatDate(formattedDate)}</span>
+        <span>Вы редактируете существующую запись за ${formatDate(
+          formattedDate
+        )}</span>
       `;
-      
-      document.querySelector(".behavior-cards").insertBefore(
-        notification,
-        document.querySelector(".behavior-cards").firstChild
-      );
+
+      document
+        .querySelector(".behavior-cards")
+        .insertBefore(
+          notification,
+          document.querySelector(".behavior-cards").firstChild
+        );
 
       // Устанавливаем значение переключателя заполнения
       const filledToggle = document.querySelector(".toggle-control input");
@@ -815,18 +861,25 @@ async function loadExistingDiaryEntry(date) {
 
       // Загружаем состояния
       if (entry.states) {
-        const stateCard = document.querySelector('.state-card');
+        const stateCard = document.querySelector(".state-card");
         if (stateCard) {
-          ['emotional', 'physical', 'pleasure'].forEach(stateId => {
-            if (entry.states[stateId] !== null && entry.states[stateId] !== undefined) {
-              const stateButton = stateCard.querySelector(`.scale-button[data-field="${stateId}"][data-value="${entry.states[stateId]}"]`);
+          ["emotional", "physical", "pleasure"].forEach((stateId) => {
+            if (
+              entry.states[stateId] !== null &&
+              entry.states[stateId] !== undefined
+            ) {
+              const stateButton = stateCard.querySelector(
+                `.scale-button[data-field="${stateId}"][data-value="${entry.states[stateId]}"]`
+              );
               if (stateButton) {
                 // Сначала убираем active у всех кнопок этого состояния
-                stateCard.querySelectorAll(`.scale-button[data-field="${stateId}"]`).forEach(btn => {
-                  btn.classList.remove('active');
-                });
+                stateCard
+                  .querySelectorAll(`.scale-button[data-field="${stateId}"]`)
+                  .forEach((btn) => {
+                    btn.classList.remove("active");
+                  });
                 // Затем добавляем active нужной кнопке
-                stateButton.classList.add('active');
+                stateButton.classList.add("active");
               }
             }
           });
@@ -835,86 +888,120 @@ async function loadExistingDiaryEntry(date) {
 
       // Устанавливаем значение использования навыков
       if (entry.skillUsage !== undefined && entry.skillUsage !== null) {
-        const skillRadio = document.querySelector(`input[name="skill-usage"][value="${entry.skillUsage}"]`);
+        const skillRadio = document.querySelector(
+          `input[name="skill-usage"][value="${entry.skillUsage}"]`
+        );
         if (skillRadio) {
           skillRadio.checked = true;
         }
       }
 
       // Устанавливаем значения для каждого поведения
-      entry.behaviors.forEach(behaviorEntry => {
-        const card = document.querySelector(`.behavior-card button[data-id="${behaviorEntry.behaviorId}"]`)?.closest('.behavior-card');
+      entry.behaviors.forEach((behaviorEntry) => {
+        const card = document
+          .querySelector(
+            `.behavior-card button[data-id="${behaviorEntry.behaviorId}"]`
+          )
+          ?.closest(".behavior-card");
         if (!card) return;
 
         // Устанавливаем значение desire если есть
-        if (behaviorEntry.desire !== null && behaviorEntry.desire !== undefined) {
+        if (
+          behaviorEntry.desire !== null &&
+          behaviorEntry.desire !== undefined
+        ) {
           // Сначала убираем active у всех кнопок desire
-          card.querySelectorAll('.scale-button[data-field="desire"]').forEach(btn => {
-            btn.classList.remove('active');
-          });
+          card
+            .querySelectorAll('.scale-button[data-field="desire"]')
+            .forEach((btn) => {
+              btn.classList.remove("active");
+            });
           // Затем добавляем active нужной кнопке
-          const desireButton = card.querySelector(`.scale-button[data-field="desire"][data-value="${behaviorEntry.desire}"]`);
+          const desireButton = card.querySelector(
+            `.scale-button[data-field="desire"][data-value="${behaviorEntry.desire}"]`
+          );
           if (desireButton) {
-            desireButton.classList.add('active');
+            desireButton.classList.add("active");
           }
         }
 
         // Устанавливаем значение action если есть
-        if (behaviorEntry.action !== null && behaviorEntry.action !== undefined) {
-          if (behaviorEntry.type === 'boolean') {
+        if (
+          behaviorEntry.action !== null &&
+          behaviorEntry.action !== undefined
+        ) {
+          if (behaviorEntry.type === "boolean") {
             // Сначала убираем active у всех кнопок action
-            card.querySelectorAll('.scale-button[data-field="action"]').forEach(btn => {
-              btn.classList.remove('active');
-            });
+            card
+              .querySelectorAll('.scale-button[data-field="action"]')
+              .forEach((btn) => {
+                btn.classList.remove("active");
+              });
             // Затем добавляем active нужной кнопке
-            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`);
+            const actionButton = card.querySelector(
+              `.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`
+            );
             if (actionButton) {
-              actionButton.classList.add('active');
+              actionButton.classList.add("active");
             }
-          } else if (behaviorEntry.type === 'scale') {
+          } else if (behaviorEntry.type === "scale") {
             // Сначала убираем active у всех кнопок action
-            card.querySelectorAll('.scale-button[data-field="action"]').forEach(btn => {
-              btn.classList.remove('active');
-            });
+            card
+              .querySelectorAll('.scale-button[data-field="action"]')
+              .forEach((btn) => {
+                btn.classList.remove("active");
+              });
             // Затем добавляем active нужной кнопке
-            const actionButton = card.querySelector(`.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`);
+            const actionButton = card.querySelector(
+              `.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`
+            );
             if (actionButton) {
-              actionButton.classList.add('active');
+              actionButton.classList.add("active");
             }
-          } else if (behaviorEntry.type === 'text') {
-            const actionInput = card.querySelector('.behavior-value[data-field="action"]');
+          } else if (behaviorEntry.type === "text") {
+            const actionInput = card.querySelector(
+              '.behavior-value[data-field="action"]'
+            );
             if (actionInput) {
               actionInput.value = behaviorEntry.action;
             }
           }
         }
       });
-
     } else {
       // Если записи нет, сбрасываем все значения
       // Устанавливаем переключатель заполнения в зависимости от даты
       const filledToggle = document.querySelector(".toggle-control input");
-      filledToggle.checked = new Date(date).toDateString() === new Date().toDateString();
+      filledToggle.checked =
+        new Date(date).toDateString() === new Date().toDateString();
 
       // Сбрасываем радио-кнопки использования навыков
-      document.querySelectorAll('input[name="skill-usage"]').forEach(radio => {
-        radio.checked = false;
-      });
+      document
+        .querySelectorAll('input[name="skill-usage"]')
+        .forEach((radio) => {
+          radio.checked = false;
+        });
 
       // Сбрасываем все активные кнопки состояний
-      document.querySelectorAll('.state-card .scale-button.active').forEach(button => {
-        button.classList.remove('active');
-      });
+      document
+        .querySelectorAll(".state-card .scale-button.active")
+        .forEach((button) => {
+          button.classList.remove("active");
+        });
 
       // Сбрасываем все активные кнопки поведений
-      document.querySelectorAll('.behavior-card .scale-button.active').forEach(button => {
-        button.classList.remove('active');
-      });
+      document
+        .querySelectorAll(".behavior-card .scale-button.active")
+        .forEach((button) => {
+          button.classList.remove("active");
+        });
 
       // Очищаем текстовые поля
-      document.querySelectorAll('.behavior-value[data-field="action"]').forEach(input => {
-        input.value = '';
-      });
+      document
+        .querySelectorAll('.behavior-value[data-field="action"]')
+        .forEach((input) => {
+          input.value = "";
+        });
     }
   } catch (error) {
     console.error("Ошибка при загрузке существующих данных:", error);
@@ -951,9 +1038,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Инициализация переключателя рода
   const genderToggle = document.getElementById("preferredGender");
   if (genderToggle) {
-    genderToggle.checked = getPreferredGender() === 'feminine';
+    genderToggle.checked = getPreferredGender() === "feminine";
     genderToggle.addEventListener("change", (e) => {
-      const gender = e.target.checked ? 'feminine' : 'masculine';
+      const gender = e.target.checked ? "feminine" : "masculine";
       setPreferredGender(gender);
       updateSkillOptions(gender);
     });
@@ -1001,9 +1088,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function formatDate(date) {
-  return date.toLocaleString('ru-RU', { 
-    day: 'numeric',
-    month: 'long',
-    monthDisplay: 'long'
-  }).replace(' г.', '');
+  return date
+    .toLocaleString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      monthDisplay: "long",
+    })
+    .replace(" г.", "");
 }
