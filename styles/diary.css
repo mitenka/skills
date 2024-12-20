@@ -254,3 +254,16 @@
 .state-row .scale-button.active .scale-value {
   color: white;
 }
+
+.download-button {
+  display: block;
+  padding: 10px 20px;
+  margin: 20px auto;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
