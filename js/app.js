@@ -421,6 +421,19 @@ function initInstallButton() {
   });
 }
 
+// Функция для форматирования даты
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return new Date(dateString).toLocaleDateString("ru-RU", options);
+}
+
+// Функция для форматирования значения
+function formatValue(value) {
+  if (value === undefined) return "Отсутствует";
+  if (typeof value === "boolean") return value ? "Да" : "Нет";
+  return value;
+}
+
 // Инициализация приложения
 import "./ui.js";
 
@@ -447,28 +460,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       entryElement.classList.add("diary-entry");
 
       const dateElement = document.createElement("h2");
-      dateElement.textContent = entry.date;
+      dateElement.textContent = formatDate(entry.date);
       entryElement.appendChild(dateElement);
 
       entry.behaviors.forEach((behavior) => {
         const behaviorElement = document.createElement("div");
         behaviorElement.classList.add("entry-item");
 
-        const nameElement = document.createElement("span");
+        const nameElement = document.createElement("div");
         nameElement.classList.add("entry-label");
         nameElement.textContent = behavior.name;
         behaviorElement.appendChild(nameElement);
 
-        const desireElement = document.createElement("span");
+        const desireElement = document.createElement("div");
         desireElement.classList.add("entry-value");
-        desireElement.textContent =
-          behavior.desire !== undefined ? behavior.desire : "Отсутствует";
+        desireElement.textContent = `Желание: ${formatValue(behavior.desire)}`;
         behaviorElement.appendChild(desireElement);
 
-        const actionElement = document.createElement("span");
+        const actionElement = document.createElement("div");
         actionElement.classList.add("entry-value");
-        actionElement.textContent =
-          behavior.action !== undefined ? behavior.action : "Отсутствует";
+        actionElement.textContent = `Действие: ${formatValue(behavior.action)}`;
         behaviorElement.appendChild(actionElement);
 
         entryElement.appendChild(behaviorElement);

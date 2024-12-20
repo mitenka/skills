@@ -1927,7 +1927,19 @@ input:checked + .slider:before {
 }
 
 .diary-entry .entry-item {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.diary-entry .entry-label {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+
+.diary-entry .entry-value {
+  color: var(--text-color-secondary);
+  margin-left: 0;
+  margin-bottom: 5px;
 }
 
 .diary-entry .entry-item:last-child {
