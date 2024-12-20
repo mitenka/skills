@@ -483,11 +483,6 @@ async function displayBehaviors() {
               }
             }
             showEncouragingMessage();
-            setTimeout(() => {
-              cleanupDiaryMode();
-              isFillingMode = false;
-              displayBehaviors();
-            }, 2000);
           } catch (error) {
             console.error("Ошибка при сохранении дневника:", error);
             alert(
@@ -1012,7 +1007,6 @@ async function loadExistingDiaryEntry(date) {
 async function activateFillDiaryMode() {
   isFillingMode = !isFillingMode; // Переключаем режим
   document.body.classList.toggle("diary-filling-mode", isFillingMode);
-  document.querySelector('.main-nav a[href="#diary"]').click();
   await displayBehaviors();
 
   // После отображения всех карточек загружаем данные для текущей даты
