@@ -827,6 +827,32 @@ async function loadExistingDiaryEntry(date) {
       existingNotification.remove();
     }
 
+    // Сбрасываем все значения перед загрузкой новых данных
+    const filledToggle = document.querySelector(".toggle-control input");
+    filledToggle.checked = false;
+
+    document.querySelectorAll('input[name="skill-usage"]').forEach((radio) => {
+      radio.checked = false;
+    });
+
+    document
+      .querySelectorAll(".state-card .scale-button.active")
+      .forEach((button) => {
+        button.classList.remove("active");
+      });
+
+    document
+      .querySelectorAll(".behavior-card .scale-button.active")
+      .forEach((button) => {
+        button.classList.remove("active");
+      });
+
+    document
+      .querySelectorAll('.behavior-value[data-field="action"]')
+      .forEach((input) => {
+        input.value = "";
+      });
+
     const entry = await getDiaryEntriesByDate(date);
 
     if (entry) {
@@ -849,7 +875,6 @@ async function loadExistingDiaryEntry(date) {
         );
 
       // Устанавливаем значение переключателя заполнения
-      const filledToggle = document.querySelector(".toggle-control input");
       if (filledToggle) {
         filledToggle.checked = entry.isFilledToday || false;
       }
@@ -867,13 +892,6 @@ async function loadExistingDiaryEntry(date) {
                 `.scale-button[data-field="${stateId}"][data-value="${entry.states[stateId]}"]`
               );
               if (stateButton) {
-                // Сначала убираем active у всех кнопок этого состояния
-                stateCard
-                  .querySelectorAll(`.scale-button[data-field="${stateId}"]`)
-                  .forEach((btn) => {
-                    btn.classList.remove("active");
-                  });
-                // Затем добавляем active нужной кнопке
                 stateButton.classList.add("active");
               }
             }
@@ -905,13 +923,6 @@ async function loadExistingDiaryEntry(date) {
           behaviorEntry.desire !== null &&
           behaviorEntry.desire !== undefined
         ) {
-          // Сначала убираем active у всех кнопок desire
-          card
-            .querySelectorAll('.scale-button[data-field="desire"]')
-            .forEach((btn) => {
-              btn.classList.remove("active");
-            });
-          // Затем добавляем active нужной кнопке
           const desireButton = card.querySelector(
             `.scale-button[data-field="desire"][data-value="${behaviorEntry.desire}"]`
           );
@@ -926,13 +937,6 @@ async function loadExistingDiaryEntry(date) {
           behaviorEntry.action !== undefined
         ) {
           if (behaviorEntry.type === "boolean") {
-            // Сначала убираем active у всех кнопок action
-            card
-              .querySelectorAll('.scale-button[data-field="action"]')
-              .forEach((btn) => {
-                btn.classList.remove("active");
-              });
-            // Затем добавляем active нужной кнопке
             const actionButton = card.querySelector(
               `.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`
             );
@@ -940,13 +944,6 @@ async function loadExistingDiaryEntry(date) {
               actionButton.classList.add("active");
             }
           } else if (behaviorEntry.type === "scale") {
-            // Сначала убираем active у всех кнопок action
-            card
-              .querySelectorAll('.scale-button[data-field="action"]')
-              .forEach((btn) => {
-                btn.classList.remove("active");
-              });
-            // Затем добавляем active нужной кнопке
             const actionButton = card.querySelector(
               `.scale-button[data-field="action"][data-value="${behaviorEntry.action}"]`
             );
@@ -963,40 +960,6 @@ async function loadExistingDiaryEntry(date) {
           }
         }
       });
-    } else {
-      // Если записи нет, сбрасываем все значения
-      // Устанавливаем переключатель заполнения в зависимости от даты
-      const filledToggle = document.querySelector(".toggle-control input");
-      filledToggle.checked =
-        new Date(date).toDateString() === new Date().toDateString();
-
-      // Сбрасываем радио-кнопки использования навыков
-      document
-        .querySelectorAll('input[name="skill-usage"]')
-        .forEach((radio) => {
-          radio.checked = false;
-        });
-
-      // Сбрасываем все активные кнопки состояний
-      document
-        .querySelectorAll(".state-card .scale-button.active")
-        .forEach((button) => {
-          button.classList.remove("active");
-        });
-
-      // Сбрасываем все активные кнопки поведений
-      document
-        .querySelectorAll(".behavior-card .scale-button.active")
-        .forEach((button) => {
-          button.classList.remove("active");
-        });
-
-      // Очищаем текстовые поля
-      document
-        .querySelectorAll('.behavior-value[data-field="action"]')
-        .forEach((input) => {
-          input.value = "";
-        });
     }
   } catch (error) {
     console.error("Ошибка при загрузке существующих данных:", error);
