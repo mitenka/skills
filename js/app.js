@@ -82,14 +82,14 @@ async function loadTheoryData() {
     const axiomsData = await axiomsResponse.json();
 
     renderTheoryBlocks(theoryData);
-    
+
     // Проверяем настройку отображения допущений
-    const showAssumptions = localStorage.getItem('showAssumptions') !== 'false';
+    const showAssumptions = localStorage.getItem("showAssumptions") !== "false";
     if (showAssumptions) {
       renderAxioms(axiomsData);
     } else {
       // Удаляем существующую карточку допущения, если она есть
-      const assumptionCard = document.querySelector('.assumption-card');
+      const assumptionCard = document.querySelector(".assumption-card");
       if (assumptionCard) {
         assumptionCard.remove();
       }
@@ -205,16 +205,16 @@ let previousAssumptionIndex = -1;
 
 function getRandomAssumption(assumptions) {
   if (!assumptions || assumptions.length === 0) return null;
-  
+
   // Если в массиве только одно допущение, возвращаем его
   if (assumptions.length === 1) return assumptions[0];
-  
+
   // Выбираем случайный индекс, исключая предыдущий
   let newIndex;
   do {
     newIndex = Math.floor(Math.random() * assumptions.length);
   } while (newIndex === previousAssumptionIndex);
-  
+
   // Сохраняем новый индекс как предыдущий
   previousAssumptionIndex = newIndex;
   return assumptions[newIndex];
@@ -223,13 +223,13 @@ function getRandomAssumption(assumptions) {
 // Отображение случайного допущения
 function renderAxioms(data) {
   if (!data.assumptions || data.assumptions.length === 0) return;
-  
-  const section = document.getElementById('theory');
+
+  const section = document.getElementById("theory");
   const randomAssumption = getRandomAssumption(data.assumptions);
   if (!randomAssumption) return;
-  
-  const container = document.createElement('div');
-  container.className = 'assumption-card';
+
+  const container = document.createElement("div");
+  container.className = "assumption-card";
   container.innerHTML = `
     <div class="assumption-header">
       <button class="refresh-button" aria-label="Показать следующее допущение">
@@ -241,18 +241,18 @@ function renderAxioms(data) {
   `;
 
   // Находим существующую карточку и заменяем её
-  const existingCard = section.querySelector('.assumption-card');
+  const existingCard = section.querySelector(".assumption-card");
   if (existingCard) {
     section.replaceChild(container, existingCard);
   } else {
     // Если карточки нет, добавляем её после заголовка
-    const title = section.querySelector('h1');
+    const title = section.querySelector("h1");
     title.after(container);
   }
 
   // Добавляем обработчик для кнопки обновления
-  const refreshButton = container.querySelector('.refresh-button');
-  refreshButton.addEventListener('click', () => {
+  const refreshButton = container.querySelector(".refresh-button");
+  refreshButton.addEventListener("click", () => {
     renderAxioms(data);
   });
 }
@@ -272,24 +272,24 @@ function showOfflineMessage() {
 
 // Инициализация настроек
 function initSettings() {
-  const showAssumptionsToggle = document.getElementById('showAssumptions');
+  const showAssumptionsToggle = document.getElementById("showAssumptions");
   if (showAssumptionsToggle) {
     // Устанавливаем начальное состояние
-    const showAssumptions = localStorage.getItem('showAssumptions') !== 'false';
+    const showAssumptions = localStorage.getItem("showAssumptions") !== "false";
     showAssumptionsToggle.checked = showAssumptions;
 
     // Добавляем обработчик изменений
-    showAssumptionsToggle.addEventListener('change', (e) => {
+    showAssumptionsToggle.addEventListener("change", (e) => {
       const showAssumptions = e.target.checked;
-      localStorage.setItem('showAssumptions', showAssumptions);
-      
+      localStorage.setItem("showAssumptions", showAssumptions);
+
       // Обновляем отображение допущений
-      const assumptionCard = document.querySelector('.assumption-card');
+      const assumptionCard = document.querySelector(".assumption-card");
       if (assumptionCard) {
         if (showAssumptions) {
           loadTheoryData(); // Перезагружаем данные для отображения допущения
         } else {
-          assumptionCard.style.display = 'none'; // Скрываем карточку допущения
+          assumptionCard.style.display = "none"; // Скрываем карточку допущения
         }
       } else if (showAssumptions) {
         loadTheoryData(); // Если карточки нет, но включили показ - загружаем данные
@@ -297,62 +297,68 @@ function initSettings() {
     });
   }
 
-  const showInstallButtonToggle = document.getElementById('showInstallButton');
+  const showInstallButtonToggle = document.getElementById("showInstallButton");
   if (showInstallButtonToggle) {
     // Устанавливаем начальное состояние
-    const showInstallButton = localStorage.getItem('showInstallButton') !== 'false';
+    const showInstallButton =
+      localStorage.getItem("showInstallButton") !== "false";
     showInstallButtonToggle.checked = showInstallButton;
-    
+
     // Применяем текущее состояние
-    const installButton = document.getElementById('installButton');
+    const installButton = document.getElementById("installButton");
     if (installButton) {
-      installButton.style.display = showInstallButton ? 'flex' : 'none';
+      installButton.style.display = showInstallButton ? "flex" : "none";
     }
 
     // Добавляем обработчик изменений
-    showInstallButtonToggle.addEventListener('change', (e) => {
+    showInstallButtonToggle.addEventListener("change", (e) => {
       const showInstallButton = e.target.checked;
-      localStorage.setItem('showInstallButton', showInstallButton);
-      
+      localStorage.setItem("showInstallButton", showInstallButton);
+
       // Обновляем отображение кнопки установки
-      const installButton = document.getElementById('installButton');
+      const installButton = document.getElementById("installButton");
       if (installButton) {
-        installButton.style.display = showInstallButton ? 'flex' : 'none';
+        installButton.style.display = showInstallButton ? "flex" : "none";
       }
     });
   }
 }
 
-import { db } from './db.js';
+import { db } from "./db.js";
+import { getAllDiaryEntries } from "./behaviors.js";
 
 // Функция для очистки всех данных
 async function clearAllData() {
-    try {
-        // Очищаем IndexedDB
-        await db.delete();
-        
-        // Очищаем localStorage
-        localStorage.clear();
-        
-        // Перезагружаем страницу для пересоздания базы данных
-        window.location.reload();
-    } catch (error) {
-        console.error('Ошибка при очистке данных:', error);
-        alert('Произошла ошибка при удалении данных. Попробуйте еще раз.');
-    }
+  try {
+    // Очищаем IndexedDB
+    await db.delete();
+
+    // Очищаем localStorage
+    localStorage.clear();
+
+    // Перезагружаем страницу для пересоздания базы данных
+    window.location.reload();
+  } catch (error) {
+    console.error("Ошибка при очистке данных:", error);
+    alert("Произошла ошибка при удалении данных. Попробуйте еще раз.");
+  }
 }
 
 // Обработчик для кнопки очистки данных
-document.getElementById('clearDataBtn')?.addEventListener('click', () => {
-    if (confirm('Вы уверены, что хотите удалить все данные? Это действие нельзя отменить.')) {
-        clearAllData();
-    }
+document.getElementById("clearDataBtn")?.addEventListener("click", () => {
+  if (
+    confirm(
+      "Вы уверены, что хотите удалить все данные? Это действие нельзя отменить."
+    )
+  ) {
+    clearAllData();
+  }
 });
 
 let deferredPrompt;
 
 // Обработка события beforeinstallprompt
-window.addEventListener('beforeinstallprompt', (e) => {
+window.addEventListener("beforeinstallprompt", (e) => {
   // Предотвращаем показ стандартного баннера установки
   e.preventDefault();
   // Сохраняем событие для последующего использования
@@ -361,10 +367,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 // Инициализация кнопки установки
 function initInstallButton() {
-  const installButton = document.getElementById('installButton');
+  const installButton = document.getElementById("installButton");
   if (!installButton) return;
 
-  installButton.addEventListener('click', async () => {
+  installButton.addEventListener("click", async () => {
     if (deferredPrompt) {
       // Браузер поддерживает установку
       try {
@@ -375,44 +381,99 @@ function initInstallButton() {
         // Очищаем сохраненное событие
         deferredPrompt = null;
       } catch (err) {
-        console.error('Ошибка при установке:', err);
+        console.error("Ошибка при установке:", err);
       }
     } else {
       // Браузер не поддерживает установку или приложение уже установлено
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isAndroid = /Android/.test(navigator.userAgent);
-      
-      let message = 'Как установить приложение на ваше устройство:\n\n';
-      
+
+      let message = "Как установить приложение на ваше устройство:\n\n";
+
       if (isIOS) {
-        message += '1. Нажмите кнопку "Поделиться" внизу экрана (значок квадратика со стрелочкой 📤)\n\n';
-        message += '2. В появившемся меню пролистайте нижний ряд иконок вправо, пока не увидите "На экран «Домой»"\n\n';
+        message +=
+          '1. Нажмите кнопку "Поделиться" внизу экрана (значок квадратика со стрелочкой 📤)\n\n';
+        message +=
+          '2. В появившемся меню пролистайте нижний ряд иконок вправо, пока не увидите "На экран «Домой»"\n\n';
         message += '3. Нажмите "На экран «Домой»", затем "Добавить"\n\n';
-        message += 'Готово! Теперь приложение будет доступно на главном экране вашего iPhone или iPad как обычное приложение 📱';
+        message +=
+          "Готово! Теперь приложение будет доступно на главном экране вашего iPhone или iPad как обычное приложение 📱";
       } else if (isAndroid) {
-        message += '1. Посмотрите вверх экрана. Справа вы увидите три точки ⋮ (меню браузера)\n\n';
-        message += '2. Нажмите на эти три точки\n\n';
-        message += '3. В появившемся меню найдите и нажмите "Установить приложение" или "Добавить на главный экран"\n\n';
-        message += 'Готово! Приложение появится на главном экране вашего телефона 📱';
+        message +=
+          "1. Посмотрите вверх экрана. Справа вы увидите три точки ⋮ (меню браузера)\n\n";
+        message += "2. Нажмите на эти три точки\n\n";
+        message +=
+          '3. В появившемся меню найдите и нажмите "Установить приложение" или "Добавить на главный экран"\n\n';
+        message +=
+          "Готово! Приложение появится на главном экране вашего телефона 📱";
       } else {
-        message += '1. Посмотрите в правый верхний угол браузера. Там вы увидите значок ⋮ или ⋯ (меню)\n\n';
-        message += '2. Нажмите на этот значок\n\n';
-        message += '3. Найдите в меню пункт "Установить приложение" или "Добавить на рабочий стол"\n\n';
-        message += 'Готово! Теперь вы сможете запускать приложение прямо с рабочего стола компьютера 🖥️';
+        message +=
+          "1. Посмотрите в правый верхний угол браузера. Там вы увидите значок ⋮ или ⋯ (меню)\n\n";
+        message += "2. Нажмите на этот значок\n\n";
+        message +=
+          '3. Найдите в меню пункт "Установить приложение" или "Добавить на рабочий стол"\n\n';
+        message +=
+          "Готово! Теперь вы сможете запускать приложение прямо с рабочего стола компьютера 🖥️";
       }
-      
+
       alert(message);
     }
   });
 }
 
 // Инициализация приложения
-import './ui.js';
+import "./ui.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initNavigation();
   loadTheoryData();
   registerServiceWorker();
   initSettings();
   initInstallButton();
+
+  const diaryPage = document.getElementById("diary");
+  const diaryHistoryContainer = document.createElement("div");
+  diaryHistoryContainer.classList.add("diary-history");
+  diaryPage.appendChild(diaryHistoryContainer);
+
+  const diaryEntries = await getAllDiaryEntries();
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  diaryEntries
+    .filter((entry) => new Date(entry.date) >= oneWeekAgo)
+    .forEach((entry) => {
+      const entryElement = document.createElement("div");
+      entryElement.classList.add("diary-entry");
+
+      const dateElement = document.createElement("h2");
+      dateElement.textContent = entry.date;
+      entryElement.appendChild(dateElement);
+
+      entry.behaviors.forEach((behavior) => {
+        const behaviorElement = document.createElement("div");
+        behaviorElement.classList.add("entry-item");
+
+        const nameElement = document.createElement("span");
+        nameElement.classList.add("entry-label");
+        nameElement.textContent = behavior.name;
+        behaviorElement.appendChild(nameElement);
+
+        const desireElement = document.createElement("span");
+        desireElement.classList.add("entry-value");
+        desireElement.textContent =
+          behavior.desire !== undefined ? behavior.desire : "Отсутствует";
+        behaviorElement.appendChild(desireElement);
+
+        const actionElement = document.createElement("span");
+        actionElement.classList.add("entry-value");
+        actionElement.textContent =
+          behavior.action !== undefined ? behavior.action : "Отсутствует";
+        behaviorElement.appendChild(actionElement);
+
+        entryElement.appendChild(behaviorElement);
+      });
+
+      diaryHistoryContainer.appendChild(entryElement);
+    });
 });

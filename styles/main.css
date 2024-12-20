@@ -1767,7 +1767,7 @@ input:checked + .slider:before {
 }
 
 .diary-button::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1849,7 +1849,7 @@ input:checked + .slider:before {
 }
 
 .diary-button::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1906,4 +1906,45 @@ input:checked + .slider:before {
   to {
     text-shadow: 0 0 10px rgba(255, 255, 255, 1);
   }
+}
+
+.diary-history {
+  margin-top: 20px;
+}
+
+.diary-entry {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.diary-entry h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+.diary-entry .entry-item {
+  margin-bottom: 10px;
+}
+
+.diary-entry .entry-item:last-child {
+  margin-bottom: 0;
+}
+
+.diary-entry .entry-label {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.diary-entry .entry-value {
+  color: var(--text-color-secondary);
+  margin-left: 5px;
+}
+
+.diary-entry .entry-value.undefined {
+  color: var(--text-color-secondary);
+  font-style: italic;
 }

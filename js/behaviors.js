@@ -48,14 +48,14 @@ export async function saveDiaryEntries(date, entries) {
     const result = await db.transaction("rw", db.diaryEntries, async () => {
       // Проверяем, существует ли уже запись за этот день
       const existingEntry = await db.diaryEntries.get(date);
-      
+
       // Создаем запись дневника, сохраняя все поля как есть
       const diaryEntry = {
         date,
         isFilledToday: entries.isFilledToday,
         skillUsage: entries.skillUsage,
         behaviors: entries.behaviors,
-        states: entries.states
+        states: entries.states,
       };
 
       // Сохраняем запись
@@ -66,10 +66,19 @@ export async function saveDiaryEntries(date, entries) {
     });
 
     return result; // Возвращаем результат транзакции
-
   } catch (error) {
     console.error("Ошибка при сохранении записей дневника:", error);
     throw error;
+  }
+}
+
+// Функция для получения всех записей дневника
+export async function getAllDiaryEntries() {
+  try {
+    return await db.diaryEntries.toArray();
+  } catch (error) {
+    console.error("Ошибка при получении записей дневника:", error);
+    return [];
   }
 }
 
