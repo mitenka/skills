@@ -455,6 +455,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   diaryEntries
     .filter((entry) => new Date(entry.date) >= oneWeekAgo)
+    .sort((a, b) => new Date(b.date) - new Date(a.date)) // Сортировка по убыванию даты
     .forEach((entry) => {
       const entryElement = document.createElement("div");
       entryElement.classList.add("diary-entry");
