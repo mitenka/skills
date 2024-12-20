@@ -464,6 +464,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       dateElement.textContent = formatDate(entry.date);
       entryElement.appendChild(dateElement);
 
+      // Добавляем отображение состояния заполнения дневника
+      const filledTodayElement = document.createElement("div");
+      filledTodayElement.classList.add("entry-filled-today");
+      filledTodayElement.style.backgroundColor = "#e0e0e0";
+      filledTodayElement.style.padding = "5px";
+      filledTodayElement.style.borderRadius = "5px";
+      filledTodayElement.style.marginBottom = "10px";
+      filledTodayElement.textContent = entry.isFilledToday
+        ? "Дневник заполнен сегодня? ✓"
+        : "Дневник заполнен сегодня? ✕";
+      entryElement.appendChild(filledTodayElement);
+
       // Добавляем отображение состояний на плашку
       const statesElement = document.createElement("div");
       statesElement.classList.add("entry-states");
