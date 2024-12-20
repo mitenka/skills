@@ -434,56 +434,6 @@ function formatValue(value) {
   return value;
 }
 
-// Функция для создания CSV из дневниковых записей
-function createCSV(entries) {
-  const header = [
-    "Дата",
-    "Заполнен сегодня",
-    "Эмоциональное состояние",
-    "Физическое состояние",
-    "Удовольствие",
-    "Поведение",
-    "Желание",
-    "Действие",
-  ];
-  const rows = entries.map((entry) => {
-    const date = formatDate(entry.date);
-    const filledToday = entry.isFilledToday ? "✓" : "✕";
-    const emotional = formatValue(entry.states.emotional);
-    const physical = formatValue(entry.states.physical);
-    const pleasure = formatValue(entry.states.pleasure);
-    const behaviors = entry.behaviors.map((behavior) => {
-      const name = behavior.name;
-      const desire = formatValue(behavior.desire);
-      const action = formatValue(behavior.action);
-      return [
-        date,
-        filledToday,
-        emotional,
-        physical,
-        pleasure,
-        name,
-        desire,
-        action,
-      ].join(",");
-    });
-    return behaviors.join("\n");
-  });
-  return [header.join(","), ...rows].join("\n");
-}
-
-// Функция для скачивания CSV файла
-function downloadCSV(entries) {
-  const csv = createCSV(entries);
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "diary_entries.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 // Инициализация приложения
 import "./ui.js";
 
@@ -497,16 +447,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const diaryPage = document.getElementById("diary");
   const diaryHistoryContainer = document.createElement("div");
   diaryHistoryContainer.classList.add("diary-history");
-
-  const downloadButton = document.createElement("button");
-  downloadButton.textContent = "Скачать дневник за последние семь дней";
-  downloadButton.classList.add("download-button");
-  downloadButton.addEventListener("click", () => {
-    downloadCSV(
-      diaryEntries.filter((entry) => new Date(entry.date) >= oneWeekAgo)
-    );
-  });
-  diaryPage.appendChild(downloadButton);
   diaryPage.appendChild(diaryHistoryContainer);
 
   const diaryEntries = await getAllDiaryEntries();
