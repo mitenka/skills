@@ -464,6 +464,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       dateElement.textContent = formatDate(entry.date);
       entryElement.appendChild(dateElement);
 
+      // Добавляем отображение состояний на плашку
+      const statesElement = document.createElement("div");
+      statesElement.classList.add("entry-states");
+      statesElement.style.backgroundColor = "#f0f0f0";
+      statesElement.style.padding = "10px";
+      statesElement.style.borderRadius = "5px";
+      statesElement.style.marginBottom = "10px";
+      statesElement.innerHTML = `
+        <div class="entry-state" style="font-weight: normal;">
+          Эмоциональное состояние: ${formatValue(entry.states.emotional)}
+        </div>
+        <div class="entry-state" style="font-weight: normal;">
+          Физическое состояние: ${formatValue(entry.states.physical)}
+        </div>
+        <div class="entry-state" style="font-weight: normal;">
+          Удовольствие: ${formatValue(entry.states.pleasure)}
+        </div>
+      `;
+      entryElement.appendChild(statesElement);
+
       entry.behaviors.forEach((behavior) => {
         const behaviorElement = document.createElement("div");
         behaviorElement.classList.add("entry-item");
