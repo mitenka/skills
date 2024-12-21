@@ -154,14 +154,9 @@ export async function exportToCSV(entries) {
     [""],
     [""],
     ["СПРАВКА: ШКАЛА ИСПОЛЬЗОВАНИЯ НАВЫКОВ"],
-    ['"0 – не думал о навыках и не использовал"'],
-    ['"1 – думал о навыках, не хотел применять, не использовал"'],
-    ['"2 – думал о навыках, хотел применить, но не использовал"'],
-    ['"3 – старался, но не смог применить навыки"'],
-    ['"4 – старался, смог применить навыки, но они не помогли"'],
-    ['"5 – старался, смог применить навыки, они помогли"'],
-    ['"6 – использовал навыки, не стараясь (автоматически), они не помогли"'],
-    ['"7 – использовал навыки, не стараясь (автоматически), они помогли"'],
+    ...skillOptionsTemplate[getPreferredGender()].map((text, index) => [
+      `"${index} – ${text}"`,
+    ]),
   ];
 
   // Преобразуем в строку CSV
@@ -284,16 +279,30 @@ function createExportPage(entries) {
         <h3>Справка по использованию навыков</h3>
         <div class="legend-grid">
           <div class="legend-column">
-            <div class="legend-item"><span class="legend-number">0</span> не думал(а) о навыках</div>
-            <div class="legend-item"><span class="legend-number">1</span> думал(а), но не хотел(а) применять</div>
-            <div class="legend-item"><span class="legend-number">2</span> хотел(а), но не применил(а)</div>
-            <div class="legend-item"><span class="legend-number">3</span> пытался(ась), не получилось</div>
+            ${skillOptionsTemplate[getPreferredGender()]
+              .slice(0, 4)
+              .map(
+                (text, index) => `
+                <div class="legend-item">
+                  <span class="legend-number">${index}</span>
+                  ${text[0].toUpperCase() + text.slice(1)}
+                </div>
+              `
+              )
+              .join("")}
           </div>
           <div class="legend-column">
-            <div class="legend-item"><span class="legend-number">4</span> применил(а), не помогло</div>
-            <div class="legend-item"><span class="legend-number">5</span> применил(а), помогло</div>
-            <div class="legend-item"><span class="legend-number">6</span> автоматически, не помогло</div>
-            <div class="legend-item"><span class="legend-number">7</span> автоматически, помогло</div>
+            ${skillOptionsTemplate[getPreferredGender()]
+              .slice(4)
+              .map(
+                (text, index) => `
+                <div class="legend-item">
+                  <span class="legend-number">${index + 4}</span>
+                  ${text[0].toUpperCase() + text.slice(1)}
+                </div>
+              `
+              )
+              .join("")}
           </div>
         </div>
       </div>
@@ -458,4 +467,31 @@ export async function exportScreenshot(entries) {
   } finally {
     document.body.removeChild(page);
   }
+}
+
+const skillOptionsTemplate = {
+  feminine: [
+    "не думала о навыках и не использовала",
+    "думала о навыках, не хотела применять, не использовала",
+    "думала о навыках, хотела применить, но не использовала",
+    "старалась, но не смогла применить навыки",
+    "старалась, смогла применить навыки, но они не помогли",
+    "старалась, смогла применить навыки, они помогли",
+    "использовала навыки, не стараясь (автоматически), они не помогли",
+    "использовала навыки, не стараясь (автоматически), они помогли",
+  ],
+  masculine: [
+    "не думал о навыках и не использовал",
+    "думал о навыках, не хотел применять, не использовал",
+    "думал о навыках, хотел применить, но не использовал",
+    "старался, но не смог применить навыки",
+    "старался, смог применить навыки, но они не помогли",
+    "старался, смог применить навыки, они помогли",
+    "использовал навыки, не стараясь (автоматически), они не помогли",
+    "использовал навыки, не стараясь (автоматически), они помогли",
+  ],
+};
+
+function getPreferredGender() {
+  return localStorage.getItem("preferredGender") || "feminine";
 }

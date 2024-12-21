@@ -2015,7 +2015,7 @@ input:checked + .slider:before {
 
 .diary-table .section-header {
   background: var(--card-background);
-  color: var(--primary-color);
+  color: var (--primary-color);
   font-weight: 600;
 }
 
@@ -2053,11 +2053,15 @@ input:checked + .slider:before {
 
 /* Стили для экспорта */
 .export-page {
-  background: var(--card-background);
+  background: var(--background-color);
   color: var(--text-color);
   border-radius: 12px;
+  font-family: system-ui, -apple-system, sans-serif;
   font-size: 14px;
   line-height: 1.4;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px;
 }
 
 .export-header {
@@ -2069,6 +2073,7 @@ input:checked + .slider:before {
   font-size: 24px;
   margin-bottom: 8px;
   color: var(--text-color);
+  font-weight: 600;
 }
 
 .export-period {
@@ -2080,15 +2085,11 @@ input:checked + .slider:before {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 24px;
-  background: var(--card-background);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  overflow: hidden;
 }
 
 .export-table th,
 .export-table td {
-  padding: 8px;
+  padding: 8px 12px;
   border: 1px solid var(--border-color);
   text-align: center;
 }
@@ -2145,32 +2146,6 @@ input:checked + .slider:before {
   gap: 12px;
   font-size: 14px;
   color: var(--text-color);
-}
-
-.export-legend {
-  background: var(--background-color);
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 24px;
-  font-size: 12px;
-}
-
-.export-legend h3 {
-  color: var(--primary-color);
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-
-.legend-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .legend-number {
