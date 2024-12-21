@@ -8,11 +8,19 @@ const FILES_TO_CACHE = [
   "/styles/main.css",
   "/styles/diary.css",
   "/js/app.js",
-  "/js/ui.js",
   "/js/behaviors.js",
   "/js/db.js",
   "/js/diary-history.js",
-  // Добавьте остальные нужные файлы
+  "/js/export-utils.js",
+  "/js/theme.js",
+  "/js/ui.js",
+  "/fonts/remixicon/remixicon.css",
+  "/fonts/remixicon/remixicon.ttf",
+  "/fonts/remixicon/remixicon.woff",
+  "/fonts/remixicon/remixicon.woff2",
+  "/data/assumptions.json",
+  "/data/dictionary.json",
+  "/data/theory.json",
 ];
 
 // При установке воркера
