@@ -273,7 +273,8 @@ function createExportPage(entries) {
             ${renderDailyValues(
               dates,
               entries,
-              (entry) => entry?.skillUsage ?? ""
+              (entry) => entry?.skillUsage ?? "",
+              () => false // Не выделяем ячейки в секции использования навыков
             )}
           </tr>
         </tbody>
@@ -314,13 +315,22 @@ function getLastWeekDates() {
   return dates;
 }
 
-function renderDailyValues(dates, entries, valueGetter) {
+export function renderDailyValues(
+  dates,
+  entries,
+  valueGetter,
+  highlightCondition = () => false // Условие по умолчанию
+) {
   return dates
     .map((date) => {
       const entry = entries.find(
         (e) => new Date(e.date).toDateString() === date.toDateString()
       );
-      return `<td class="center">${valueGetter(entry)}</td>`;
+      const value = valueGetter(entry);
+      const isHighlighted = highlightCondition(value);
+      return `<td class="center${
+        isHighlighted ? " highlight" : ""
+      }">${value}</td>`;
     })
     .join("");
 }
@@ -340,7 +350,8 @@ function renderStateRows(dates, entries) {
       ${renderDailyValues(
         dates,
         entries,
-        (entry) => entry?.states[state.id] ?? ""
+        (entry) => entry?.states[state.id] ?? "",
+        (value) => value === 4 || value === 5
       )}
     </tr>
   `
@@ -365,21 +376,28 @@ function renderBehaviorRows(dates, entries, type) {
       ([behaviorId, behaviorName]) => `
     <tr>
       <td>${behaviorName}</td>
-      ${renderDailyValues(dates, entries, (entry) => {
-        const behaviorEntry = entry?.behaviors.find(
-          (b) => b.behaviorId === behaviorId
-        );
-        if (!behaviorEntry) return "";
+      ${renderDailyValues(
+        dates,
+        entries,
+        (entry) => {
+          const behaviorEntry = entry?.behaviors.find(
+            (b) => b.behaviorId === behaviorId
+          );
+          if (!behaviorEntry) return "";
 
-        const value = behaviorEntry[type];
+          const value = behaviorEntry[type];
 
-        // Форматируем значение в зависимости от типа поведения
-        if (behaviorEntry.type === "boolean" && type === "action") {
-          return value ? "✓" : "✕";
-        } else {
-          return value ?? "";
-        }
-      })}
+          // Форматируем значение в зависимости от типа поведения
+          if (behaviorEntry.type === "boolean" && type === "action") {
+            return value ? "✓" : "✕";
+          } else {
+            return value ?? "";
+          }
+        },
+        (value) =>
+          (type === "desire" || type === "action") &&
+          (value === 4 || value === 5)
+      )}
     </tr>
   `
     )
