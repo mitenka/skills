@@ -1,4 +1,4 @@
-const CACHE_NAME = "dpt-skills-v10";
+const CACHE_NAME = "dpt-skills-v11";
 
 // При установке воркера
 self.addEventListener("install", (event) => {
