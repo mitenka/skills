@@ -2,8 +2,6 @@ import { db } from "./db.js";
 import { getAllDiaryEntries } from "./behaviors.js";
 import { exportToCSV } from "./export-utils.js";
 
-// Удалён импорт createPDF
-
 // Навигация
 function initNavigation() {
   const navLinks = document.querySelectorAll(".main-nav a");
