@@ -7,6 +7,8 @@ import {
   getDiaryEntriesByDate,
 } from "./behaviors.js";
 
+import { updateDiaryHistory } from "./diary-history.js";
+
 // Функция для создания карточки поведения
 function createBehaviorCard(behavior) {
   const card = document.createElement("div");
@@ -482,6 +484,7 @@ async function displayBehaviors() {
                 return;
               }
             }
+            await updateDiaryHistory(); // Обновляем историю после успешного сохранения
             showEncouragingMessage();
           } catch (error) {
             console.error("Ошибка при сохранении дневника:", error);

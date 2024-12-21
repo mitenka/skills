@@ -423,9 +423,12 @@ function initInstallButton() {
 }
 
 // Функция для форматирования даты
-function formatDate(dateString) {
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  return new Date(dateString).toLocaleDateString("ru-RU", options);
+export function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+  });
 }
 
 // Функция для форматирования значения
