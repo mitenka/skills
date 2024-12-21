@@ -191,8 +191,253 @@ function escapeCSV(value) {
 }
 
 function formatValue(value) {
-  if (value === undefined || value === null) return "·";
-  if (value === true) return "Да";
-  if (value === false) return "Нет";
+  if (value === undefined || value === null) return ""; // Меняем точку на пустую строку
+  if (value === true) return "✓";
+  if (value === false) return "✕";
   return value;
+}
+
+function createExportPage(entries) {
+  const container = document.createElement("div");
+  container.className = "export-page";
+
+  // Получаем даты
+  const dates = getLastWeekDates();
+
+  container.innerHTML = `
+    <div class="export-header">
+      <h1>Дневник наблюдений</h1>
+      <p class="export-period">
+        ${dates[0].toLocaleDateString("ru-RU")} — ${dates[
+    dates.length - 1
+  ].toLocaleDateString("ru-RU")}
+      </p>
+    </div>
+    <div class="export-content">
+      <table class="export-table">
+        <thead>
+          <tr>
+            <th class="column-name"></th>
+            ${dates
+              .map(
+                (d) => `
+              <th>
+                <div class="date-header">
+                  <div class="weekday">${d
+                    .toLocaleDateString("ru", { weekday: "short" })
+                    .toUpperCase()}</div>
+                  <div class="day">${d.getDate()}</div>
+                </div>
+              </th>
+            `
+              )
+              .join("")}
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Секция заполнения дневника -->
+          <tr class="section-row">
+            <td colspan="8">Отметка о заполнении дневника</td>
+          </tr>
+          <tr>
+            <td>Дневник заполнен сегодня?</td>
+            ${renderDailyValues(dates, entries, (entry) =>
+              entry?.isFilledToday ? "✓" : "✕"
+            )}
+          </tr>
+
+          <!-- Секция состояний -->
+          <tr class="section-row">
+            <td colspan="8">Состояние (0–5)</td>
+          </tr>
+          ${renderStateRows(dates, entries)}
+
+          <!-- Секция желаний -->
+          <tr class="section-row">
+            <td colspan="8">Желания, максимальная выраженность в течение дня (0–5)</td>
+          </tr>
+          ${renderBehaviorRows(dates, entries, "desire")}
+
+          <!-- Секция действий -->
+          <tr class="section-row">
+            <td colspan="8">Действия</td>
+          </tr>
+          ${renderBehaviorRows(dates, entries, "action")}
+
+          <!-- Секция навыков -->
+          <tr class="section-row">
+            <td colspan="8">Использованные навыки</td>
+          </tr>
+          <tr>
+            <td>Оценка (0–7)</td>
+            ${renderDailyValues(
+              dates,
+              entries,
+              (entry) => entry?.skillUsage ?? ""
+            )}
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="export-legend">
+        <h3>Справка по использованию навыков</h3>
+        <div class="legend-grid">
+          <div class="legend-column">
+            <div class="legend-item"><span class="legend-number">0</span> не думал(а) о навыках</div>
+            <div class="legend-item"><span class="legend-number">1</span> думал(а), но не хотел(а) применять</div>
+            <div class="legend-item"><span class="legend-number">2</span> хотел(а), но не применил(а)</div>
+            <div class="legend-item"><span class="legend-number">3</span> пытался(ась), не получилось</div>
+          </div>
+          <div class="legend-column">
+            <div class="legend-item"><span class="legend-number">4</span> применил(а), не помогло</div>
+            <div class="legend-item"><span class="legend-number">5</span> применил(а), помогло</div>
+            <div class="legend-item"><span class="legend-number">6</span> автоматически, не помогло</div>
+            <div class="legend-item"><span class="legend-number">7</span> автоматически, помогло</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return container;
+}
+
+// Вспомогательные функции для рендеринга
+function getLastWeekDates() {
+  const dates = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+    dates.push(date);
+  }
+  return dates;
+}
+
+function renderDailyValues(dates, entries, valueGetter) {
+  return dates
+    .map((date) => {
+      const entry = entries.find(
+        (e) => new Date(e.date).toDateString() === date.toDateString()
+      );
+      return `<td class="center">${valueGetter(entry)}</td>`;
+    })
+    .join("");
+}
+
+function renderStateRows(dates, entries) {
+  const states = [
+    { id: "emotional", name: "Эмоциональное страдание" },
+    { id: "physical", name: "Физическое страдание" },
+    { id: "pleasure", name: "Удовольствие" },
+  ];
+
+  return states
+    .map(
+      (state) => `
+    <tr>
+      <td>${state.name}</td>
+      ${renderDailyValues(
+        dates,
+        entries,
+        (entry) => entry?.states[state.id] ?? ""
+      )}
+    </tr>
+  `
+    )
+    .join("");
+}
+
+function renderBehaviorRows(dates, entries, type) {
+  // Собираем все уникальные поведения из всех записей
+  const allBehaviors = new Map();
+  entries.forEach((entry) => {
+    entry.behaviors.forEach((b) => allBehaviors.set(b.behaviorId, b.name));
+  });
+
+  // Преобразуем Map в массив и сортируем по id
+  const behaviors = Array.from(allBehaviors.entries()).sort(
+    (a, b) => a[0] - b[0]
+  );
+
+  return behaviors
+    .map(
+      ([behaviorId, behaviorName]) => `
+    <tr>
+      <td>${behaviorName}</td>
+      ${renderDailyValues(dates, entries, (entry) => {
+        const behaviorEntry = entry?.behaviors.find(
+          (b) => b.behaviorId === behaviorId
+        );
+        if (!behaviorEntry) return "";
+
+        const value = behaviorEntry[type];
+
+        // Форматируем значение в зависимости от типа поведения
+        if (behaviorEntry.type === "boolean" && type === "action") {
+          return value ? "✓" : "✕";
+        } else {
+          return value ?? "";
+        }
+      })}
+    </tr>
+  `
+    )
+    .join("");
+}
+
+export async function exportScreenshot(entries) {
+  const page = createExportPage(entries);
+  document.body.appendChild(page);
+
+  try {
+    const canvas = await html2canvas(page, {
+      backgroundColor: getComputedStyle(document.body).getPropertyValue(
+        "--background-color"
+      ),
+      scale: 2, // Увеличиваем масштаб для лучшего качества
+      useCORS: true,
+      logging: false,
+      onclone: (clonedDoc) => {
+        const clonedPage = clonedDoc.querySelector(".export-page");
+        if (clonedPage) {
+          // Устанавливаем фиксированную ширину и отступы для лучшей читаемости
+          clonedPage.style.width = "800px";
+          clonedPage.style.padding = "32px";
+          clonedPage.style.margin = "0";
+
+          // Делаем ячейки таблицы более компактными
+          const cells = clonedPage.querySelectorAll("td, th");
+          cells.forEach((cell) => {
+            cell.style.padding = "8px 12px";
+          });
+
+          // Уменьшаем отступы между секциями
+          const sections = clonedPage.querySelectorAll(".section-row");
+          sections.forEach((section) => {
+            section.style.paddingTop = "16px";
+          });
+        }
+      },
+    });
+
+    // Форматируем текущую дату для имени файла
+    const exportDate = new Date()
+      .toLocaleDateString("ru-RU", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .replace(/\./g, "-"); // Заменяем точки на тире
+
+    const link = document.createElement("a");
+    link.download = `Дневник_${exportDate}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } catch (error) {
+    console.error("Ошибка при создании скриншота:", error);
+    alert("Не удалось создать скриншот. Попробуйте другой способ экспорта.");
+  } finally {
+    document.body.removeChild(page);
+  }
 }
