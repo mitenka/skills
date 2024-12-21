@@ -14,12 +14,57 @@ export async function exportToCSV(entries) {
     dates.push(date);
   }
 
-  // Формируем строки CSV
+  // Получаем информацию о периоде
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - 6); // 6 дней назад для полных 7 дней с сегодняшним
+
+  // Форматируем даты для заголовка
+  const exportDate = today.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const periodStart = startDate.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const periodEnd = today.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  // Получаем дополнительную статистику
+  const totalDays = entries.length;
+  const daysWithEntries = entries.filter((e) => e.isFilledToday).length;
+  const totalBehaviors = entries.reduce(
+    (sum, entry) => sum + entry.behaviors.length,
+    0
+  );
+
+  // Считаем дополнительную статистику
+  const uniqueBehaviorsCount = behaviors.length;
+
+  // Формируем строки CSV с метаинформацией
   const csvRows = [
+    ["МЕТАИНФОРМАЦИЯ"],
+    [`Дата экспорта: ${exportDate}`],
+    [`Период: с ${periodStart} по ${periodEnd}`],
+    [`Отслеживается поведений: ${uniqueBehaviorsCount}`],
+    [""],
+    [""],
     // Заголовки колонок с датами
     [
       "",
-      ...dates.map((d) => d.toLocaleDateString("ru", { weekday: "short" })),
+      ...dates.map((d) =>
+        d.toLocaleDateString("ru", { weekday: "short" }).toUpperCase()
+      ),
     ].map(escapeCSV),
     // Секция заполнения дневника (теперь в одной строке)
     [
@@ -28,7 +73,7 @@ export async function exportToCSV(entries) {
         const entry = entries.find(
           (e) => new Date(e.date).toDateString() === date.toDateString()
         );
-        return escapeCSV(entry?.isFilledToday ? "да" : "нет");
+        return escapeCSV(entry?.isFilledToday ? "Да" : "Нет");
       }),
     ],
     // Пустая строка между секциями
@@ -90,6 +135,33 @@ export async function exportToCSV(entries) {
         return escapeCSV(formatValue(behavior?.action));
       }),
     ]),
+    // Пустая строка между секциями
+    [""],
+    // Секция использования навыков
+    ["ИСПОЛЬЗОВАННЫЕ НАВЫКИ"],
+    [
+      "",
+      ...dates.map((date) => {
+        const entry = entries.find(
+          (e) => new Date(e.date).toDateString() === date.toDateString()
+        );
+        return escapeCSV(formatValue(entry?.skillUsage));
+      }),
+    ],
+    [""],
+    [""],
+    // Добавляем легенду использования навыков с экранированием запятых
+    [""],
+    [""],
+    ["СПРАВКА: ШКАЛА ИСПОЛЬЗОВАНИЯ НАВЫКОВ"],
+    ['"0 – не думал о навыках и не использовал"'],
+    ['"1 – думал о навыках, не хотел применять, не использовал"'],
+    ['"2 – думал о навыках, хотел применить, но не использовал"'],
+    ['"3 – старался, но не смог применить навыки"'],
+    ['"4 – старался, смог применить навыки, но они не помогли"'],
+    ['"5 – старался, смог применить навыки, они помогли"'],
+    ['"6 – использовал навыки, не стараясь (автоматически), они не помогли"'],
+    ['"7 – использовал навыки, не стараясь (автоматически), они помогли"'],
   ];
 
   // Преобразуем в строку CSV
@@ -119,8 +191,8 @@ function escapeCSV(value) {
 }
 
 function formatValue(value) {
-  if (value === undefined || value === null) return "-";
-  if (value === true) return "да";
-  if (value === false) return "нет";
+  if (value === undefined || value === null) return "·";
+  if (value === true) return "Да";
+  if (value === false) return "Нет";
   return value;
 }
