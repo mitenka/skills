@@ -1,5 +1,5 @@
 export function createPDF(title, entries) {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  // Определяем Safari
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   const docDefinition = {
@@ -146,19 +146,11 @@ export function createPDF(title, entries) {
     },
   };
 
-  // Специальная обработка для iOS Safari
-  if (isIOS && isSafari) {
-    pdfMake.createPdf(docDefinition).getBase64((base64) => {
-      const url = `data:application/pdf;base64,${base64}`;
-      window.location.href = url;
-    });
-  }
-  // Для десктопного Safari
-  else if (isSafari) {
+  if (isSafari) {
+    // Для Safari открываем в новой вкладке
     pdfMake.createPdf(docDefinition).open();
-  }
-  // Для всех остальных браузеров
-  else {
+  } else {
+    // Для остальных браузеров - скачиваем
     pdfMake.createPdf(docDefinition).download(`${title}.pdf`);
   }
 }
