@@ -146,84 +146,19 @@ export function createPDF(title, entries) {
     },
   };
 
-  // Для iOS создаем HTML-версию для печати
-  if (isIOS) {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      alert("Пожалуйста, разрешите всплывающие окна для этого сайта");
-      return;
-    }
-
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${title}</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <style>
-            body { font-family: -apple-system, sans-serif; padding: 20px; }
-            .entry { margin-bottom: 30px; }
-            .entry-date { font-size: 18px; font-weight: bold; color: #2196F3; }
-            .entry-status { margin: 10px 0; }
-            .entry-states { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 8px; }
-            .behaviors { margin-top: 20px; }
-            .behavior-item { margin: 10px 0; }
-            @media print {
-              .no-print { display: none; }
-              body { padding: 0; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="no-print">
-            <p>Нажмите кнопку "Поделиться" и выберите "Сохранить PDF" или распечатайте эту страницу.</p>
-          </div>
-          <h1>${title}</h1>
-          ${entries
-            .map(
-              (entry) => `
-            <div class="entry">
-              <div class="entry-date">${formatDate(entry.date)}</div>
-              <div class="entry-status">
-                Дневник заполнен: ${entry.isFilledToday ? "Да" : "Нет"}
-              </div>
-              <div class="entry-states">
-                <div>Эмоциональное состояние: ${formatValue(
-                  entry.states.emotional
-                )}</div>
-                <div>Физическое состояние: ${formatValue(
-                  entry.states.physical
-                )}</div>
-                <div>Удовольствие: ${formatValue(entry.states.pleasure)}</div>
-              </div>
-              <div class="behaviors">
-                ${entry.behaviors
-                  .map(
-                    (b) => `
-                  <div class="behavior-item">
-                    <strong>${b.name}</strong>
-                    <div>Желание: ${formatValue(b.desire)}</div>
-                    <div>Действие: ${formatValue(b.action)}</div>
-                  </div>
-                `
-                  )
-                  .join("")}
-              </div>
-            </div>
-          `
-            )
-            .join("")}
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(html);
-    printWindow.document.close();
-  } else if (isSafari) {
-    // Для десктопного Safari открываем в новой вкладке
+  // Специальная обработка для iOS Safari
+  if (isIOS && isSafari) {
+    pdfMake.createPdf(docDefinition).getBase64((base64) => {
+      const url = `data:application/pdf;base64,${base64}`;
+      window.location.href = url;
+    });
+  }
+  // Для десктопного Safari
+  else if (isSafari) {
     pdfMake.createPdf(docDefinition).open();
-  } else {
-    // Для остальных браузеров скачиваем
+  }
+  // Для всех остальных браузеров
+  else {
     pdfMake.createPdf(docDefinition).download(`${title}.pdf`);
   }
 }
