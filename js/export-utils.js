@@ -33,6 +33,37 @@ export async function exportToCSV(entries) {
     ],
     // Пустая строка между секциями
     [""],
+    // Секция состояний
+    ["СОСТОЯНИЕ"],
+    [
+      "Эмоциональное страдание",
+      ...dates.map((date) => {
+        const entry = entries.find(
+          (e) => new Date(e.date).toDateString() === date.toDateString()
+        );
+        return escapeCSV(formatValue(entry?.states.emotional));
+      }),
+    ],
+    [
+      "Физическое страдание",
+      ...dates.map((date) => {
+        const entry = entries.find(
+          (e) => new Date(e.date).toDateString() === date.toDateString()
+        );
+        return escapeCSV(formatValue(entry?.states.physical));
+      }),
+    ],
+    [
+      "Удовольствие",
+      ...dates.map((date) => {
+        const entry = entries.find(
+          (e) => new Date(e.date).toDateString() === date.toDateString()
+        );
+        return escapeCSV(formatValue(entry?.states.pleasure));
+      }),
+    ],
+    // Пустая строка между секциями
+    [""],
     // Секция желаний
     ["ЖЕЛАНИЯ"],
     ...behaviors.map((name) => [
