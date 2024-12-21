@@ -1,4 +1,7 @@
 export function createPDF(title, entries) {
+  // Определяем Safari
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
   const docDefinition = {
     pageSize: "A4",
     pageMargins: [40, 60, 40, 60],
@@ -143,7 +146,13 @@ export function createPDF(title, entries) {
     },
   };
 
-  pdfMake.createPdf(docDefinition).download(`${title}.pdf`);
+  if (isSafari) {
+    // Для Safari открываем в новой вкладке
+    pdfMake.createPdf(docDefinition).open();
+  } else {
+    // Для остальных браузеров - скачиваем
+    pdfMake.createPdf(docDefinition).download(`${title}.pdf`);
+  }
 }
 
 function formatValue(value) {

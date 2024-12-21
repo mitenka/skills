@@ -536,6 +536,13 @@ async function exportToPDF() {
     return;
   }
 
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (isSafari) {
+    alert(
+      "PDF откроется в новой вкладке. Используйте кнопку 'Поделиться' для сохранения документа."
+    );
+  }
+
   const title = "Дневник самонаблюдения";
   const sortedEntries = diaryEntries.sort(
     (a, b) => new Date(b.date) - new Date(a.date)
