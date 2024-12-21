@@ -536,10 +536,16 @@ async function exportToPDF() {
     return;
   }
 
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  if (isSafari) {
+
+  if (isIOS && isSafari) {
     alert(
-      "PDF откроется в новой вкладке. Используйте кнопку 'Поделиться' для сохранения документа."
+      "Сейчас откроется PDF. Нажмите на '...' или значок 'Поделиться' для сохранения документа."
+    );
+  } else if (isSafari) {
+    alert(
+      "PDF откроется в новой вкладке. Используйте Cmd+S или меню File > Save для сохранения."
     );
   }
 
