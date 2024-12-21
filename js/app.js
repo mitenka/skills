@@ -326,6 +326,7 @@ function initSettings() {
 
 import { db } from "./db.js";
 import { getAllDiaryEntries } from "./behaviors.js";
+import { createPDF } from "./pdf-utils.js"; // Добавляем импорт
 
 // Функция для очистки всех данных
 async function clearAllData() {
@@ -520,4 +521,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       diaryHistoryContainer.appendChild(entryElement);
     });
+
+  // Добавляем обработчик для кнопки экспорта
+  document
+    .getElementById("exportDiaryBtn")
+    ?.addEventListener("click", exportToPDF);
 });
+
+async function exportToPDF() {
+  const diaryEntries = await getAllDiaryEntries();
+
+  if (diaryEntries.length === 0) {
+    alert("Нет записей для экспорта");
+    return;
+  }
+
+  const title = "Дневник самонаблюдения";
+  const sortedEntries = diaryEntries.sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
+  createPDF(title, sortedEntries);
+}
