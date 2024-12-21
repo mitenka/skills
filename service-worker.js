@@ -28,18 +28,17 @@ self.addEventListener("install", (event) => {
 // При активации воркера
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-      .then(() => self.clients.claim())
+    (async () => {
+      const keyList = await caches.keys();
+      await Promise.all(
+        keyList.map((key) => {
+          if (key.startsWith(BASE_CACHE_NAME) && key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+      await self.clients.claim();
+    })()
   );
 });
 
