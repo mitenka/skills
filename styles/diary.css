@@ -252,7 +252,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border-color);
-  background: var(--background-color);
+  background: var(--card-background);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -265,7 +265,7 @@
 }
 
 .state-row .scale-button:hover {
-  background: var(--hover-color);
+  background: var(--hover-background);
 }
 
 .state-row .scale-button.active {
@@ -274,5 +274,46 @@
 }
 
 .state-row .scale-button.active .scale-value {
-  color: white;
+  color: #ffffff;
+}
+
+/* Стили для истории дневника */
+.diary-entry {
+  margin-bottom: 20px;
+}
+
+.diary-entry h2 {
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.entry-filled-today {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 5px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.entry-states {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.entry-state {
+  font-weight: normal;
+  margin-bottom: 5px;
+  color: var(--text-color);
+}
+
+.entry-state:last-child {
+  margin-bottom: 0;
+}
+
+html[data-theme="dark"] .entry-filled-today,
+html[data-theme="dark"] .entry-states {
+  background-color: rgba(255, 255, 255, 0.05);
 }

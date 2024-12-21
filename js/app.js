@@ -468,10 +468,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Добавляем отображение состояния заполнения дневника
       const filledTodayElement = document.createElement("div");
       filledTodayElement.classList.add("entry-filled-today");
-      filledTodayElement.style.backgroundColor = "#e0e0e0";
-      filledTodayElement.style.padding = "5px";
-      filledTodayElement.style.borderRadius = "5px";
-      filledTodayElement.style.marginBottom = "10px";
       filledTodayElement.textContent = entry.isFilledToday
         ? "Дневник заполнен сегодня? ✓"
         : "Дневник заполнен сегодня? ✕";
@@ -480,18 +476,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Добавляем отображение состояний на плашку
       const statesElement = document.createElement("div");
       statesElement.classList.add("entry-states");
-      statesElement.style.backgroundColor = "#f0f0f0";
-      statesElement.style.padding = "10px";
-      statesElement.style.borderRadius = "5px";
-      statesElement.style.marginBottom = "10px";
       statesElement.innerHTML = `
-        <div class="entry-state" style="font-weight: normal;">
+        <div class="entry-state">
           Эмоциональное состояние: ${formatValue(entry.states.emotional)}
         </div>
-        <div class="entry-state" style="font-weight: normal;">
+        <div class="entry-state">
           Физическое состояние: ${formatValue(entry.states.physical)}
         </div>
-        <div class="entry-state" style="font-weight: normal;">
+        <div class="entry-state">
           Удовольствие: ${formatValue(entry.states.pleasure)}
         </div>
       `;
