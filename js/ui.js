@@ -259,6 +259,18 @@ function createSkillUsageCard() {
 }
 
 // Функция для создания карточки с датами
+function formatLocalDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function parseLocalDate(dateString) {
+  const [y, m, d] = dateString.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
 function createDateCard() {
   const dateCard = document.createElement("div");
   dateCard.className = "behavior-card date-card";
@@ -266,14 +278,15 @@ function createDateCard() {
   const weekDates = getWeekDates();
   const dateButtons = weekDates
     .map((date) => {
+      const dateValue = formatLocalDate(date);
       const dayName = date.toLocaleDateString("ru-RU", { weekday: "short" });
       const dayNumber = date.getDate();
-      const isToday = date.toDateString() === new Date().toDateString();
+      const isToday = dateValue === formatLocalDate(new Date());
 
       return `
-      <button class="date-btn ${isToday ? "active" : ""}" data-date="${
-        date.toISOString().split("T")[0]
-      }">
+      <button class="date-btn ${
+        isToday ? "active" : ""
+      }" data-date="${dateValue}">
         <span class="day-name">${dayName}</span>
         <span class="day-number">${dayNumber}</span>
       </button>
@@ -306,7 +319,7 @@ function createDateCard() {
       button.classList.add("active");
 
       // Проверяем, является ли выбранная дата сегодняшней
-      const selectedDate = new Date(button.dataset.date);
+      const selectedDate = parseLocalDate(button.dataset.date);
       const today = new Date();
       const isToday = selectedDate.toDateString() === today.toDateString();
 
@@ -822,7 +835,7 @@ async function collectDiaryData() {
 }
 
 // Функция для загрузки существующей записи дневника
-async function loadExistingDiaryEntry(date) {
+async function loadExistingDiaryEntry(dateStr) {
   try {
     // Удаляем предыдущее уведомление, если оно есть
     const existingNotification = document.querySelector(".edit-notification");
@@ -856,13 +869,13 @@ async function loadExistingDiaryEntry(date) {
         input.value = "";
       });
 
-    const entry = await getDiaryEntriesByDate(date);
+    const entry = await getDiaryEntriesByDate(dateStr);
 
     if (entry) {
       // Показываем уведомление о редактировании
       const notification = document.createElement("div");
       notification.className = "edit-notification";
-      const formattedDate = new Date(date);
+      const formattedDate = parseLocalDate(dateStr);
       notification.innerHTML = `
         <i class="ri-edit-line"></i>
         <span>Вы редактируете существующую запись за ${formatDate(
