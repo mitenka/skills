@@ -21,6 +21,18 @@ export async function exportToCSV(entries) {
       "",
       ...dates.map((d) => d.toLocaleDateString("ru", { weekday: "short" })),
     ].map(escapeCSV),
+    // Секция заполнения дневника (теперь в одной строке)
+    [
+      "ДНЕВНИК ЗАПОЛНЕН СЕГОДНЯ",
+      ...dates.map((date) => {
+        const entry = entries.find(
+          (e) => new Date(e.date).toDateString() === date.toDateString()
+        );
+        return escapeCSV(entry?.isFilledToday ? "да" : "нет");
+      }),
+    ],
+    // Пустая строка между секциями
+    [""],
     // Секция желаний
     ["ЖЕЛАНИЯ"],
     ...behaviors.map((name) => [
