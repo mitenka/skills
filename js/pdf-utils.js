@@ -1,5 +1,4 @@
 export function createPDF(title, entries) {
-  // Определяем Safari
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   const docDefinition = {
@@ -147,10 +146,8 @@ export function createPDF(title, entries) {
   };
 
   if (isSafari) {
-    // Для Safari открываем в новой вкладке
     pdfMake.createPdf(docDefinition).open();
   } else {
-    // Для остальных браузеров - скачиваем
     pdfMake.createPdf(docDefinition).download(`${title}.pdf`);
   }
 }
