@@ -111,19 +111,21 @@
       <section id="diary" class="page">
         <h1>Дневник</h1>
         <div class="diary-actions">
-          <button class="ios-action-button" id="fillDiaryBtn">
-            <span class="ios-button-icon"><i class="ri-edit-line"></i></span>
-            <span class="ios-button-label">Заполнить дневник</span>
-          </button>
-          <button class="ios-action-button" id="addBehaviorBtn">
-            <span class="ios-button-icon">+</span>
-            <span class="ios-button-label">Поведение</span>
-          </button>
-          <button class="ios-action-button" id="exportDiaryBtn">
+          <div class="primary-actions">
+            <button class="ios-action-button" id="fillDiaryBtn">
+              <span class="ios-button-icon"><i class="ri-edit-line"></i></span>
+              <span class="ios-button-label">Заполнить дневник</span>
+            </button>
+            <button class="ios-action-button" id="addBehaviorBtn">
+              <span class="ios-button-icon">+</span>
+              <span class="ios-button-label">Поведение</span>
+            </button>
+          </div>
+          <button class="ios-action-button secondary" id="exportDiaryBtn">
             <span class="ios-button-icon"
               ><i class="ri-file-download-line"></i
             ></span>
-            <span class="ios-button-label">Экспорт в PDF</span>
+            <span class="ios-button-label">Экспорт за последнюю неделю</span>
           </button>
         </div>
         <div class="behavior-cards"></div>
