@@ -1,4 +1,4 @@
-const CACHE_NAME = "dpt-skills-v8";
+const CACHE_NAME = "dpt-skills-v9";
 
 // При установке воркера
 self.addEventListener("install", (event) => {
@@ -28,7 +28,7 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   // Для CSS файлов используем StaleWhileRevalidate
-  if (event.request.url.endsWith('.css')) {
+  if (event.request.url.endsWith(".css")) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(event.request).then((cachedResponse) => {
