@@ -1,5 +1,7 @@
 import { db } from "./db.js";
 import { getAllDiaryEntries } from "./behaviors.js";
+import { exportToCSV } from "./export-utils.js";
+
 // Удалён импорт createPDF
 
 // Навигация
@@ -522,8 +524,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       diaryHistoryContainer.appendChild(entryElement);
     });
 
-  // Временно отключаем обработчик кнопки экспорта
-  /*document
+  // Добавляем обработчик для кнопки экспорта
+  document
     .getElementById("exportDiaryBtn")
-    ?.addEventListener("click", exportToPDF);*/
+    ?.addEventListener("click", async () => {
+      const diaryEntries = await getAllDiaryEntries();
+      if (diaryEntries.length === 0) {
+        alert("Нет записей для экспорта");
+        return;
+      }
+
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+      const recentEntries = diaryEntries.filter(
+        (entry) => new Date(entry.date) >= oneWeekAgo
+      );
+
+      exportToCSV(recentEntries);
+    });
 });
