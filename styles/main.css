@@ -904,9 +904,37 @@ html[data-theme="dark"] .theme-button:not(.active):hover {
 }
 
 .skill-title h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
-  color: var(--primary-color);
-  font-weight: bold;
+}
+
+.skill-youtube, .skill-vk {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+.skill-youtube {
+  color: #FF0000;
+}
+
+.skill-vk {
+  color: #0077FF;
+}
+
+.skill-youtube i, .skill-vk i {
+  font-size: 20px;
+}
+
+.skill-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
 }
 
 .skill-category {
@@ -1002,10 +1030,6 @@ html[data-theme="dark"] .theme-button:not(.active):hover {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-}
-
-.switch-label span {
-  color: var(--text-color);
 }
 
 .switch {
@@ -1307,11 +1331,6 @@ input:checked + .slider:before {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   margin: 1rem 0;
-}
-
-.empty-state p {
-  color: var(--text-color-secondary);
-  margin-bottom: 1rem;
 }
 
 .create-demo-card {

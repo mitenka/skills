@@ -159,6 +159,30 @@ function renderTheoryBlocks(data) {
                   </div>
                   <div class="skill-details">
                     ${renderPoints(skill.points)}
+                    ${(skill.youtube || skill.vk) ? `
+                      <div class="skill-links">
+                        ${skill.youtube ? `
+                          <a href="${skill.youtube}" 
+                             class="skill-youtube" 
+                             target="_blank" 
+                             rel="noopener noreferrer" 
+                             title="Посмотреть видео о навыке">
+                            <i class="ri-youtube-fill"></i>
+                            Посмотрите видео
+                          </a>
+                        ` : ''}
+                        ${skill.vk ? `
+                          <a href="${skill.vk}" 
+                             class="skill-vk" 
+                             target="_blank" 
+                             rel="noopener noreferrer" 
+                             title="Прочитать пост в VK">
+                            <i class="ri-vk-fill"></i>
+                            Прочитайте пост
+                          </a>
+                        ` : ''}
+                      </div>
+                    ` : ''}
                   </div>
                 </div>
               `
