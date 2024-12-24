@@ -259,18 +259,6 @@ function createSkillUsageCard() {
 }
 
 // Функция для создания карточки с датами
-function formatLocalDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function parseLocalDate(dateString) {
-  const [y, m, d] = dateString.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
-
 function createDateCard() {
   const dateCard = document.createElement("div");
   dateCard.className = "behavior-card date-card";
@@ -393,8 +381,22 @@ function createStateCard() {
   return card;
 }
 
+// Функция для форматирования даты
+export function formatLocalDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+// Функция для парсинга даты
+export function parseLocalDate(dateString) {
+  const [y, m, d] = dateString.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
 // Функция для получения дат недели
-function getWeekDates() {
+export function getWeekDates() {
   const dates = [];
   const today = new Date();
 

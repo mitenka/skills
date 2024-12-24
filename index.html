@@ -100,7 +100,13 @@
 
       <section id="practice" class="page">
         <h1>Практика</h1>
-        <p>Этот раздел пока в разработке.</p>
+        <div class="date-card-wrapper">
+          <div class="behavior-card date-card">
+            <div class="date-buttons">
+              <!-- Кнопки с датами будут добавлены через JavaScript -->
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="diary" class="page">
@@ -290,7 +296,8 @@
       type="module"
     ></script>
     <script src="js/theme.js" type="module"></script>
-    <script src="js/app.js" type="module"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/practice.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker
