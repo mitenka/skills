@@ -43,6 +43,13 @@ class BehaviorDatabase extends Dexie {
             diaryEntries: 'date, isFilledToday, skillUsage',
             practices: '++id, date, skill, timestamp'
         });
+
+        // Версия 3: Добавляем составной индекс для practices
+        this.version(3).stores({
+            behaviors: '++id, name, type',
+            diaryEntries: 'date, isFilledToday, skillUsage',
+            practices: '++id, date, skill, timestamp, [date+skill]'
+        });
     }
 }
 
