@@ -673,7 +673,7 @@ body.diary-filling-mode .behavior-cards {
   border-radius: 50%;
   top: 2px;
   left: 2px;
-  background: white;
+  background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }
@@ -1062,11 +1062,12 @@ html[data-theme="dark"] .theme-button:not(.active):hover {
   content: "";
   height: 18px;
   width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
   border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
 }
 
 input:checked + .slider {
@@ -2402,4 +2403,64 @@ input:checked + .slider:before {
   opacity: 0;
   color: var(--primary-color);
   transition: all 0.2s ease;
+}
+
+.export-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.export-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.skills-table {
+  margin-top: 24px;
+}
+
+.skills-table th[colspan="8"] {
+  background-color: var(--header-background);
+  color: var(--header-color);
+  font-weight: bold;
+  text-align: left;
+}
+
+.skills-table-header {
+  margin: 24px 0 16px;
+  font-size: 1.1em;
+  color: var(--text-color);
+}
+
+.skills-table {
+  margin-top: 0;
+}
+
+.skills-table .section-row td {
+  background-color: var(--header-background);
+  color: var(--header-color);
+  font-weight: bold;
+  text-align: left;
+  padding: 8px 12px;
+}
+
+.skills-table-header {
+  margin: 24px 0 16px;
+  font-size: 1.4em;
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.skills-table {
+  margin-top: 0;
+}
+
+.skills-table .section-row td {
+  background-color: var(--header-background);
+  color: var(--header-color);
+  font-weight: bold;
+  text-align: left;
+  padding: 8px 12px;
 }

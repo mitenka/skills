@@ -1,3 +1,6 @@
+// Импортируем Dexie
+import { db } from "./db.js";
+
 export async function exportToCSV(entries) {
   // Получаем все уникальные поведения
   const allBehaviors = new Set();
@@ -192,13 +195,73 @@ function formatValue(value) {
   return value;
 }
 
-function createExportPage(entries) {
+async function renderSkillsTable(dates) {
+  // Получаем все практики за указанный период
+  const startDate = dates[0].toISOString().split('T')[0];
+  const endDate = dates[dates.length - 1].toISOString().split('T')[0];
+  
+  console.log('Даты для поиска практик:', { startDate, endDate });
+  
+  // Получаем все практики за период
+  const practices = await db.practices
+    .where('date')
+    .between(startDate, endDate, true, true)
+    .toArray();
+
+  console.log('Найденные практики:', practices);
+
+  // Загружаем структуру навыков из theory.json
+  const response = await fetch('/data/theory.json');
+  const theory = await response.json();
+
+  return `
+    <h3 class="skills-table-header">Навыки: практика</h3>
+    <table class="export-table skills-table">
+      <thead>
+        <tr>
+          <th class="column-name"></th>
+          ${dates.map(d => `
+            <th>
+              <div class="date-header">
+                <div class="weekday">${d.toLocaleDateString('ru', { weekday: 'short' }).toUpperCase()}</div>
+                <div class="day">${d.getDate()}</div>
+              </div>
+            </th>
+          `).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${theory.blocks.map(block => `
+          <tr class="section-row">
+            <td colspan="8">${block.title}</td>
+          </tr>
+          ${block.skills.map(skill => `
+            <tr>
+              <td>${skill.name}</td>
+              ${dates.map(date => {
+                const dateStr = date.toISOString().split('T')[0];
+                const hasSkill = practices.some(p => 
+                  p.date === dateStr && p.skill === skill.name
+                );
+                return `<td>${hasSkill ? '✓' : ''}</td>`;
+              }).join('')}
+            </tr>
+          `).join('')}
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+async function createExportPage(entries) {
   const container = document.createElement("div");
   container.className = "export-page";
 
   // Получаем даты
   const dates = getLastWeekDates();
+  console.log('Даты для экспорта:', dates);
 
+  // Рендерим основную таблицу
   container.innerHTML = `
     <div class="export-header">
       <h1>Дневник наблюдений</h1>
@@ -209,7 +272,7 @@ function createExportPage(entries) {
       </p>
     </div>
     <div class="export-content">
-      <table class="export-table">
+      <table class="export-table main-table">
         <thead>
           <tr>
             <th class="column-name"></th>
@@ -309,10 +372,72 @@ function createExportPage(entries) {
     </div>
   `;
 
+  // Добавляем таблицу навыков
+  const skillsTable = await renderSkillsTable(dates);
+  console.log('Сгенерированная таблица навыков:', skillsTable);
+  if (skillsTable) {
+    container.querySelector('.export-content').insertAdjacentHTML('beforeend', skillsTable);
+  }
+
   return container;
 }
 
-// Вспомогательные функции для рендеринга
+export async function exportScreenshot(entries) {
+  const page = await createExportPage(entries);
+  document.body.appendChild(page);
+
+  try {
+    const canvas = await html2canvas(page, {
+      backgroundColor: getComputedStyle(document.body).getPropertyValue(
+        "--background-color"
+      ),
+      scale: 2, // Увеличиваем масштаб для лучшего качества
+      useCORS: true,
+      logging: false,
+      onclone: (clonedDoc) => {
+        const clonedPage = clonedDoc.querySelector(".export-page");
+        if (clonedPage) {
+          // Устанавливаем фиксированную ширину и отступы для лучшей читаемости
+          clonedPage.style.width = "800px";
+          clonedPage.style.padding = "32px";
+          clonedPage.style.margin = "0";
+
+          // Делаем ячейки таблицы более компактными
+          const cells = clonedPage.querySelectorAll("td, th");
+          cells.forEach((cell) => {
+            cell.style.padding = "8px 12px";
+          });
+
+          // Уменьшаем отступы между секциями
+          const sections = clonedPage.querySelectorAll(".section-row");
+          sections.forEach((section) => {
+            section.style.paddingTop = "16px";
+          });
+        }
+      },
+    });
+
+    // Форматируем текущую дату для имени файла
+    const exportDate = new Date()
+      .toLocaleDateString("ru-RU", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .replace(/\./g, "-"); // Заменяем точки на тире
+
+    const link = document.createElement("a");
+    link.download = `Дневник_${exportDate}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } catch (error) {
+    console.error("Ошибка при создании скриншота:", error);
+    alert("Не удалось создать скриншот. Попробуйте другой способ экспорта.");
+  } finally {
+    document.body.removeChild(page);
+  }
+}
+
 function getLastWeekDates() {
   const dates = [];
   const today = new Date();
@@ -324,7 +449,7 @@ function getLastWeekDates() {
   return dates;
 }
 
-export function renderDailyValues(
+function renderDailyValues(
   dates,
   entries,
   valueGetter,
@@ -411,62 +536,6 @@ function renderBehaviorRows(dates, entries, type) {
   `
     )
     .join("");
-}
-
-export async function exportScreenshot(entries) {
-  const page = createExportPage(entries);
-  document.body.appendChild(page);
-
-  try {
-    const canvas = await html2canvas(page, {
-      backgroundColor: getComputedStyle(document.body).getPropertyValue(
-        "--background-color"
-      ),
-      scale: 2, // Увеличиваем масштаб для лучшего качества
-      useCORS: true,
-      logging: false,
-      onclone: (clonedDoc) => {
-        const clonedPage = clonedDoc.querySelector(".export-page");
-        if (clonedPage) {
-          // Устанавливаем фиксированную ширину и отступы для лучшей читаемости
-          clonedPage.style.width = "800px";
-          clonedPage.style.padding = "32px";
-          clonedPage.style.margin = "0";
-
-          // Делаем ячейки таблицы более компактными
-          const cells = clonedPage.querySelectorAll("td, th");
-          cells.forEach((cell) => {
-            cell.style.padding = "8px 12px";
-          });
-
-          // Уменьшаем отступы между секциями
-          const sections = clonedPage.querySelectorAll(".section-row");
-          sections.forEach((section) => {
-            section.style.paddingTop = "16px";
-          });
-        }
-      },
-    });
-
-    // Форматируем текущую дату для имени файла
-    const exportDate = new Date()
-      .toLocaleDateString("ru-RU", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-      .replace(/\./g, "-"); // Заменяем точки на тире
-
-    const link = document.createElement("a");
-    link.download = `Дневник_${exportDate}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  } catch (error) {
-    console.error("Ошибка при создании скриншота:", error);
-    alert("Не удалось создать скриншот. Попробуйте другой способ экспорта.");
-  } finally {
-    document.body.removeChild(page);
-  }
 }
 
 const skillOptionsTemplate = {
