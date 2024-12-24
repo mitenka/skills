@@ -1062,12 +1062,11 @@ html[data-theme="dark"] .theme-button:not(.active):hover {
   content: "";
   height: 18px;
   width: 18px;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: 0.3s;
+  border-radius: 50%;
 }
 
 input:checked + .slider {
