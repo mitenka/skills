@@ -24,9 +24,24 @@ class BehaviorDatabase extends Dexie {
         //   - name - название поведения на момент записи
         //   - desire - уровень желания
         //   - action - предпринятое действие
+        //
+        // Таблица practices (добавлена в версии 2):
+        // ++id - автоинкрементное поле
+        // date - дата практики
+        // skill - название навыка
+        // timestamp - метка времени
+
+        // Версия 1: Исходная схема
         this.version(1).stores({
             behaviors: '++id, name, type',
             diaryEntries: 'date, isFilledToday, skillUsage'
+        });
+
+        // Версия 2: Добавляем таблицу practices
+        this.version(2).stores({
+            behaviors: '++id, name, type',
+            diaryEntries: 'date, isFilledToday, skillUsage',
+            practices: '++id, date, skill, timestamp'
         });
     }
 }

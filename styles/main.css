@@ -2252,3 +2252,74 @@ input:checked + .slider:before {
     print-color-adjust: exact;
   }
 }
+
+/* Стили для блоков навыков в практике */
+.skills-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.skills-block {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.skills-block-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--background-color);
+  border-radius: 8px;
+}
+
+.skill-name {
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.skill-toggle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.skill-toggle.active {
+  background: var(--primary-color);
+}
+
+.skill-toggle.active i {
+  color: white;
+  opacity: 1;
+}
+
+.skill-toggle i {
+  font-size: 16px;
+  opacity: 0;
+  color: var(--primary-color);
+  transition: all 0.2s ease;
+}
