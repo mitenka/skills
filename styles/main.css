@@ -2323,3 +2323,64 @@ input:checked + .slider:before {
   color: var(--primary-color);
   transition: all 0.2s ease;
 }
+
+.skill-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--background-color);
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.skill-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.skill-name {
+  font-size: 16px;
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+.skill-recap {
+  font-size: 13px;
+  color: var(--text-color);
+  opacity: 0.5;
+  line-height: 1.2;
+  margin-top: 1px;
+}
+
+.skill-toggle {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.skill-toggle.active {
+  background: var(--primary-color);
+}
+
+.skill-toggle.active i {
+  color: var(--background-color);
+  opacity: 1;
+}
+
+.skill-toggle i {
+  font-size: 16px;
+  opacity: 0;
+  color: var(--primary-color);
+  transition: all 0.2s ease;
+}

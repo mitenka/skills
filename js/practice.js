@@ -59,7 +59,10 @@ async function createSkillsBlocks(selectedDate) {
       <div class="skills-list">
         ${block.skills.map(skill => `
           <div class="skill-item">
-            <span class="skill-name">${skill.name}</span>
+            <div class="skill-info">
+              <span class="skill-name">${skill.name}</span>
+              ${skill.recap ? `<span class="skill-recap">${skill.recap}</span>` : ''}
+            </div>
             <button class="skill-toggle ${practicedSkills.has(skill.name) ? 'active' : ''}" 
                     data-skill="${skill.name}">
               <i class="ri-check-line"></i>
