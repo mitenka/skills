@@ -439,28 +439,37 @@ export async function exportScreenshot(entries, dates) {
           clonedPage.style.padding = "32px";
 
           // Адаптируем размеры ячеек в зависимости от количества дней
-          const cells = clonedPage.querySelectorAll("td, th");
-          if (dates.length >= 10) {
-            cells.forEach((cell) => {
-              cell.style.padding = "6px 8px";
-              cell.style.fontSize = "13px";
-            });
-
-            // Уменьшаем заголовки дней недели
-            const dayHeaders = clonedPage.querySelectorAll("th");
-            dayHeaders.forEach((header) => {
-              header.style.fontSize = "12px";
-            });
+          const cells = clonedPage.querySelectorAll("td:not(:first-child), th:not(:first-child)");
+          
+          // Определяем размеры в зависимости от количества дней
+          let cellWidth, cellPadding, fontSize;
+          if (dates.length >= 13) {
+            cellWidth = "38px";
+            cellPadding = "4px 6px";
+            fontSize = "11px";
+          } else if (dates.length >= 10) {
+            cellWidth = "45px";
+            cellPadding = "6px 8px";
+            fontSize = "12px";
           } else {
-            cells.forEach((cell) => {
-              cell.style.padding = "8px 12px";
-            });
+            cellWidth = "52px";
+            cellPadding = "8px 12px";
+            fontSize = "13px";
           }
 
-          // Уменьшаем отступы между секциями
-          const sections = clonedPage.querySelectorAll(".section-row");
-          sections.forEach((section) => {
-            section.style.paddingTop = dates.length >= 10 ? "12px" : "16px";
+          // Применяем стили
+          cells.forEach((cell) => {
+            cell.style.padding = cellPadding;
+            cell.style.fontSize = fontSize;
+            cell.style.width = cellWidth;
+            cell.style.minWidth = cellWidth;
+            cell.style.maxWidth = cellWidth;
+          });
+
+          // Уменьшаем заголовки дней недели
+          const dayHeaders = clonedPage.querySelectorAll("th");
+          dayHeaders.forEach((header) => {
+            header.style.fontSize = "12px";
           });
         }
       },
