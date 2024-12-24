@@ -234,7 +234,7 @@ async function renderSkillsTable(dates) {
       <tbody>
         ${theory.blocks.map(block => `
           <tr class="section-row">
-            <td colspan="8">${block.title}</td>
+            <td colspan="${dates.length + 1}">${block.title}</td>
           </tr>
           ${block.skills.map(skill => `
             <tr>
@@ -332,7 +332,7 @@ async function createExportPage(entries, dates) {
         <tbody>
           <!-- Секция заполнения дневника -->
           <tr class="section-row">
-            <td colspan="8">Отметка о заполнении дневника</td>
+            <td colspan="${dates.length + 1}">Отметка о заполнении дневника</td>
           </tr>
           <tr>
             <td>Дневник заполнен сегодня?</td>
@@ -343,25 +343,25 @@ async function createExportPage(entries, dates) {
 
           <!-- Секция состояний -->
           <tr class="section-row">
-            <td colspan="8">Состояние (0–5)</td>
+            <td colspan="${dates.length + 1}">Состояние (0–5)</td>
           </tr>
           ${renderStateRows(dates, entries)}
 
           <!-- Секция желаний -->
           <tr class="section-row">
-            <td colspan="8">Желания, максимальная выраженность в течение дня (0–5)</td>
+            <td colspan="${dates.length + 1}">Желания, максимальная выраженность в течение дня (0–5)</td>
           </tr>
           ${renderBehaviorRows(dates, entries, "desire")}
 
           <!-- Секция действий -->
           <tr class="section-row">
-            <td colspan="8">Действия</td>
+            <td colspan="${dates.length + 1}">Действия</td>
           </tr>
           ${renderBehaviorRows(dates, entries, "action")}
 
           <!-- Секция навыков -->
           <tr class="section-row">
-            <td colspan="8">Использованные навыки</td>
+            <td colspan="${dates.length + 1}">Использованные навыки</td>
           </tr>
           <tr>
             <td>Оценка (0–7)</td>
