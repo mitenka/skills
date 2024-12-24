@@ -129,7 +129,7 @@
             <span class="ios-button-icon"
               ><i class="ri-file-download-line"></i
             ></span>
-            <span class="ios-button-label">Сохранить дневник за неделю</span>
+            <span class="ios-button-label">Сохранить дневник</span>
           </button>
         </div>
         <div class="behavior-cards"></div>
@@ -158,6 +158,35 @@
             </div>
             <div class="behavior-type-hint" id="textHint">
               Свободное описание ситуации своими словами
+            </div>
+            <div class="modal-buttons">
+              <button class="cancel-button">Отмена</button>
+              <button class="save-button">Сохранить</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Модальное окно для экспорта дневника -->
+        <div class="modal" id="exportDiaryModal">
+          <div class="modal-content">
+            <h2>Сохранение дневника</h2>
+            <div class="export-days-control">
+              <label for="exportDays">За сколько дней сохранить:</label>
+              <div class="export-days-input">
+                <input
+                  type="number"
+                  id="exportDays"
+                  value="7"
+                  min="1"
+                  max="14"
+                />
+                <span>дней</span>
+              </div>
+              <div class="export-days-links">
+                <a href="#" class="dotted-link" data-days="7">За неделю</a>
+                <span class="dot-separator">·</span>
+                <a href="#" class="dotted-link" data-days="14">Две недели</a>
+              </div>
             </div>
             <div class="modal-buttons">
               <button class="cancel-button">Отмена</button>

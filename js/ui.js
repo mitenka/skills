@@ -8,6 +8,8 @@ import {
 } from "./behaviors.js";
 
 import { updateDiaryHistory } from "./diary-history.js";
+import { db } from "./db.js";
+import { exportDiaryToImage } from "./export-utils.js";
 
 // Функция для создания карточки поведения
 function createBehaviorCard(behavior) {
@@ -999,6 +1001,41 @@ async function activateFillDiaryMode() {
   }
 }
 
+// Функция для открытия модального окна экспорта
+function openExportModal() {
+  const modal = document.getElementById("exportDiaryModal");
+  const input = document.getElementById("exportDays");
+
+  // Устанавливаем значение по умолчанию - 7 дней
+  input.value = "7";
+
+  modal.style.display = "flex";
+}
+
+// Функция для закрытия модального окна экспорта
+function closeExportModal() {
+  const modal = document.getElementById("exportDiaryModal");
+  modal.style.display = "none";
+}
+
+// Функция для сохранения дневника
+async function exportDiary() {
+  const input = document.getElementById("exportDays");
+  const days = parseInt(input.value);
+
+  // Проверяем корректность введенного значения
+  if (isNaN(days) || days < 1 || days > 14) {
+    alert("Пожалуйста, введите число от 1 до 14");
+    return;
+  }
+
+  // Закрываем модальное окно
+  closeExportModal();
+
+  // Вызываем существующую функцию экспорта с новым параметром
+  await exportDiaryToImage(days);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   // Получаем необходимые элементы DOM
   const modal = document.getElementById("addBehaviorModal");
@@ -1060,6 +1097,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Инициализация: отображаем существующие поведения
   displayBehaviors();
+
+  // Обработчики для модального окна экспорта дневника
+  const exportBtn = document.getElementById("exportScreenshotBtn");
+  const exportModal = document.getElementById("exportDiaryModal");
+
+  if (exportBtn) {
+    exportBtn.addEventListener("click", openExportModal);
+  }
+
+  if (exportModal) {
+    // Обработчик для кнопки отмены
+    const cancelBtn = exportModal.querySelector(".cancel-button");
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", closeExportModal);
+    }
+
+    // Обработчик для кнопки сохранения
+    const saveBtn = exportModal.querySelector(".save-button");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", exportDiary);
+    }
+
+    // Обработчики для быстрых ссылок
+    const links = exportModal.querySelectorAll(".dotted-link");
+    links.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const days = parseInt(e.target.dataset.days);
+        document.getElementById("exportDays").value = days;
+      });
+    });
+  }
 });
 
 function formatDate(date) {

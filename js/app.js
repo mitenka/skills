@@ -541,9 +541,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       diaryHistoryContainer.appendChild(entryElement);
     });
 
-  // Добавляем обработчик для кнопки экспорта
+  // Добавляем обработчик для экспорта в CSV
   document
-    .getElementById("exportDiaryBtn")
+    .getElementById("exportCSVBtn")
     ?.addEventListener("click", async () => {
       const diaryEntries = await getAllDiaryEntries();
       if (diaryEntries.length === 0) {
@@ -553,29 +553,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-      const recentEntries = diaryEntries.filter(
-        (entry) => new Date(entry.date) >= oneWeekAgo
-      );
+      const recentEntries = diaryEntries
+        .filter((entry) => new Date(entry.date) >= oneWeekAgo)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
 
       exportToCSV(recentEntries);
-    });
-
-  document
-    .getElementById("exportScreenshotBtn")
-    ?.addEventListener("click", async () => {
-      const diaryEntries = await getAllDiaryEntries();
-      if (diaryEntries.length === 0) {
-        alert("Нет записей для экспорта");
-        return;
-      }
-
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const recentEntries = diaryEntries.filter(
-        (entry) => new Date(entry.date) >= oneWeekAgo
-      );
-
-      exportScreenshot(recentEntries);
     });
 });

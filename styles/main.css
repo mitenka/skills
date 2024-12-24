@@ -2463,3 +2463,49 @@ input:checked + .slider:before {
   text-align: left;
   padding: 8px 12px;
 }
+
+/* Стили для модального окна экспорта */
+.export-days-control {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.export-days-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-days-input input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+.export-days-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.dotted-link {
+  color: var(--text-color);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--text-color);
+  cursor: pointer;
+}
+
+.dotted-link:hover {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.dot-separator {
+  color: var(--text-secondary);
+  font-weight: bold;
+}

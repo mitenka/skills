@@ -1,5 +1,6 @@
 // Импортируем Dexie
 import { db } from "./db.js";
+import { getAllDiaryEntries } from "./behaviors.js";
 
 export async function exportToCSV(entries) {
   // Получаем все уникальные поведения
@@ -253,24 +254,60 @@ async function renderSkillsTable(dates) {
   `;
 }
 
-async function createExportPage(entries) {
+async function createExportPage(entries, dates) {
   const container = document.createElement("div");
-  container.className = "export-page";
+  container.classList.add("export-page");
 
-  // Получаем даты
-  const dates = getLastWeekDates();
-  console.log('Даты для экспорта:', dates);
+  // Получаем информацию о периоде
+  const today = new Date();
+  const startDate = dates[0];
+  const endDate = dates[dates.length - 1];
+
+  // Форматируем даты для заголовка
+  const exportDate = today.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const startYear = startDate.getFullYear();
+  const endYear = endDate.getFullYear();
+  
+  const formatDate = (date) => {
+    return date.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long"
+    });
+  };
+  
+  let periodText = '';
+  if (startYear === endYear) {
+    periodText = `${formatDate(startDate)} — ${formatDate(endDate)} ${endYear} г.`;
+  } else {
+    periodText = `${formatDate(startDate)} ${startYear} г. — ${formatDate(endDate)} ${endYear} г.`;
+  }
+
+  const daysText = dates.length === 1 ? "день" :
+                   dates.length < 5 ? "дня" : "дней";
+  
+  // Заголовок
+  const title = document.createElement("h1");
+  title.textContent = "Дневник наблюдений";
+  container.appendChild(title);
+
+  // Добавляем период
+  const period = document.createElement("div");
+  period.className = "export-period";
+  period.style.marginBottom = "16px";
+  period.style.color = "var(--text-secondary)";
+  period.style.fontSize = "14px";
+  period.textContent = `${periodText} · ${dates.length} ${daysText}`;
+  container.appendChild(period);
 
   // Рендерим основную таблицу
-  container.innerHTML = `
-    <div class="export-header">
-      <h1>Дневник наблюдений</h1>
-      <p class="export-period">
-        ${dates[0].toLocaleDateString("ru-RU")} — ${dates[
-    dates.length - 1
-  ].toLocaleDateString("ru-RU")}
-      </p>
-    </div>
+  container.innerHTML += `
     <div class="export-content">
       <table class="export-table main-table">
         <thead>
@@ -382,8 +419,8 @@ async function createExportPage(entries) {
   return container;
 }
 
-export async function exportScreenshot(entries) {
-  const page = await createExportPage(entries);
+export async function exportScreenshot(entries, dates) {
+  const page = await createExportPage(entries, dates);
   document.body.appendChild(page);
 
   try {
@@ -400,18 +437,30 @@ export async function exportScreenshot(entries) {
           // Устанавливаем фиксированную ширину и отступы для лучшей читаемости
           clonedPage.style.width = "800px";
           clonedPage.style.padding = "32px";
-          clonedPage.style.margin = "0";
 
-          // Делаем ячейки таблицы более компактными
+          // Адаптируем размеры ячеек в зависимости от количества дней
           const cells = clonedPage.querySelectorAll("td, th");
-          cells.forEach((cell) => {
-            cell.style.padding = "8px 12px";
-          });
+          if (dates.length >= 10) {
+            cells.forEach((cell) => {
+              cell.style.padding = "6px 8px";
+              cell.style.fontSize = "13px";
+            });
+
+            // Уменьшаем заголовки дней недели
+            const dayHeaders = clonedPage.querySelectorAll("th");
+            dayHeaders.forEach((header) => {
+              header.style.fontSize = "12px";
+            });
+          } else {
+            cells.forEach((cell) => {
+              cell.style.padding = "8px 12px";
+            });
+          }
 
           // Уменьшаем отступы между секциями
           const sections = clonedPage.querySelectorAll(".section-row");
           sections.forEach((section) => {
-            section.style.paddingTop = "16px";
+            section.style.paddingTop = dates.length >= 10 ? "12px" : "16px";
           });
         }
       },
@@ -424,7 +473,7 @@ export async function exportScreenshot(entries) {
         month: "2-digit",
         day: "2-digit",
       })
-      .replace(/\./g, "-"); // Заменяем точки на тире
+      .replace(/\./g, "-");
 
     const link = document.createElement("a");
     link.download = `Дневник_${exportDate}.png`;
@@ -563,4 +612,34 @@ const skillOptionsTemplate = {
 
 function getPreferredGender() {
   return localStorage.getItem("preferredGender") || "feminine";
+}
+
+// Получаем даты за указанный период
+function getDatesForPeriod(days) {
+  const dates = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    dates.push(date);
+  }
+  return dates;
+}
+
+// Получаем записи за указанный период
+async function getEntriesForPeriod(days) {
+  const dates = getDatesForPeriod(days);
+  const startDate = dates[0].toISOString().split('T')[0];
+  
+  const allEntries = await getAllDiaryEntries();
+  const filteredEntries = allEntries.filter(entry => 
+    entry.date >= startDate
+  ).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  return { dates, entries: filteredEntries };
+}
+
+// Экспортируем дневник за указанное количество дней
+export async function exportDiaryToImage(days = 7) {
+  const { entries, dates } = await getEntriesForPeriod(days);
+  await exportScreenshot(entries, dates);
 }
