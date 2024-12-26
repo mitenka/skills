@@ -652,3 +652,31 @@ export async function exportDiaryToImage(days = 7) {
   const { entries, dates } = await getEntriesForPeriod(days);
   await exportScreenshot(entries, dates);
 }
+
+// Инициализация обработчиков для модального окна экспорта
+export function initExportHandlers() {
+  // Добавляем обработчики для кнопок оценки влияния
+  document.querySelectorAll('.influence-item .scale-button').forEach(button => {
+    button.addEventListener('click', () => {
+      // Находим все кнопки в той же группе
+      const field = button.dataset.field;
+      const value = button.dataset.value;
+      const buttons = button.closest('.scale-buttons').querySelectorAll('.scale-button');
+      
+      // Убираем active у всех кнопок
+      buttons.forEach(btn => btn.classList.remove('active'));
+      
+      // Добавляем active к нажатой кнопке
+      button.classList.add('active');
+    });
+  });
+
+  // Добавляем обработчики для ссылок выбора периода
+  document.querySelectorAll('.export-days-links .dotted-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const days = link.dataset.days;
+      document.getElementById('exportDays').value = days;
+    });
+  });
+}

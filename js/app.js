@@ -1,6 +1,6 @@
 import { db } from "./db.js";
 import { getAllDiaryEntries } from "./behaviors.js";
-import { exportToCSV, exportScreenshot } from "./export-utils.js";
+import { exportToCSV, exportScreenshot, initExportHandlers } from "./export-utils.js";
 
 // Навигация
 function initNavigation() {
@@ -471,6 +471,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   registerServiceWorker();
   initSettings();
   initInstallButton();
+  initExportHandlers();
 
   const diaryPage = document.getElementById("diary");
   const diaryHistoryContainer = document.createElement("div");
