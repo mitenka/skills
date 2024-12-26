@@ -265,17 +265,26 @@ function createDateCard() {
   const dateCard = document.createElement("div");
   dateCard.className = "behavior-card date-card";
 
+  // Сохраняем текущую активную дату, если она есть
+  const currentActiveDate = document.querySelector(".date-btn.active")?.dataset.date;
+
   const weekDates = getWeekDates();
+  const today = weekDates.find((date) => {
+    const dateStr = formatLocalDate(date);
+    return dateStr === formatLocalDate(new Date());
+  });
+
   const dateButtons = weekDates
     .map((date) => {
       const dateValue = formatLocalDate(date);
       const dayName = date.toLocaleDateString("ru-RU", { weekday: "short" });
       const dayNumber = date.getDate();
-      const isToday = dateValue === formatLocalDate(new Date());
+      // Устанавливаем активную дату либо из сохраненной, либо сегодняшнюю если нет сохраненной
+      const isActive = currentActiveDate ? dateValue === currentActiveDate : date === today;
 
       return `
       <button class="date-btn ${
-        isToday ? "active" : ""
+        isActive ? "active" : ""
       }" data-date="${dateValue}">
         <span class="day-name">${dayName}</span>
         <span class="day-number">${dayNumber}</span>
@@ -312,8 +321,7 @@ function createDateCard() {
       const selectedDate = parseLocalDate(button.dataset.date);
       const today = new Date();
       const isToday = selectedDate.toDateString() === today.toDateString();
-
-      // Обновляем состояние свитчера
+      
       toggleInput.checked = isToday;
 
       // Загружаем существующие данные дневника
@@ -488,31 +496,63 @@ async function displayBehaviors() {
 
       const saveButton = saveCard.querySelector(".save-diary-btn");
       saveButton.addEventListener("click", async () => {
-        const data = await collectDiaryData();
+        try {
+          const data = await collectDiaryData();
 
-        if (data) {
-          try {
-            const result = await saveDiaryEntries(data.date, data);
-            if (result?.wasOverwritten) {
-              const confirmOverwrite = confirm(
-                "За этот день уже есть запись в дневнике. Хотите перезаписать её новыми данными?"
-              );
-              if (!confirmOverwrite) {
-                return;
+          if (data) {
+            // Показываем индикатор загрузки
+            saveButton.classList.add("loading");
+            saveButton.disabled = true;
+
+            try {
+              // Проверяем существование записи до сохранения
+              const existingEntry = await db.diaryEntries.get(data.date);
+              
+              if (existingEntry) {
+                const confirmOverwrite = confirm(
+                  "За этот день уже есть запись в дневнике. Хотите перезаписать её новыми данными?"
+                );
+
+                if (!confirmOverwrite) {
+                  return;
+                }
               }
+
+              const result = await saveDiaryEntries(data.date, data);
+
+              // Обновляем только историю, не перерисовывая всю страницу
+              await updateDiaryHistory();
+
+              // Показываем сообщение об успехе
+              showEncouragingMessage();
+
+              // Очищаем форму, но сохраняем выбранную дату
+              const selectedDate = document.querySelector(".date-btn.active")?.dataset.date;
+              clearDiaryData();
+              if (selectedDate) {
+                const dateButton = document.querySelector(`.date-btn[data-date="${selectedDate}"]`);
+                if (dateButton) {
+                  document.querySelectorAll(".date-btn").forEach(btn => btn.classList.remove("active"));
+                  dateButton.classList.add("active");
+                }
+              }
+            } catch (error) {
+              console.error("Ошибка при сохранении дневника:", error);
+              alert(
+                "Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков."
+              );
+            } finally {
+              // Убираем индикатор загрузки и разблокируем кнопку
+              saveButton.classList.remove("loading");
+              saveButton.disabled = false;
             }
-            await updateDiaryHistory(); // Обновляем историю после успешного сохранения
-            showEncouragingMessage();
-          } catch (error) {
-            console.error("Ошибка при сохранении дневника:", error);
+          } else {
             alert(
-              "Произошла ошибка при сохранении дневника. Пожалуйста, попробуйте еще раз. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков."
+              "Нет данных для сохранения. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков."
             );
           }
-        } else {
-          alert(
-            "Нет данных для сохранения. Пожалуйста, заполните хотя бы одно поле (желание или действие) для любого поведения, либо включите переключатель заполнения, либо выберите использование навыков."
-          );
+        } catch (error) {
+          console.error("Ошибка при сохранении дневника:", error);
         }
       });
 
@@ -727,10 +767,11 @@ function cleanupDiaryMode() {
 
 // Функция для сбора данных дневника
 async function collectDiaryData() {
-  const cards = document.querySelectorAll(".behavior-card");
-  const dateButton = document.querySelector(".date-btn.active");
-  const isFilledToday = document.querySelector(".toggle-control input").checked;
-  const skillUsageRadio = document.querySelector(
+  const behaviorCards = document.querySelector(".behavior-cards");
+  const cards = behaviorCards.querySelectorAll(".behavior-card");
+  const dateButton = behaviorCards.querySelector(".date-btn.active");
+  const isFilledToday = behaviorCards.querySelector(".toggle-control input").checked;
+  const skillUsageRadio = behaviorCards.querySelector(
     'input[name="skill-usage"]:checked'
   );
 
@@ -743,7 +784,7 @@ async function collectDiaryData() {
   }
 
   // Собираем данные состояния
-  const stateCard = document.querySelector(".state-card");
+  const stateCard = behaviorCards.querySelector(".state-card");
   const states = {
     emotional: null,
     physical: null,
@@ -829,13 +870,15 @@ async function collectDiaryData() {
     return null;
   }
 
-  return {
+  const result = {
     date: dateButton.dataset.date,
     isFilledToday,
     skillUsage: skillUsageRadio ? parseInt(skillUsageRadio.value) : null,
     behaviors,
     states,
   };
+
+  return result;
 }
 
 // Функция для загрузки существующей записи дневника
@@ -983,6 +1026,35 @@ async function loadExistingDiaryEntry(dateStr) {
     }
   } catch (error) {
     console.error("Ошибка при загрузке существующих данных:", error);
+  }
+}
+
+// Функция для очистки данных дневника
+function clearDiaryData() {
+  // Сохраняем текущую активную дату
+  const activeDate = document.querySelector(".date-btn.active")?.dataset.date;
+
+  // Очищаем состояния
+  document
+    .querySelectorAll(".state-card .scale-button.active")
+    .forEach((button) => {
+      button.classList.remove("active");
+    });
+
+  // Очищаем значения в карточках поведений
+  document
+    .querySelectorAll(".behavior-card .scale-button.active")
+    .forEach((button) => {
+      button.classList.remove("active");
+    });
+
+  // Восстанавливаем активную дату
+  if (activeDate) {
+    const dateButton = document.querySelector(`.date-btn[data-date="${activeDate}"]`);
+    if (dateButton) {
+      document.querySelectorAll(".date-btn").forEach(btn => btn.classList.remove("active"));
+      dateButton.classList.add("active");
+    }
   }
 }
 
