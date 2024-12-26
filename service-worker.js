@@ -1,5 +1,4 @@
-const BASE_CACHE_NAME = "dpt-skills";
-const CACHE_NAME = `${BASE_CACHE_NAME}-${new Date().toISOString()}`;
+const CACHE_NAME = "skills-v1.4";
 
 const FILES_TO_CACHE = [
   "/",
@@ -12,6 +11,7 @@ const FILES_TO_CACHE = [
   "/js/db.js",
   "/js/diary-history.js",
   "/js/export-utils.js",
+  "/js/practice.js",
   "/js/theme.js",
   "/js/ui.js",
   "/fonts/remixicon/remixicon.css",
@@ -40,7 +40,7 @@ self.addEventListener("activate", (event) => {
       const keyList = await caches.keys();
       await Promise.all(
         keyList.map((key) => {
-          if (key.startsWith(BASE_CACHE_NAME) && key !== CACHE_NAME) {
+          if (key.startsWith(CACHE_NAME) && key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
