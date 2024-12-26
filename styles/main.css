@@ -910,7 +910,8 @@ html[data-theme="dark"] .theme-button:not(.active):hover {
   margin: 0;
 }
 
-.skill-youtube, .skill-vk {
+.skill-youtube,
+.skill-vk {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
@@ -919,14 +920,15 @@ html[data-theme="dark"] .theme-button:not(.active):hover {
 }
 
 .skill-youtube {
-  color: #FF0000;
+  color: #ff0000;
 }
 
 .skill-vk {
-  color: #0077FF;
+  color: #0077ff;
 }
 
-.skill-youtube i, .skill-vk i {
+.skill-youtube i,
+.skill-vk i {
   font-size: 20px;
 }
 
@@ -2529,11 +2531,11 @@ input:checked + .slider:before {
 
 /* Стили для оценки влияния */
 .influence-assessment {
-  margin-top: 20px;
   padding: 1rem;
   background: var(--card-background);
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
+  margin-bottom: 10px;
 }
 
 .influence-assessment h3 {
