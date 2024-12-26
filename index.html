@@ -171,7 +171,7 @@
           <div class="modal-content">
             <h2>Сохранение дневника</h2>
             <div class="export-days-control">
-              <label for="exportDays">За сколько дней сохранить:</label>
+              <label for="exportDays">Сохранить дневник за:</label>
               <div class="export-days-input">
                 <input
                   type="number"
@@ -269,7 +269,9 @@
                 данных браузера ваши записи будут удалены.</span
               >
             </div>
-            <p class="version-info">Версия приложения: <tt class="version-number"></tt></p>
+            <p class="version-info">
+              Версия приложения: <tt class="version-number"></tt>
+            </p>
           </div>
           <div class="about-links">
             <div class="link-item">
@@ -337,14 +339,15 @@
           .register("/service-worker.js")
           .then((registration) => {
             console.log("ServiceWorker registered");
-            
+
             // Получаем версию из Service Worker
             if (registration.active) {
               const channel = new MessageChannel();
               channel.port1.onmessage = (event) => {
-                document.querySelector('.version-number').textContent = event.data;
+                document.querySelector(".version-number").textContent =
+                  event.data;
               };
-              registration.active.postMessage('getVersion', [channel.port2]);
+              registration.active.postMessage("getVersion", [channel.port2]);
             }
           })
           .catch((error) =>
