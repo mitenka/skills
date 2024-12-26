@@ -1,4 +1,11 @@
-const CACHE_NAME = "skills-v1.4";
+const CACHE_NAME = "v1.4.1";
+
+// Добавляем обработчик сообщений
+self.addEventListener("message", (event) => {
+  if (event.data === "getVersion") {
+    event.ports[0].postMessage(CACHE_NAME);
+  }
+});
 
 const FILES_TO_CACHE = [
   "/",

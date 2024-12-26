@@ -269,6 +269,7 @@
                 данных браузера ваши записи будут удалены.</span
               >
             </div>
+            <p class="version-info">Версия приложения: <tt class="version-number"></tt></p>
           </div>
           <div class="about-links">
             <div class="link-item">
@@ -334,7 +335,18 @@
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker
           .register("/service-worker.js")
-          .then((registration) => console.log("ServiceWorker registered"))
+          .then((registration) => {
+            console.log("ServiceWorker registered");
+            
+            // Получаем версию из Service Worker
+            if (registration.active) {
+              const channel = new MessageChannel();
+              channel.port1.onmessage = (event) => {
+                document.querySelector('.version-number').textContent = event.data;
+              };
+              registration.active.postMessage('getVersion', [channel.port2]);
+            }
+          })
           .catch((error) =>
             console.log("ServiceWorker registration failed:", error)
           );

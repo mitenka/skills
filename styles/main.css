@@ -2509,3 +2509,20 @@ input:checked + .slider:before {
   color: var(--text-secondary);
   font-weight: bold;
 }
+
+/* Стили для версии приложения */
+.version-info {
+  margin-top: 1rem;
+  color: var(--text-secondary);
+}
+
+.version-number {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background: var(--surface-variant);
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--text-primary);
+  border: 1px solid var(--outline);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Добавляем лёгкую тень */
+}
