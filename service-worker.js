@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1.4.1";
+const CACHE_NAME = "v1.4.2";
 
 // Добавляем обработчик сообщений
 self.addEventListener("message", (event) => {
