@@ -319,18 +319,18 @@ async function createExportPage(entries, dates, influenceValues = {}) {
 
   // Общие стили для заголовков секций
   const sectionHeaderStyle = `
-    font-size: 18px;
+    font-size: 20px;
     color: var(--text-color);
-    margin: 32px 0 16px 0;
+    margin: 16px 0 12px 0;
     text-align: left;
-    font-weight: 500;
+    font-weight: 600;
   `.replace(/\n\s*/g, "");
 
   // Рендерим основную страницу
   container.innerHTML = `
     <div class="export-content">
-      <div class="export-header" style="margin-bottom: 32px;">
-        <h1 style="font-size: 24px; margin: 0 0 8px 0; text-align: left;">Дневник наблюдений</h1>
+      <div class="export-header" style="margin-bottom: 16px; text-align: left;">
+        <h1 style="font-size: 28px; margin: 0 0 8px 0;">Дневник наблюдений</h1>
         <div class="export-period" style="color: var(--text-secondary); font-size: 14px;">
           <div class="period-text">${periodText}</div>
           <div class="days-text">Наблюдения ${daysText}</div>
@@ -338,7 +338,7 @@ async function createExportPage(entries, dates, influenceValues = {}) {
       </div>
 
       <div class="diary-data">
-        <h2 style="${sectionHeaderStyle}">Ежедневные записи</h2>
+        <h2 style="${sectionHeaderStyle}">Поведение</h2>
         <table class="export-table main-table">
           <thead>
             <tr>
@@ -362,14 +362,14 @@ async function createExportPage(entries, dates, influenceValues = {}) {
           <tbody>
             <!-- Секция заполнения дневника -->
             <tr class="section-row">
-              <td colspan="${
-                dates.length + 1
-              }">Отметка о заполнении дневника</td>
+              <td colspan="${dates.length + 1}">Отметка о заполнении дневника</td>
             </tr>
             <tr>
               <td>Дневник заполнен сегодня?</td>
-              ${renderDailyValues(dates, entries, (entry) =>
-                entry?.isFilledToday ? "✓" : "✕"
+              ${renderDailyValues(
+                dates,
+                entries,
+                (entry) => entry?.isFilledToday ? "✓" : "✕"
               )}
             </tr>
 
@@ -389,7 +389,9 @@ async function createExportPage(entries, dates, influenceValues = {}) {
 
             <!-- Секция действий -->
             <tr class="section-row">
-              <td colspan="${dates.length + 1}">Действия</td>
+              <td colspan="${
+                dates.length + 1
+              }">Действия</td>
             </tr>
             ${renderBehaviorRows(dates, entries, "action")}
 
@@ -409,75 +411,53 @@ async function createExportPage(entries, dates, influenceValues = {}) {
           </tbody>
         </table>
 
-        <div class="export-legend">
-          <h3>Справка по использованию навыков</h3>
-          <div class="legend-grid">
-            <div class="legend-column">
-              ${skillOptionsTemplate[getPreferredGender()]
-                .slice(0, 4)
-                .map(
-                  (text, index) => `
-                <div class="legend-item">
-                  <span class="legend-number">${index}</span>
-                  ${text[0].toUpperCase() + text.slice(1)}
+        <div style="margin: 16px 0; padding: 12px 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow); opacity: 0.9;">
+          <h2 style="${sectionHeaderStyle}; margin-top: 0;">Справка по использованию навыков</h2>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; line-height: 1;">
+            <div style="display: grid; gap: 4px;">
+              ${skillOptionsTemplate[getPreferredGender()].slice(0, 4).map((text, index) => `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="flex: none; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; background: #2196f3; color: white; border-radius: 50%; font-size: 12px;">${index}</div>
+                  <span style="color: var(--text-secondary); font-size: 13px;">${text[0].toUpperCase() + text.slice(1)}</span>
                 </div>
-              `
-                )
-                .join("")}
+              `).join("")}
             </div>
-            <div class="legend-column">
-              ${skillOptionsTemplate[getPreferredGender()]
-                .slice(4)
-                .map(
-                  (text, index) => `
-                <div class="legend-item">
-                  <span class="legend-number">${index + 4}</span>
-                  ${text[0].toUpperCase() + text.slice(1)}
+            <div style="display: grid; gap: 4px;">
+              ${skillOptionsTemplate[getPreferredGender()].slice(4).map((text, index) => `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="flex: none; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; background: #2196f3; color: white; border-radius: 50%; font-size: 12px;">${index + 4}</div>
+                  <span style="color: var(--text-secondary); font-size: 13px;">${text[0].toUpperCase() + text.slice(1)}</span>
                 </div>
-              `
-                )
-                .join("")}
+              `).join("")}
             </div>
           </div>
         </div>
 
-        ${
-          Object.values(influenceValues).some((v) => v !== undefined)
+        ${Object.values(influenceValues).some((v) => v !== undefined)
             ? `
           <h2 style="${sectionHeaderStyle}">Способность влиять и управлять</h2>
-          <div class="influence-section" style="padding: 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow);">
+          <div class="influence-section" style="padding: 12px 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow);">
             <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 14px; color: var(--text-color);">
-              ${
-                influenceValues.thoughts !== undefined
-                  ? `<div>Мыслями:</div><div>${influenceValues.thoughts}/5</div>`
-                  : ""
-              }
-              ${
-                influenceValues.emotions !== undefined
-                  ? `<div>Эмоциями:</div><div>${influenceValues.emotions}/5</div>`
-                  : ""
-              }
-              ${
-                influenceValues.actions !== undefined
-                  ? `<div>Действиями:</div><div>${influenceValues.actions}/5</div>`
-                  : ""
-              }
+              ${influenceValues.thoughts !== undefined ? `<div>Мыслями:</div><div>${influenceValues.thoughts}/5</div>` : ""}
+              ${influenceValues.emotions !== undefined ? `<div>Эмоциями:</div><div>${influenceValues.emotions}/5</div>` : ""}
+              ${influenceValues.actions !== undefined ? `<div>Действиями:</div><div>${influenceValues.actions}/5</div>` : ""}
             </div>
           </div>
         `
-            : ""
-        }
+            : ""}
+
+        ${await renderSkillsTable(dates)}
       </div>
     </div>
   `;
-
   // Добавляем таблицу навыков
-  const skillsTable = await renderSkillsTable(dates);
-  if (skillsTable) {
-    container
-      .querySelector(".export-content")
-      .insertAdjacentHTML("beforeend", skillsTable);
-  }
+  // const skillsTable = await renderSkillsTable(dates);
+  // if (skillsTable) {
+  //   container.querySelector('.export-content').insertAdjacentHTML('beforeend', `
+  //     <h2 style="${sectionHeaderStyle}">Практика навыков</h2>
+  //     ${skillsTable}
+  //   `);
+  // }
 
   return container;
 }
