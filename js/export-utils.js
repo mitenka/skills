@@ -430,7 +430,7 @@ async function createExportPage(entries, dates, influenceValues = {}) {
           Object.values(influenceValues).some((v) => v !== undefined)
             ? `
           <div class="influence-section" style="margin: 24px 0; padding: 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow);">
-            <h3 style="margin: 0 0 12px 0; font-size: 16px; color: var(--text-color);">Способность управлять:</h3>
+            <h3 style="margin: 0 0 12px 0; font-size: 16px; color: var(--text-color);">Оценка способности влиять и управлять:</h3>
             <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 14px; color: var(--text-color);">
               ${
                 influenceValues.thoughts !== undefined
