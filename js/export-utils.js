@@ -309,21 +309,36 @@ async function createExportPage(entries, dates, influenceValues = {}) {
     )} ${endYear} г.`;
   }
 
+  // Формируем текст о количестве дней
   const daysText =
-    dates.length === 1 ? "день" : dates.length < 5 ? "дня" : "дней";
+    dates.length === 1
+      ? "за один день"
+      : dates.length < 5
+      ? `за ${dates.length} дня`
+      : `за ${dates.length} дней`;
+
+  // Общие стили для заголовков секций
+  const sectionHeaderStyle = `
+    font-size: 18px;
+    color: var(--text-color);
+    margin: 32px 0 16px 0;
+    text-align: left;
+    font-weight: 500;
+  `.replace(/\n\s*/g, "");
 
   // Рендерим основную страницу
   container.innerHTML = `
     <div class="export-content">
-      <div class="export-header">
-        <h1>Дневник наблюдений</h1>
-        <div class="export-period">
+      <div class="export-header" style="margin-bottom: 32px;">
+        <h1 style="font-size: 24px; margin: 0 0 8px 0; text-align: left;">Дневник наблюдений</h1>
+        <div class="export-period" style="color: var(--text-secondary); font-size: 14px;">
           <div class="period-text">${periodText}</div>
-          <div class="days-text">${dates.length} ${daysText}</div>
+          <div class="days-text">Наблюдения ${daysText}</div>
         </div>
       </div>
 
       <div class="diary-data">
+        <h2 style="${sectionHeaderStyle}">Ежедневные записи</h2>
         <table class="export-table main-table">
           <thead>
             <tr>
@@ -429,8 +444,8 @@ async function createExportPage(entries, dates, influenceValues = {}) {
         ${
           Object.values(influenceValues).some((v) => v !== undefined)
             ? `
-          <div class="influence-section" style="margin: 24px 0; padding: 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow);">
-            <h3 style="margin: 0 0 12px 0; font-size: 16px; color: var(--text-color);">Оценка способности влиять и управлять:</h3>
+          <h2 style="${sectionHeaderStyle}">Способность влиять и управлять</h2>
+          <div class="influence-section" style="padding: 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow);">
             <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 14px; color: var(--text-color);">
               ${
                 influenceValues.thoughts !== undefined
