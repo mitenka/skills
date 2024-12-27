@@ -198,21 +198,21 @@ function formatValue(value) {
 
 async function renderSkillsTable(dates) {
   // Получаем все практики за указанный период
-  const startDate = dates[0].toISOString().split('T')[0];
-  const endDate = dates[dates.length - 1].toISOString().split('T')[0];
-  
-  console.log('Даты для поиска практик:', { startDate, endDate });
-  
+  const startDate = dates[0].toISOString().split("T")[0];
+  const endDate = dates[dates.length - 1].toISOString().split("T")[0];
+
+  console.log("Даты для поиска практик:", { startDate, endDate });
+
   // Получаем все практики за период
   const practices = await db.practices
-    .where('date')
+    .where("date")
     .between(startDate, endDate, true, true)
     .toArray();
 
-  console.log('Найденные практики:', practices);
+  console.log("Найденные практики:", practices);
 
   // Загружаем структуру навыков из theory.json
-  const response = await fetch('/data/theory.json');
+  const response = await fetch("/data/theory.json");
   const theory = await response.json();
 
   return `
@@ -221,40 +221,56 @@ async function renderSkillsTable(dates) {
       <thead>
         <tr>
           <th class="column-name"></th>
-          ${dates.map(d => `
+          ${dates
+            .map(
+              (d) => `
             <th>
               <div class="date-header">
-                <div class="weekday">${d.toLocaleDateString('ru', { weekday: 'short' }).toUpperCase()}</div>
+                <div class="weekday">${d
+                  .toLocaleDateString("ru", { weekday: "short" })
+                  .toUpperCase()}</div>
                 <div class="day">${d.getDate()}</div>
               </div>
             </th>
-          `).join('')}
+          `
+            )
+            .join("")}
         </tr>
       </thead>
       <tbody>
-        ${theory.blocks.map(block => `
+        ${theory.blocks
+          .map(
+            (block) => `
           <tr class="section-row">
             <td colspan="${dates.length + 1}">${block.title}</td>
           </tr>
-          ${block.skills.map(skill => `
+          ${block.skills
+            .map(
+              (skill) => `
             <tr>
               <td>${skill.name}</td>
-              ${dates.map(date => {
-                const dateStr = date.toISOString().split('T')[0];
-                const hasSkill = practices.some(p => 
-                  p.date === dateStr && p.skill === skill.name
-                );
-                return `<td>${hasSkill ? '✓' : ''}</td>`;
-              }).join('')}
+              ${dates
+                .map((date) => {
+                  const dateStr = date.toISOString().split("T")[0];
+                  const hasSkill = practices.some(
+                    (p) => p.date === dateStr && p.skill === skill.name
+                  );
+                  return `<td>${hasSkill ? "✓" : ""}</td>`;
+                })
+                .join("")}
             </tr>
-          `).join('')}
-        `).join('')}
+          `
+            )
+            .join("")}
+        `
+          )
+          .join("")}
       </tbody>
     </table>
   `;
 }
 
-async function createExportPage(entries, dates) {
+async function createExportPage(entries, dates, influenceValues = {}) {
   const container = document.createElement("div");
   container.classList.add("export-page");
 
@@ -274,153 +290,198 @@ async function createExportPage(entries, dates) {
 
   const startYear = startDate.getFullYear();
   const endYear = endDate.getFullYear();
-  
+
   const formatDate = (date) => {
     return date.toLocaleDateString("ru-RU", {
       day: "numeric",
-      month: "long"
+      month: "long",
     });
   };
-  
-  let periodText = '';
+
+  let periodText = "";
   if (startYear === endYear) {
-    periodText = `${formatDate(startDate)} — ${formatDate(endDate)} ${endYear} г.`;
+    periodText = `${formatDate(startDate)} — ${formatDate(
+      endDate
+    )} ${endYear} г.`;
   } else {
-    periodText = `${formatDate(startDate)} ${startYear} г. — ${formatDate(endDate)} ${endYear} г.`;
+    periodText = `${formatDate(startDate)} ${startYear} г. — ${formatDate(
+      endDate
+    )} ${endYear} г.`;
   }
 
-  const daysText = dates.length === 1 ? "день" :
-                   dates.length < 5 ? "дня" : "дней";
-  
-  // Заголовок
-  const title = document.createElement("h1");
-  title.textContent = "Дневник наблюдений";
-  container.appendChild(title);
+  const daysText =
+    dates.length === 1 ? "день" : dates.length < 5 ? "дня" : "дней";
 
-  // Добавляем период
-  const period = document.createElement("div");
-  period.className = "export-period";
-  period.style.marginBottom = "16px";
-  period.style.color = "var(--text-secondary)";
-  period.style.fontSize = "14px";
-  period.textContent = `${periodText} · ${dates.length} ${daysText}`;
-  container.appendChild(period);
-
-  // Рендерим основную таблицу
-  container.innerHTML += `
+  // Рендерим основную страницу
+  container.innerHTML = `
     <div class="export-content">
-      <table class="export-table main-table">
-        <thead>
-          <tr>
-            <th class="column-name"></th>
-            ${dates
-              .map(
-                (d) => `
-              <th>
-                <div class="date-header">
-                  <div class="weekday">${d
-                    .toLocaleDateString("ru", { weekday: "short" })
-                    .toUpperCase()}</div>
-                  <div class="day">${d.getDate()}</div>
-                </div>
-              </th>
-            `
-              )
-              .join("")}
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Секция заполнения дневника -->
-          <tr class="section-row">
-            <td colspan="${dates.length + 1}">Отметка о заполнении дневника</td>
-          </tr>
-          <tr>
-            <td>Дневник заполнен сегодня?</td>
-            ${renderDailyValues(dates, entries, (entry) =>
-              entry?.isFilledToday ? "✓" : "✕"
-            )}
-          </tr>
+      <div class="export-header">
+        <h1>Дневник наблюдений</h1>
+        <div class="export-period">
+          <div class="period-text">${periodText}</div>
+          <div class="days-text">${dates.length} ${daysText}</div>
+        </div>
+      </div>
 
-          <!-- Секция состояний -->
-          <tr class="section-row">
-            <td colspan="${dates.length + 1}">Состояние (0–5)</td>
-          </tr>
-          ${renderStateRows(dates, entries)}
+      <div class="diary-data">
+        <table class="export-table main-table">
+          <thead>
+            <tr>
+              <th class="column-name"></th>
+              ${dates
+                .map(
+                  (d) => `
+                <th>
+                  <div class="date-header">
+                    <div class="weekday">${d
+                      .toLocaleDateString("ru", { weekday: "short" })
+                      .toUpperCase()}</div>
+                    <div class="day">${d.getDate()}</div>
+                  </div>
+                </th>
+              `
+                )
+                .join("")}
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Секция заполнения дневника -->
+            <tr class="section-row">
+              <td colspan="${
+                dates.length + 1
+              }">Отметка о заполнении дневника</td>
+            </tr>
+            <tr>
+              <td>Дневник заполнен сегодня?</td>
+              ${renderDailyValues(dates, entries, (entry) =>
+                entry?.isFilledToday ? "✓" : "✕"
+              )}
+            </tr>
 
-          <!-- Секция желаний -->
-          <tr class="section-row">
-            <td colspan="${dates.length + 1}">Желания, максимальная выраженность в течение дня (0–5)</td>
-          </tr>
-          ${renderBehaviorRows(dates, entries, "desire")}
+            <!-- Секция состояний -->
+            <tr class="section-row">
+              <td colspan="${dates.length + 1}">Состояние (0–5)</td>
+            </tr>
+            ${renderStateRows(dates, entries)}
 
-          <!-- Секция действий -->
-          <tr class="section-row">
-            <td colspan="${dates.length + 1}">Действия</td>
-          </tr>
-          ${renderBehaviorRows(dates, entries, "action")}
+            <!-- Секция желаний -->
+            <tr class="section-row">
+              <td colspan="${
+                dates.length + 1
+              }">Желания, максимальная выраженность в течение дня (0–5)</td>
+            </tr>
+            ${renderBehaviorRows(dates, entries, "desire")}
 
-          <!-- Секция навыков -->
-          <tr class="section-row">
-            <td colspan="${dates.length + 1}">Использованные навыки</td>
-          </tr>
-          <tr>
-            <td>Оценка (0–7)</td>
-            ${renderDailyValues(
-              dates,
-              entries,
-              (entry) => entry?.skillUsage ?? "",
-              () => false // Не выделяем ячейки в секции использования навыков
-            )}
-          </tr>
-        </tbody>
-      </table>
+            <!-- Секция действий -->
+            <tr class="section-row">
+              <td colspan="${dates.length + 1}">Действия</td>
+            </tr>
+            ${renderBehaviorRows(dates, entries, "action")}
 
-      <div class="export-legend">
-        <h3>Справка по использованию навыков</h3>
-        <div class="legend-grid">
-          <div class="legend-column">
-            ${skillOptionsTemplate[getPreferredGender()]
-              .slice(0, 4)
-              .map(
-                (text, index) => `
+            <!-- Секция навыков -->
+            <tr class="section-row">
+              <td colspan="${dates.length + 1}">Использованные навыки</td>
+            </tr>
+            <tr>
+              <td>Оценка (0–7)</td>
+              ${renderDailyValues(
+                dates,
+                entries,
+                (entry) => entry?.skillUsage ?? "",
+                () => false
+              )}
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="export-legend">
+          <h3>Справка по использованию навыков</h3>
+          <div class="legend-grid">
+            <div class="legend-column">
+              ${skillOptionsTemplate[getPreferredGender()]
+                .slice(0, 4)
+                .map(
+                  (text, index) => `
                 <div class="legend-item">
                   <span class="legend-number">${index}</span>
                   ${text[0].toUpperCase() + text.slice(1)}
                 </div>
               `
-              )
-              .join("")}
-          </div>
-          <div class="legend-column">
-            ${skillOptionsTemplate[getPreferredGender()]
-              .slice(4)
-              .map(
-                (text, index) => `
+                )
+                .join("")}
+            </div>
+            <div class="legend-column">
+              ${skillOptionsTemplate[getPreferredGender()]
+                .slice(4)
+                .map(
+                  (text, index) => `
                 <div class="legend-item">
                   <span class="legend-number">${index + 4}</span>
                   ${text[0].toUpperCase() + text.slice(1)}
                 </div>
               `
-              )
-              .join("")}
+                )
+                .join("")}
+            </div>
           </div>
         </div>
+
+        ${
+          Object.values(influenceValues).some((v) => v !== undefined)
+            ? `
+          <div class="influence-section" style="margin: 24px 0; padding: 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow);">
+            <h3 style="margin: 0 0 12px 0; font-size: 16px; color: var(--text-color);">Способность управлять:</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 14px; color: var(--text-color);">
+              ${
+                influenceValues.thoughts !== undefined
+                  ? `<div>Мыслями:</div><div>${influenceValues.thoughts}/5</div>`
+                  : ""
+              }
+              ${
+                influenceValues.emotions !== undefined
+                  ? `<div>Эмоциями:</div><div>${influenceValues.emotions}/5</div>`
+                  : ""
+              }
+              ${
+                influenceValues.actions !== undefined
+                  ? `<div>Действиями:</div><div>${influenceValues.actions}/5</div>`
+                  : ""
+              }
+            </div>
+          </div>
+        `
+            : ""
+        }
       </div>
     </div>
   `;
 
   // Добавляем таблицу навыков
   const skillsTable = await renderSkillsTable(dates);
-  console.log('Сгенерированная таблица навыков:', skillsTable);
   if (skillsTable) {
-    container.querySelector('.export-content').insertAdjacentHTML('beforeend', skillsTable);
+    container
+      .querySelector(".export-content")
+      .insertAdjacentHTML("beforeend", skillsTable);
   }
 
   return container;
 }
 
 export async function exportScreenshot(entries, dates) {
-  const page = await createExportPage(entries, dates);
+  // Получаем значения оценок влияния из модального окна
+  const influenceValues = {
+    thoughts: document.querySelector(
+      '.scale-button[data-field="thoughts"].active'
+    )?.dataset.value,
+    emotions: document.querySelector(
+      '.scale-button[data-field="emotions"].active'
+    )?.dataset.value,
+    actions: document.querySelector(
+      '.scale-button[data-field="actions"].active'
+    )?.dataset.value,
+  };
+
+  const page = await createExportPage(entries, dates, influenceValues);
   document.body.appendChild(page);
 
   try {
@@ -439,8 +500,10 @@ export async function exportScreenshot(entries, dates) {
           clonedPage.style.padding = "32px";
 
           // Адаптируем размеры ячеек в зависимости от количества дней
-          const cells = clonedPage.querySelectorAll("td:not(:first-child), th:not(:first-child)");
-          
+          const cells = clonedPage.querySelectorAll(
+            "td:not(:first-child), th:not(:first-child)"
+          );
+
           // Определяем размеры в зависимости от количества дней
           let cellWidth, cellPadding, fontSize;
           if (dates.length >= 13) {
@@ -637,12 +700,12 @@ function getDatesForPeriod(days) {
 // Получаем записи за указанный период
 async function getEntriesForPeriod(days) {
   const dates = getDatesForPeriod(days);
-  const startDate = dates[0].toISOString().split('T')[0];
-  
+  const startDate = dates[0].toISOString().split("T")[0];
+
   const allEntries = await getAllDiaryEntries();
-  const filteredEntries = allEntries.filter(entry => 
-    entry.date >= startDate
-  ).sort((a, b) => new Date(b.date) - new Date(a.date));
+  const filteredEntries = allEntries
+    .filter((entry) => entry.date >= startDate)
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return { dates, entries: filteredEntries };
 }
@@ -656,27 +719,33 @@ export async function exportDiaryToImage(days = 7) {
 // Инициализация обработчиков для модального окна экспорта
 export function initExportHandlers() {
   // Добавляем обработчики для кнопок оценки влияния
-  document.querySelectorAll('.influence-item .scale-button').forEach(button => {
-    button.addEventListener('click', () => {
-      // Находим все кнопки в той же группе
-      const field = button.dataset.field;
-      const value = button.dataset.value;
-      const buttons = button.closest('.scale-buttons').querySelectorAll('.scale-button');
-      
-      // Убираем active у всех кнопок
-      buttons.forEach(btn => btn.classList.remove('active'));
-      
-      // Добавляем active к нажатой кнопке
-      button.classList.add('active');
+  document
+    .querySelectorAll(".influence-item .scale-button")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        // Находим все кнопки в той же группе
+        const field = button.dataset.field;
+        const value = button.dataset.value;
+        const buttons = button
+          .closest(".scale-buttons")
+          .querySelectorAll(".scale-button");
+
+        // Убираем active у всех кнопок
+        buttons.forEach((btn) => btn.classList.remove("active"));
+
+        // Добавляем active к нажатой кнопке
+        button.classList.add("active");
+      });
     });
-  });
 
   // Добавляем обработчики для ссылок выбора периода
-  document.querySelectorAll('.export-days-links .dotted-link').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const days = link.dataset.days;
-      document.getElementById('exportDays').value = days;
+  document
+    .querySelectorAll(".export-days-links .dotted-link")
+    .forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const days = link.dataset.days;
+        document.getElementById("exportDays").value = days;
+      });
     });
-  });
 }
