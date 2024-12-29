@@ -2605,3 +2605,16 @@ input:checked + .slider:before {
   border-color: var(--primary-color);
   color: #fff;
 }
+
+.export-table .section-row td,
+.skills-table .section-row td {
+  background: var(--background-color);
+  color: var(--primary-color);
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+}
+
+.skills-table {
+  margin-top: 0;
+}
