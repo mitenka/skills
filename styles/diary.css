@@ -85,6 +85,8 @@
   background-color: var(--background-color);
   border: 1px solid var(--border-color);
   color: var(--text-color);
+  justify-content: center;
+  text-align: center;
 }
 
 .ios-action-button.secondary:hover {
