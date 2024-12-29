@@ -201,70 +201,49 @@ async function renderSkillsTable(dates) {
   const startDate = dates[0].toISOString().split("T")[0];
   const endDate = dates[dates.length - 1].toISOString().split("T")[0];
 
-  console.log("Даты для поиска практик:", { startDate, endDate });
-
   // Получаем все практики за период
   const practices = await db.practices
     .where("date")
     .between(startDate, endDate, true, true)
     .toArray();
 
-  console.log("Найденные практики:", practices);
-
   // Загружаем структуру навыков из theory.json
   const response = await fetch("/data/theory.json");
   const theory = await response.json();
 
   return `
-    <h3 class="skills-table-header">Навыки: практика</h3>
     <table class="export-table skills-table">
       <thead>
         <tr>
           <th class="column-name"></th>
-          ${dates
-            .map(
-              (d) => `
+          ${dates.map(d => `
             <th>
               <div class="date-header">
-                <div class="weekday">${d
-                  .toLocaleDateString("ru", { weekday: "short" })
-                  .toUpperCase()}</div>
+                <div class="weekday">${d.toLocaleDateString('ru', { weekday: 'short' }).toUpperCase()}</div>
                 <div class="day">${d.getDate()}</div>
               </div>
             </th>
-          `
-            )
-            .join("")}
+          `).join('')}
         </tr>
       </thead>
       <tbody>
-        ${theory.blocks
-          .map(
-            (block) => `
+        ${theory.blocks.map(block => `
           <tr class="section-row">
             <td colspan="${dates.length + 1}">${block.title}</td>
           </tr>
-          ${block.skills
-            .map(
-              (skill) => `
+          ${block.skills.map(skill => `
             <tr>
               <td>${skill.name}</td>
-              ${dates
-                .map((date) => {
-                  const dateStr = date.toISOString().split("T")[0];
-                  const hasSkill = practices.some(
-                    (p) => p.date === dateStr && p.skill === skill.name
-                  );
-                  return `<td>${hasSkill ? "✓" : ""}</td>`;
-                })
-                .join("")}
+              ${dates.map(date => {
+                const dateStr = date.toISOString().split('T')[0];
+                const hasSkill = practices.some(p => 
+                  p.date === dateStr && p.skill === skill.name
+                );
+                return `<td>${hasSkill ? '✓' : ''}</td>`;
+              }).join('')}
             </tr>
-          `
-            )
-            .join("")}
-        `
-          )
-          .join("")}
+          `).join('')}
+        `).join('')}
       </tbody>
     </table>
   `;
@@ -329,11 +308,10 @@ async function createExportPage(entries, dates, influenceValues = {}) {
   // Рендерим основную страницу
   container.innerHTML = `
     <div class="export-content">
-      <div class="export-header" style="margin-bottom: 16px; text-align: left;">
-        <h1 style="font-size: 28px; margin: 0 0 8px 0;">Дневник наблюдений</h1>
-        <div class="export-period" style="color: var(--text-secondary); font-size: 14px;">
-          <div class="period-text">${periodText}</div>
-          <div class="days-text">Наблюдения ${daysText}</div>
+      <div class="export-header" style="margin-bottom: 12px; text-align: left;">
+        <h1 style="font-size: 28px; margin: 0 0 4px 0;">Дневник наблюдений</h1>
+        <div style="color: var(--text-secondary); font-size: 14px;">
+          ${periodText} · Наблюдения ${daysText}
         </div>
       </div>
 
@@ -412,7 +390,6 @@ async function createExportPage(entries, dates, influenceValues = {}) {
         </table>
 
         <div style="margin: 16px 0; padding: 12px 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow); opacity: 0.9;">
-          <h2 style="${sectionHeaderStyle}; margin-top: 0;">Справка по использованию навыков</h2>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; line-height: 1;">
             <div style="display: grid; gap: 4px;">
               ${skillOptionsTemplate[getPreferredGender()].slice(0, 4).map((text, index) => `
@@ -446,6 +423,7 @@ async function createExportPage(entries, dates, influenceValues = {}) {
         `
             : ""}
 
+        <h2 style="${sectionHeaderStyle}">Практика</h2>
         ${await renderSkillsTable(dates)}
       </div>
     </div>
