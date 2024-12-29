@@ -1,6 +1,14 @@
 class Fireworks {
     constructor() {
-        this.colors = ['#ff0000', '#ffa500', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff'];
+        this.colors = [
+            '#ff3333', // Яркий красный
+            '#ff9933', // Яркий оранжевый
+            '#ffff33', // Яркий желтый
+            '#33ff33', // Яркий зеленый
+            '#33ffff', // Яркий голубой
+            '#3333ff', // Яркий синий
+            '#ff33ff'  // Яркий розовый
+        ];
     }
 
     createFirework(x, y) {
@@ -12,7 +20,7 @@ class Fireworks {
         firework.className = 'firework';
         firework.style.left = x + 'px';
         firework.style.top = y + 'px';
-        firework.style.backgroundColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+        firework.style.color = this.colors[Math.floor(Math.random() * this.colors.length)];
         container.appendChild(firework);
 
         // Create particles
@@ -21,7 +29,7 @@ class Fireworks {
             particle.className = 'particle';
             particle.style.left = x + 'px';
             particle.style.top = y + 'px';
-            particle.style.backgroundColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+            particle.style.color = this.colors[Math.floor(Math.random() * this.colors.length)];
             
             const angle = (i * 12) * Math.PI / 180;
             const velocity = 50 + Math.random() * 50;
