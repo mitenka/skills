@@ -338,10 +338,6 @@ async function createExportPage(entries, dates, influenceValues = {}) {
             </tr>
           </thead>
           <tbody>
-            <!-- Секция заполнения дневника -->
-            <tr class="section-row">
-              <td colspan="${dates.length + 1}">Отметка о заполнении дневника</td>
-            </tr>
             <tr>
               <td>Дневник заполнен сегодня?</td>
               ${renderDailyValues(
@@ -351,13 +347,11 @@ async function createExportPage(entries, dates, influenceValues = {}) {
               )}
             </tr>
 
-            <!-- Секция состояний -->
             <tr class="section-row">
               <td colspan="${dates.length + 1}">Состояние (0–5)</td>
             </tr>
             ${renderStateRows(dates, entries)}
 
-            <!-- Секция желаний -->
             <tr class="section-row">
               <td colspan="${
                 dates.length + 1
@@ -365,7 +359,6 @@ async function createExportPage(entries, dates, influenceValues = {}) {
             </tr>
             ${renderBehaviorRows(dates, entries, "desire")}
 
-            <!-- Секция действий -->
             <tr class="section-row">
               <td colspan="${
                 dates.length + 1
@@ -373,7 +366,6 @@ async function createExportPage(entries, dates, influenceValues = {}) {
             </tr>
             ${renderBehaviorRows(dates, entries, "action")}
 
-            <!-- Секция навыков -->
             <tr class="section-row">
               <td colspan="${dates.length + 1}">Использованные навыки</td>
             </tr>
