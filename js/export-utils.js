@@ -615,7 +615,7 @@ function renderBehaviorRows(dates, entries, type) {
         },
         (value) =>
           (type === "desire" || type === "action") &&
-          (value === 4 || value === 5)
+          (value === 4 || value === 5 || value === "✓")
       )}
     </tr>
   `
