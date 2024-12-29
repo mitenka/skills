@@ -752,6 +752,12 @@ function showEncouragingMessage() {
   // Показываем сообщение
   messageContainer.classList.add("show");
 
+  // Запускаем салют
+  if (window.Fireworks) {
+    const fireworks = new window.Fireworks();
+    fireworks.celebrate();
+  }
+
   // Скрываем сообщение через 3 секунды
   setTimeout(() => {
     messageContainer.classList.remove("show");
