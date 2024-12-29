@@ -381,7 +381,7 @@ async function createExportPage(entries, dates, influenceValues = {}) {
           </tbody>
         </table>
 
-        <div style="margin: 16px 0; padding: 12px 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow); opacity: 0.9;">
+        <div style="margin: 16px 0; padding: 12px 16px; background-color: var(--card-background); border-radius: 8px; box-shadow: var(--card-shadow); opacity: 0.9;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; line-height: 1;">
             <div style="display: grid; gap: 4px;">
               ${skillOptionsTemplate[getPreferredGender()].slice(0, 4).map((text, index) => `
@@ -405,7 +405,7 @@ async function createExportPage(entries, dates, influenceValues = {}) {
         ${Object.values(influenceValues).some((v) => v !== undefined)
             ? `
           <h2 style="${sectionHeaderStyle}">Способность влиять и управлять</h2>
-          <div class="influence-section" style="padding: 12px 16px; background-color: var(--card-background-color); border-radius: 8px; box-shadow: var(--card-shadow);">
+          <div class="influence-section" style="padding: 12px 16px; background-color: var(--card-background); border-radius: 8px; box-shadow: var(--card-shadow);">
             <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 14px; color: var(--text-color);">
               ${influenceValues.thoughts !== undefined ? `<div>Мыслями:</div><div>${influenceValues.thoughts}/5</div>` : ""}
               ${influenceValues.emotions !== undefined ? `<div>Эмоциями:</div><div>${influenceValues.emotions}/5</div>` : ""}
@@ -414,7 +414,6 @@ async function createExportPage(entries, dates, influenceValues = {}) {
           </div>
         `
             : ""}
-
         <h2 style="${sectionHeaderStyle}">Практика</h2>
         ${await renderSkillsTable(dates)}
       </div>
