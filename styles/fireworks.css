@@ -23,6 +23,8 @@
                 0 0 12px currentColor;
     transform-origin: center center;
     will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .particle {
@@ -38,26 +40,28 @@
     box-shadow: 0 0 2px currentColor,
                 0 0 4px currentColor;
     will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 @keyframes explode {
     0% {
-        transform: scale(1);
+        transform: scale(1) translateZ(0);
         opacity: 1;
     }
     100% {
-        transform: scale(30);
+        transform: scale(30) translateZ(0);
         opacity: 0;
     }
 }
 
 @keyframes shoot {
     0% {
-        transform: translateY(0) translateX(0);
+        transform: translate3d(0, 0, 0);
         opacity: 1;
     }
     100% {
-        transform: translateY(var(--y)) translateX(var(--x));
+        transform: translate3d(var(--x), var(--y), 0);
         opacity: 0;
     }
 }
@@ -74,6 +78,8 @@
         box-shadow: 0 0 2px currentColor,
                    0 0 4px currentColor,
                    0 0 6px currentColor;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
 
     .particle {
@@ -85,15 +91,28 @@
             rgba(255,255,255,0) 100%);
         box-shadow: 0 0 1px currentColor,
                    0 0 2px currentColor;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
 
     @keyframes explode {
         0% {
-            transform: scale(1);
+            transform: scale(1) translateZ(0);
             opacity: 1;
         }
         100% {
-            transform: scale(35);
+            transform: scale(35) translateZ(0);
+            opacity: 0;
+        }
+    }
+
+    @keyframes shoot {
+        0% {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+        }
+        100% {
+            transform: translate3d(var(--x), var(--y), 0);
             opacity: 0;
         }
     }
