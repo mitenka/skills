@@ -41,13 +41,13 @@ class Fireworks {
         const width = window.innerWidth;
         const height = window.innerHeight;
 
-        // Create multiple fireworks
-        for (let i = 0; i < 5; i++) {
+        // Запускаем красивую волну салютов
+        for (let i = 0; i < 8; i++) {
             setTimeout(() => {
                 const x = Math.random() * width;
-                const y = height - (Math.random() * height * 0.3 + height * 0.2);
+                const y = Math.random() * height * 0.8;
                 this.createFirework(x, y);
-            }, i * 200);
+            }, i * 150);
         }
     }
 }
