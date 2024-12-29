@@ -266,7 +266,8 @@ function createDateCard() {
   dateCard.className = "behavior-card date-card";
 
   // Сохраняем текущую активную дату, если она есть
-  const currentActiveDate = document.querySelector(".date-btn.active")?.dataset.date;
+  const currentActiveDate =
+    document.querySelector(".date-btn.active")?.dataset.date;
 
   const weekDates = getWeekDates();
   const today = weekDates.find((date) => {
@@ -280,7 +281,9 @@ function createDateCard() {
       const dayName = date.toLocaleDateString("ru-RU", { weekday: "short" });
       const dayNumber = date.getDate();
       // Устанавливаем активную дату либо из сохраненной, либо сегодняшнюю если нет сохраненной
-      const isActive = currentActiveDate ? dateValue === currentActiveDate : date === today;
+      const isActive = currentActiveDate
+        ? dateValue === currentActiveDate
+        : date === today;
 
       return `
       <button class="date-btn ${
@@ -321,7 +324,7 @@ function createDateCard() {
       const selectedDate = parseLocalDate(button.dataset.date);
       const today = new Date();
       const isToday = selectedDate.toDateString() === today.toDateString();
-      
+
       toggleInput.checked = isToday;
 
       // Загружаем существующие данные дневника
@@ -507,7 +510,7 @@ async function displayBehaviors() {
             try {
               // Проверяем существование записи до сохранения
               const existingEntry = await db.diaryEntries.get(data.date);
-              
+
               if (existingEntry) {
                 const confirmOverwrite = confirm(
                   "За этот день уже есть запись в дневнике. Хотите перезаписать её новыми данными?"
@@ -527,12 +530,17 @@ async function displayBehaviors() {
               showEncouragingMessage();
 
               // Очищаем форму, но сохраняем выбранную дату
-              const selectedDate = document.querySelector(".date-btn.active")?.dataset.date;
+              const selectedDate =
+                document.querySelector(".date-btn.active")?.dataset.date;
               clearDiaryData();
               if (selectedDate) {
-                const dateButton = document.querySelector(`.date-btn[data-date="${selectedDate}"]`);
+                const dateButton = document.querySelector(
+                  `.date-btn[data-date="${selectedDate}"]`
+                );
                 if (dateButton) {
-                  document.querySelectorAll(".date-btn").forEach(btn => btn.classList.remove("active"));
+                  document
+                    .querySelectorAll(".date-btn")
+                    .forEach((btn) => btn.classList.remove("active"));
                   dateButton.classList.add("active");
                 }
               }
@@ -770,7 +778,9 @@ async function collectDiaryData() {
   const behaviorCards = document.querySelector(".behavior-cards");
   const cards = behaviorCards.querySelectorAll(".behavior-card");
   const dateButton = behaviorCards.querySelector(".date-btn.active");
-  const isFilledToday = behaviorCards.querySelector(".toggle-control input").checked;
+  const isFilledToday = behaviorCards.querySelector(
+    ".toggle-control input"
+  ).checked;
   const skillUsageRadio = behaviorCards.querySelector(
     'input[name="skill-usage"]:checked'
   );
@@ -1050,9 +1060,13 @@ function clearDiaryData() {
 
   // Восстанавливаем активную дату
   if (activeDate) {
-    const dateButton = document.querySelector(`.date-btn[data-date="${activeDate}"]`);
+    const dateButton = document.querySelector(
+      `.date-btn[data-date="${activeDate}"]`
+    );
     if (dateButton) {
-      document.querySelectorAll(".date-btn").forEach(btn => btn.classList.remove("active"));
+      document
+        .querySelectorAll(".date-btn")
+        .forEach((btn) => btn.classList.remove("active"));
       dateButton.classList.add("active");
     }
   }
@@ -1076,12 +1090,19 @@ async function activateFillDiaryMode() {
 // Функция для открытия модального окна экспорта
 function openExportModal() {
   const modal = document.getElementById("exportDiaryModal");
-  const input = document.getElementById("exportDays");
-
-  // Устанавливаем значение по умолчанию - 7 дней
-  input.value = "7";
-
   modal.style.display = "flex";
+
+  // Сбрасываем активные кнопки
+  const activeButtons = modal.querySelectorAll(
+    ".scale-button.diary-button.active"
+  );
+  activeButtons.forEach((button) => {
+    button.classList.remove("active");
+  });
+
+  // Устанавливаем значение по умолчанию для количества дней
+  const input = document.getElementById("exportDays");
+  if (input) input.value = "7";
 }
 
 // Функция для закрытия модального окна экспорта
@@ -1095,17 +1116,16 @@ async function exportDiary() {
   const input = document.getElementById("exportDays");
   const days = parseInt(input.value);
 
-  // Проверяем корректность введенного значения
-  if (isNaN(days) || days < 1 || days > 14) {
-    alert("Пожалуйста, введите число от 1 до 14");
+  if (isNaN(days) || days < 1) {
+    alert("Пожалуйста, введите корректное количество дней");
     return;
   }
 
-  // Закрываем модальное окно
-  closeExportModal();
-
-  // Вызываем существующую функцию экспорта с новым параметром
+  // Сначала делаем скриншот
   await exportDiaryToImage(days);
+
+  // Потом закрываем окно
+  closeExportModal();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
