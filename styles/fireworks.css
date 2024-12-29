@@ -22,17 +22,7 @@
                 0 0 8px currentColor,
                 0 0 12px currentColor;
     transform-origin: center center;
-}
-
-@keyframes explode {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(30);
-        opacity: 0;
-    }
+    will-change: transform;
 }
 
 .particle {
@@ -47,6 +37,18 @@
         rgba(255,255,255,0) 100%);
     box-shadow: 0 0 2px currentColor,
                 0 0 4px currentColor;
+    will-change: transform;
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(30);
+        opacity: 0;
+    }
 }
 
 @keyframes shoot {
@@ -57,5 +59,42 @@
     100% {
         transform: translateY(var(--y)) translateX(var(--x));
         opacity: 0;
+    }
+}
+
+/* Оптимизация для устройств с высоким DPI */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .firework {
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, 
+            rgba(255,255,255,1) 0%, 
+            currentColor 40%, 
+            rgba(255,255,255,0) 100%);
+        box-shadow: 0 0 2px currentColor,
+                   0 0 4px currentColor,
+                   0 0 6px currentColor;
+    }
+
+    .particle {
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, 
+            rgba(255,255,255,1) 0%, 
+            currentColor 40%, 
+            rgba(255,255,255,0) 100%);
+        box-shadow: 0 0 1px currentColor,
+                   0 0 2px currentColor;
+    }
+
+    @keyframes explode {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(35);
+            opacity: 0;
+        }
     }
 }
