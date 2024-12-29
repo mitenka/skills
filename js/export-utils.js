@@ -453,7 +453,7 @@ export async function exportScreenshot(entries, dates) {
       backgroundColor: getComputedStyle(document.body).getPropertyValue(
         "--background-color"
       ),
-      scale: 4, // Увеличиваем масштаб для лучшего качества
+      scale: 2, // Увеличиваем масштаб для лучшего качества
       useCORS: true,
       logging: false,
       onclone: (clonedDoc) => {
