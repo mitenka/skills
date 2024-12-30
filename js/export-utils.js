@@ -309,7 +309,7 @@ async function createExportPage(entries, dates, influenceValues = {}) {
   container.innerHTML = `
     <div class="export-content">
       <div class="export-header" style="margin-bottom: 12px; text-align: left;">
-        <h1 style="font-size: 28px; margin: 0 0 4px 0;">Дневник наблюдений</h1>
+        <h1 style="font-size: 28px; margin: 0 0 4px 0; letter-spacing: 0.02em;">Дневник наблюдений</h1>
         <div style="color: var(--text-secondary); font-size: 14px;">
           ${periodText} · Наблюдения ${daysText}
         </div>
