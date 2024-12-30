@@ -9,6 +9,7 @@ class Fireworks {
             '#3333ff', // Яркий синий
             '#ff33ff'  // Яркий розовый
         ];
+        this.showProbability = 0.2; // Вероятность 20% (1 из 5)
     }
 
     createFirework(x, y) {
@@ -46,6 +47,11 @@ class Fireworks {
     }
 
     celebrate() {
+        // Проверяем, нужно ли показывать фейерверк
+        if (Math.random() > this.showProbability) {
+            return; // Не показываем фейерверк в 80% случаев
+        }
+
         const width = window.innerWidth;
         const height = window.innerHeight;
 
