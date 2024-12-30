@@ -453,7 +453,7 @@ export async function exportScreenshot(entries, dates) {
       backgroundColor: getComputedStyle(document.body).getPropertyValue(
         "--background-color"
       ),
-      scale: 2, // Увеличиваем масштаб для лучшего качества
+      scale: 3, // Увеличиваем масштаб для лучшего качества в мессенджерах
       useCORS: true,
       logging: false,
       onclone: (clonedDoc) => {
@@ -473,15 +473,15 @@ export async function exportScreenshot(entries, dates) {
           if (dates.length >= 13) {
             cellWidth = "38px";
             cellPadding = "4px 6px";
-            fontSize = "11px";
+            fontSize = "13px";  // Увеличили с 12px
           } else if (dates.length >= 10) {
             cellWidth = "45px";
             cellPadding = "6px 8px";
-            fontSize = "12px";
+            fontSize = "14px";  // Увеличили с 13px
           } else {
             cellWidth = "52px";
             cellPadding = "8px 12px";
-            fontSize = "13px";
+            fontSize = "15px";  // Увеличили с 14px
           }
 
           // Применяем стили
@@ -496,7 +496,7 @@ export async function exportScreenshot(entries, dates) {
           // Уменьшаем заголовки дней недели
           const dayHeaders = clonedPage.querySelectorAll("th");
           dayHeaders.forEach((header) => {
-            header.style.fontSize = "12px";
+            header.style.fontSize = "14px";  // Увеличили с 13px
           });
         }
       },
@@ -513,7 +513,8 @@ export async function exportScreenshot(entries, dates) {
 
     const link = document.createElement("a");
     link.download = `Дневник_${exportDate}.png`;
-    link.href = canvas.toDataURL("image/png");
+    // Сохраняем с максимальным качеством
+    link.href = canvas.toDataURL("image/png", 1.0);
     link.click();
   } catch (error) {
     console.error("Ошибка при создании скриншота:", error);
