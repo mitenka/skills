@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="styles/main.css?v=1.0.0" />
     <link rel="stylesheet" href="styles/diary.css" />
     <link rel="stylesheet" href="styles/fireworks.css" />
+    <link rel="stylesheet" href="styles/theory.css" />
   </head>
   <body>
     <header class="glass-header">
@@ -79,6 +80,7 @@
           </svg>
           Установить приложение
         </button>
+
         <div class="assumption-card">
           <div class="assumption-header">
             <button
@@ -96,6 +98,33 @@
             свои жизни и быть счастливыми
           </div>
         </div>
+
+        <button class="theory-toggle-button" id="emotionalScaleToggle">
+          <i class="ri-question-line"></i>
+          <span>Интенсивность и навыки</span>
+        </button>
+
+        <div class="emotional-scale" id="emotionalScale" style="display: none">
+          <div class="scale-row">
+            <div class="intensity-level level-1-2">1-2</div>
+            <i class="ri-arrow-right-line arrow-icon"></i>
+            <div class="skill-label">Осознанность</div>
+          </div>
+
+          <div class="scale-row">
+            <div class="intensity-level level-3-6">3-6</div>
+            <i class="ri-arrow-right-line arrow-icon"></i>
+            <div class="skill-label">Эмоциональная регуляция</div>
+          </div>
+
+          <div class="scale-row">
+            <div class="intensity-level level-7-10">7-10</div>
+            <i class="ri-arrow-right-line arrow-icon"></i>
+            <div class="skill-label">Стрессоустойчивость</div>
+          </div>
+        </div>
+
+        <div id="skillsContainer"></div>
         <div class="blocks-container"></div>
       </section>
 

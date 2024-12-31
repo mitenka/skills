@@ -1,6 +1,10 @@
 import { db } from "./db.js";
 import { getAllDiaryEntries } from "./behaviors.js";
-import { exportToCSV, exportScreenshot, initExportHandlers } from "./export-utils.js";
+import {
+  exportToCSV,
+  exportScreenshot,
+  initExportHandlers,
+} from "./export-utils.js";
 
 // Навигация
 function initNavigation() {
@@ -118,7 +122,11 @@ function renderTheoryBlocks(data) {
       .map(
         (point) => `
       <div class="point">
-        <p>${point.variant === 'header' ? `<strong>${point.text}</strong>` : point.text}</p>
+        <p>${
+          point.variant === "header"
+            ? `<strong>${point.text}</strong>`
+            : point.text
+        }</p>
         ${
           point.subpoints
             ? `
@@ -159,9 +167,13 @@ function renderTheoryBlocks(data) {
                   </div>
                   <div class="skill-details">
                     ${renderPoints(skill.points)}
-                    ${(skill.youtube || skill.vk) ? `
+                    ${
+                      skill.youtube || skill.vk
+                        ? `
                       <div class="skill-links">
-                        ${skill.youtube ? `
+                        ${
+                          skill.youtube
+                            ? `
                           <a href="${skill.youtube}" 
                              class="skill-youtube" 
                              target="_blank" 
@@ -170,8 +182,12 @@ function renderTheoryBlocks(data) {
                             <i class="ri-youtube-fill"></i>
                             Посмотрите видео
                           </a>
-                        ` : ''}
-                        ${skill.vk ? `
+                        `
+                            : ""
+                        }
+                        ${
+                          skill.vk
+                            ? `
                           <a href="${skill.vk}" 
                              class="skill-vk" 
                              target="_blank" 
@@ -180,9 +196,13 @@ function renderTheoryBlocks(data) {
                             <i class="ri-vk-fill"></i>
                             Прочитайте пост
                           </a>
-                        ` : ''}
+                        `
+                            : ""
+                        }
                       </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                   </div>
                 </div>
               `
@@ -559,5 +579,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         .sort((a, b) => new Date(b.date) - new Date(a.date));
 
       exportToCSV(recentEntries);
+    });
+
+  // Обработчик для переключения шкалы эмоциональной интенсивности
+  document
+    .getElementById("emotionalScaleToggle")
+    ?.addEventListener("click", function () {
+      const scale = document.getElementById("emotionalScale");
+      if (scale) {
+        if (scale.style.display === "none") {
+          scale.style.display = "block";
+          // Добавляем плавное появление
+          scale.style.opacity = "0";
+          setTimeout(() => {
+            scale.style.opacity = "1";
+          }, 10);
+        } else {
+          scale.style.opacity = "0";
+          setTimeout(() => {
+            scale.style.display = "none";
+          }, 200);
+        }
+      }
     });
 });
