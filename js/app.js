@@ -118,7 +118,7 @@ function renderTheoryBlocks(data) {
       .map(
         (point) => `
       <div class="point">
-        <p>${point.text}</p>
+        <p>${point.variant === 'header' ? `<strong>${point.text}</strong>` : point.text}</p>
         ${
           point.subpoints
             ? `
