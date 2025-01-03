@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1.7";
+const CACHE_NAME = "v1.7.1";
 
 // Добавляем обработчик сообщений
 self.addEventListener("message", (event) => {
@@ -38,7 +38,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(FILES_TO_CACHE);
-    })
+    }),
   );
 });
 
@@ -52,10 +52,10 @@ self.addEventListener("activate", (event) => {
           if (key.startsWith(CACHE_NAME) && key !== CACHE_NAME) {
             return caches.delete(key);
           }
-        })
+        }),
       );
       await self.clients.claim();
-    })()
+    })(),
   );
 });
 
@@ -73,7 +73,7 @@ self.addEventListener("fetch", (event) => {
           });
           return cachedResponse || fetchPromise;
         });
-      })
+      }),
     );
   } else {
     event.respondWith(
@@ -89,7 +89,7 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => {
           return caches.match(event.request);
-        })
+        }),
     );
   }
 });
