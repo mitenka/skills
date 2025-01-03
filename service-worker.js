@@ -1,11 +1,4 @@
-const CACHE_NAME = "v1.7.1";
-
-// Добавляем обработчик сообщений
-self.addEventListener("message", (event) => {
-  if (event.data === "getVersion") {
-    event.ports[0].postMessage(CACHE_NAME);
-  }
-});
+const CACHE_NAME = "v1.7.3";
 
 const FILES_TO_CACHE = [
   "/",
@@ -14,6 +7,7 @@ const FILES_TO_CACHE = [
   "/styles/diary.css",
   "/styles/fireworks.css",
   "/styles/main.css",
+  "/styles/theory.css",
   "/js/app.js",
   "/js/behaviors.js",
   "/js/db.js",
@@ -30,9 +24,22 @@ const FILES_TO_CACHE = [
   "/data/assumptions.json",
   "/data/dictionary.json",
   "/data/theory.json",
+  "/icons/icon-48x48.png",
+  "/icons/icon-96x96.png",
+  "/icons/icon-128x128.png",
+  "/icons/icon-192x192.png",
+  "/icons/icon-256x256.png",
+  "/icons/icon-384x384.png",
+  "/icons/icon-512x512.png",
+  "/offline.html",
 ];
 
-// При установке воркера
+self.addEventListener("message", (event) => {
+  if (event.data === "getVersion") {
+    event.ports[0].postMessage(CACHE_NAME);
+  }
+});
+
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -42,14 +49,13 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// При активации воркера
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
       const keyList = await caches.keys();
       await Promise.all(
         keyList.map((key) => {
-          if (key.startsWith(CACHE_NAME) && key !== CACHE_NAME) {
+          if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
         }),
@@ -59,7 +65,6 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Отдельная стратегия для CSS файлов - StaleWhileRevalidate
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
@@ -68,7 +73,9 @@ self.addEventListener("fetch", (event) => {
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(event.request).then((cachedResponse) => {
           const fetchPromise = fetch(event.request).then((networkResponse) => {
-            cache.put(event.request, networkResponse.clone());
+            if (networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
             return networkResponse;
           });
           return cachedResponse || fetchPromise;
@@ -88,7 +95,9 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          return caches.match(event.request);
+          return caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || caches.match("/offline.html");
+          });
         }),
     );
   }
