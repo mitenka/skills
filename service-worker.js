@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1.7.4";
+const CACHE_NAME = "v1.7.5";
 
 const FILES_TO_CACHE = [
   "/",
@@ -65,40 +65,59 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Функция для запроса с таймаутом
+function timeoutFetch(request, timeout = 5000) {
+  return Promise.race([
+    fetch(request),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Network timeout')), timeout)
+    )
+  ]);
+}
+
+// Обработчик изменения состояния сети
+self.addEventListener('online', (event) => {
+  console.log('Network is online, updating cache...');
+  self.skipWaiting();
+  self.clients.claim();
+});
+
+self.addEventListener('offline', (event) => {
+  console.log('Network is offline, serving from cache...');
+});
+
+// Основной обработчик fetch
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
-  if (event.request.url.endsWith(".css")) {
-    event.respondWith(
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.match(event.request).then((cachedResponse) => {
-          const fetchPromise = fetch(event.request).then((networkResponse) => {
-            if (networkResponse.status === 200) {
-              cache.put(event.request, networkResponse.clone());
-            }
-            return networkResponse;
+  event.respondWith(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        return cache.match(event.request)
+          .then((cachedResponse) => {
+            // Используем стратегию stale-while-revalidate
+            const fetchPromise = timeoutFetch(event.request)
+              .then((networkResponse) => {
+                if (networkResponse.status === 200) {
+                  // Асинхронно обновляем кэш
+                  cache.put(event.request, networkResponse.clone())
+                    .catch(error => console.error('Cache update failed:', error));
+                }
+                return networkResponse;
+              })
+              .catch(error => {
+                console.error(`Network fetch failed for ${event.request.url}:`, error);
+                // Возвращаем кэшированный ответ или offline.html
+                return cachedResponse || caches.match("/offline.html");
+              });
+
+            // Сразу возвращаем кэшированный ответ, если он есть
+            return cachedResponse || fetchPromise;
+          })
+          .catch(error => {
+            console.error('Cache match failed:', error);
+            return caches.match("/offline.html");
           });
-          return cachedResponse || fetchPromise;
-        });
-      }),
-    );
-  } else {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request).then((cachedResponse) => {
-            return cachedResponse || caches.match("/offline.html");
-          });
-        }),
-    );
-  }
+      })
+  );
 });

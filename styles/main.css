@@ -37,6 +37,22 @@ html[data-theme="dark"] {
   }
 }
 
+/* Предотвращение мерцания темы при загрузке */
+html {
+  /* Плавный переход для интерактивного переключения темы */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Скрываем контент до полной загрузки стилей */
+html:not([data-theme]) {
+  visibility: hidden;
+}
+
+/* Показываем контент, когда тема определена */
+html[data-theme] {
+  visibility: visible;
+}
+
 * {
   margin: 0;
   padding: 0;

@@ -1,5 +1,19 @@
 const THEME_KEY = 'app-theme';
 
+// Немедленно применяем тему до загрузки DOM
+(function() {
+    const savedTheme = localStorage.getItem(THEME_KEY) || 'system';
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Определяем реальную тему для применения
+    const effectiveTheme = savedTheme === 'system' ? 
+        (systemDark ? 'dark' : 'light') : 
+        savedTheme;
+    
+    // Применяем тему немедленно
+    document.documentElement.setAttribute('data-theme', effectiveTheme);
+})();
+
 class ThemeManager {
     constructor() {
         this.theme = localStorage.getItem(THEME_KEY) || 'system';
@@ -7,13 +21,18 @@ class ThemeManager {
     }
 
     init() {
-        this.applyTheme();
+        // Тема уже применена, просто настраиваем интерактивность
         this.setupListeners();
         this.updateActiveButton();
     }
 
     applyTheme() {
-        document.documentElement.setAttribute('data-theme', this.theme);
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const effectiveTheme = this.theme === 'system' ? 
+            (systemDark ? 'dark' : 'light') : 
+            this.theme;
+        
+        document.documentElement.setAttribute('data-theme', effectiveTheme);
     }
 
     setTheme(newTheme) {

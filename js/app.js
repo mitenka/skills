@@ -31,15 +31,44 @@ function initNavigation() {
   });
 }
 
+// Получение версии от Service Worker
+async function getServiceWorkerVersion() {
+  if (!navigator.serviceWorker.controller) return null;
+
+  // Создаем канал связи
+  const messageChannel = new MessageChannel();
+  
+  return new Promise((resolve) => {
+    // Обработчик ответа
+    messageChannel.port1.onmessage = (event) => {
+      messageChannel.port1.close();
+      resolve(event.data);
+    };
+
+    // Отправляем запрос версии
+    navigator.serviceWorker.controller.postMessage("getVersion", [
+      messageChannel.port2,
+    ]);
+  });
+}
+
 // Регистрация и обновление Service Worker
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker
       .register("/service-worker.js")
-      .then((registration) => {
+      .then(async (registration) => {
+        // Получаем текущую версию
+        const currentVersion = await getServiceWorkerVersion();
+        console.log('Current SW version:', currentVersion);
+
         // Проверяем обновления каждые 60 минут
-        setInterval(() => {
+        setInterval(async () => {
           registration.update();
+          const newVersion = await getServiceWorkerVersion();
+          if (currentVersion && newVersion && currentVersion !== newVersion) {
+            showUpdateNotification();
+          }
         }, 1000 * 60 * 60);
 
         // Отслеживаем обновления
