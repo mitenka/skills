@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1.7.5";
+const CACHE_NAME = "v1.7.6";
 
 const FILES_TO_CACHE = [
   "/",
@@ -69,21 +69,21 @@ self.addEventListener("activate", (event) => {
 function timeoutFetch(request, timeout = 5000) {
   return Promise.race([
     fetch(request),
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Network timeout')), timeout)
-    )
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Network timeout")), timeout),
+    ),
   ]);
 }
 
 // Обработчик изменения состояния сети
-self.addEventListener('online', (event) => {
-  console.log('Network is online, updating cache...');
+self.addEventListener("online", (event) => {
+  console.log("Network is online, updating cache...");
   self.skipWaiting();
   self.clients.claim();
 });
 
-self.addEventListener('offline', (event) => {
-  console.log('Network is offline, serving from cache...');
+self.addEventListener("offline", (event) => {
+  console.log("Network is offline, serving from cache...");
 });
 
 // Основной обработчик fetch
@@ -91,33 +91,39 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.match(event.request)
-          .then((cachedResponse) => {
-            // Используем стратегию stale-while-revalidate
-            const fetchPromise = timeoutFetch(event.request)
-              .then((networkResponse) => {
-                if (networkResponse.status === 200) {
-                  // Асинхронно обновляем кэш
-                  cache.put(event.request, networkResponse.clone())
-                    .catch(error => console.error('Cache update failed:', error));
-                }
-                return networkResponse;
-              })
-              .catch(error => {
-                console.error(`Network fetch failed for ${event.request.url}:`, error);
-                // Возвращаем кэшированный ответ или offline.html
-                return cachedResponse || caches.match("/offline.html");
-              });
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache
+        .match(event.request)
+        .then((cachedResponse) => {
+          // Используем стратегию stale-while-revalidate
+          const fetchPromise = timeoutFetch(event.request)
+            .then((networkResponse) => {
+              if (networkResponse.status === 200) {
+                // Асинхронно обновляем кэш
+                cache
+                  .put(event.request, networkResponse.clone())
+                  .catch((error) =>
+                    console.error("Cache update failed:", error),
+                  );
+              }
+              return networkResponse;
+            })
+            .catch((error) => {
+              console.error(
+                `Network fetch failed for ${event.request.url}:`,
+                error,
+              );
+              // Возвращаем кэшированный ответ или offline.html
+              return cachedResponse || caches.match("/offline.html");
+            });
 
-            // Сразу возвращаем кэшированный ответ, если он есть
-            return cachedResponse || fetchPromise;
-          })
-          .catch(error => {
-            console.error('Cache match failed:', error);
-            return caches.match("/offline.html");
-          });
-      })
+          // Сразу возвращаем кэшированный ответ, если он есть
+          return cachedResponse || fetchPromise;
+        })
+        .catch((error) => {
+          console.error("Cache match failed:", error);
+          return caches.match("/offline.html");
+        });
+    }),
   );
 });
