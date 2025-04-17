@@ -449,11 +449,16 @@ export async function exportScreenshot(entries, dates) {
   document.body.appendChild(page);
 
   try {
+    // Используем более низкий масштаб для снижения нагрузки на память устройства
+    const scale = isMobileDevice() ? 2 : 3;
+    
+    console.log(`Создание скриншота с масштабом ${scale}...`);
+    
     const canvas = await html2canvas(page, {
       backgroundColor: getComputedStyle(document.body).getPropertyValue(
         "--background-color"
       ),
-      scale: 3, // Увеличиваем масштаб для лучшего качества в мессенджерах
+      scale: scale, // Снижаем масштаб для мобильных устройств
       useCORS: true,
       logging: false,
       onclone: (clonedDoc) => {
@@ -511,14 +516,45 @@ export async function exportScreenshot(entries, dates) {
       })
       .replace(/\./g, "-");
 
-    const link = document.createElement("a");
-    link.download = `Дневник_${exportDate}.png`;
-    // Сохраняем с максимальным качеством
-    link.href = canvas.toDataURL("image/png", 1.0);
-    link.click();
+    const filename = `Дневник_${exportDate}.png`;
+    
+    // Определяем способ сохранения в зависимости от устройства и поддержки браузера
+    if (isMobileDevice() && isWebShareSupported()) {
+      console.log("Используем Web Share API для сохранения");
+      // Используем Web Share API для мобильных устройств
+      try {
+        // Конвертируем canvas в blob
+        const blob = await new Promise(resolve => {
+          canvas.toBlob(resolve, 'image/png', 1.0);
+        });
+        
+        if (!blob) {
+          throw new Error("Не удалось создать blob из canvas");
+        }
+        
+        // Создаем файл из blob
+        const file = new File([blob], filename, { type: 'image/png' });
+        
+        // Используем Web Share API
+        await navigator.share({
+          files: [file],
+          title: 'Дневник наблюдений'
+        });
+      } catch (shareError) {
+        console.warn("Ошибка при использовании Web Share API:", shareError);
+        // Если не удалось использовать Web Share API, используем стандартный способ
+        useStandardDownload(canvas, filename);
+      }
+    } else {
+      // Стандартный способ скачивания через ссылку
+      useStandardDownload(canvas, filename);
+    }
+    
+    console.log("Экспорт изображения успешно завершен");
   } catch (error) {
     console.error("Ошибка при создании скриншота:", error);
-    alert("Не удалось создать скриншот. Попробуйте другой способ экспорта.");
+    // Более информативное сообщение об ошибке
+    alert(`Не удалось создать скриншот: ${error.message}. Попробуйте использовать меньший период экспорта или другой браузер.`);
   } finally {
     document.body.removeChild(page);
   }
@@ -624,6 +660,33 @@ function renderBehaviorRows(dates, entries, type) {
     .join("");
 }
 
+// Вспомогательная функция для определения, является ли устройство мобильным
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Проверяем поддержку Web Share API
+function isWebShareSupported() {
+  return navigator.share && navigator.canShare;
+}
+
+// Стандартный способ скачивания через ссылку
+function useStandardDownload(canvas, filename) {
+  try {
+    const dataUrl = canvas.toDataURL("image/png", 1.0);
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = dataUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    console.log("Использован стандартный способ скачивания");
+  } catch (error) {
+    console.error("Ошибка при стандартном скачивании:", error);
+    throw error; // Пробрасываем ошибку дальше для обработки в вызывающей функции
+  }
+}
+
 const skillOptionsTemplate = {
   feminine: [
     "не думала о навыках и не использовала",
@@ -675,10 +738,16 @@ async function getEntriesForPeriod(days) {
   return { dates, entries: filteredEntries };
 }
 
-// Экспортируем дневник за указанное количество дней
+// Экспортируем дневник в формате изображения за указанное количество дней
 export async function exportDiaryToImage(days = 7) {
   const { entries, dates } = await getEntriesForPeriod(days);
   await exportScreenshot(entries, dates);
+}
+
+// Экспортируем дневник в CSV формате за указанное количество дней
+export async function exportDiaryToCSV(days = 7) {
+  const { entries } = await getEntriesForPeriod(days);
+  await exportToCSV(entries);
 }
 
 // Инициализация обработчиков для модального окна экспорта

@@ -131,6 +131,7 @@ body.diary-filling-mode #fillDiaryBtn {
   background: var(--primary-color);
   background: linear-gradient(135deg, var(--primary-color), #5856d6);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -312,6 +313,7 @@ html[data-theme="dark"] .glass-header {
   margin: 0;
   background: linear-gradient(135deg, var(--primary-color), #5856d6);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 28px;
   font-weight: 800;
@@ -336,6 +338,14 @@ html[data-theme="dark"] .glass-header {
   border-radius: 2px;
   opacity: 0.7;
   width: 100%;
+}
+
+.app-title.highlight::after {
+  background: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), #5856d6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .ios-action-button {
@@ -443,6 +453,12 @@ html[data-theme="dark"] .glass-header {
 }
 
 .modal-content select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
   background-repeat: no-repeat;
@@ -553,6 +569,8 @@ html[data-theme="dark"] .modal-content select {
   background-color: white;
   color: var(--text-color);
   font-size: 0.95rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -710,6 +728,8 @@ body.diary-filling-mode .behavior-cards {
 
 .scale-control input[type="range"] {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   width: 100%;
   height: 4px;
   background: #e9e9ea;
@@ -719,6 +739,8 @@ body.diary-filling-mode .behavior-cards {
 
 .scale-control input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   width: 20px;
   height: 20px;
   background: white;
@@ -2486,11 +2508,59 @@ input:checked + .slider:before {
 }
 
 /* Стили для модального окна экспорта */
-.export-days-control {
+.export-days-control,
+.export-format-control {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin: 24px 0;
+}
+
+.export-format-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  flex: 1;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.radio-label:hover {
+  background-color: var(--hover-background);
+}
+
+.radio-label input[type="radio"]:checked + .radio-text {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.radio-label:has(input[type="radio"]:checked) {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 122, 255, 0.05);
+}
+
+.radio-label input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-text {
+  font-size: 0.95rem;
+  color: var(--text-color);
 }
 
 .export-days-input {

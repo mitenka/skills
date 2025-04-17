@@ -9,7 +9,7 @@ import {
 
 import { updateDiaryHistory } from "./diary-history.js";
 import { db } from "./db.js";
-import { exportDiaryToImage } from "./export-utils.js";
+import { exportDiaryToImage, exportDiaryToCSV } from "./export-utils.js";
 
 // Функция для создания карточки поведения
 function createBehaviorCard(behavior) {
@@ -1127,10 +1127,32 @@ async function exportDiary() {
     return;
   }
 
-  // Сначала делаем скриншот
-  await exportDiaryToImage(days);
+  // Получаем выбранный формат экспорта
+  const formatRadios = document.getElementsByName("exportFormat");
+  let selectedFormat = "png"; // По умолчанию PNG
+  
+  for (const radio of formatRadios) {
+    if (radio.checked) {
+      selectedFormat = radio.value;
+      break;
+    }
+  }
 
-  // Потом закрываем окно
+  try {
+    // Выбираем метод экспорта в зависимости от формата
+    if (selectedFormat === "png") {
+      console.log(`Экспорт дневника в формате PNG за ${days} дней`);
+      await exportDiaryToImage(days);
+    } else if (selectedFormat === "csv") {
+      console.log(`Экспорт дневника в формате CSV за ${days} дней`);
+      await exportDiaryToCSV(days);
+    }
+  } catch (error) {
+    console.error("Ошибка при экспорте дневника:", error);
+    alert(`Ошибка при экспорте дневника: ${error.message}. Попробуйте другой формат или меньший период.`);
+  }
+
+  // Закрываем модальное окно
   closeExportModal();
 }
 
