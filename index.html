@@ -30,8 +30,8 @@
     <link rel="shortcut icon" href="icons/icon-192x192.png" />
     <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
     <link rel="stylesheet" href="fonts/remixicon/remixicon.css" />
-    <link rel="stylesheet" href="styles/main.css?v=1.8.1" />
-    <link rel="stylesheet" href="styles/diary.css?v=1.8.1" />
+    <link rel="stylesheet" href="styles/main.css?v=1.8.2" />
+    <link rel="stylesheet" href="styles/diary.css?v=1.8.2" />
     <link rel="stylesheet" href="styles/fireworks.css" />
     <link rel="stylesheet" href="styles/theory.css" />
   </head>
@@ -201,7 +201,6 @@
           <div class="modal-content">
             <h2>Сохранение дневника</h2>
             <div class="export-days-control">
-              <label for="exportDays">Сохранить дневник за:</label>
               <div class="export-days-input">
                 <input
                   type="number"
@@ -212,30 +211,23 @@
                 />
                 <span>дней</span>
               </div>
-              <div class="export-days-links">
-                <a href="#" class="dotted-link" data-days="7">За неделю</a>
-                <span class="dot-separator">·</span>
-                <a href="#" class="dotted-link" data-days="14">Две недели</a>
-              </div>
             </div>
 
             <div class="export-format-control">
-              <label>Формат экспорта:</label>
               <div class="export-format-options">
                 <label class="radio-label">
                   <input type="radio" name="exportFormat" value="png" checked />
-                  <span class="radio-text">Картинка (PNG)</span>
+                  <span class="radio-text">Картинка</span>
                 </label>
                 <label class="radio-label">
                   <input type="radio" name="exportFormat" value="csv" />
-                  <span class="radio-text">Таблица (CSV)</span>
+                  <span class="radio-text">Таблица</span>
                 </label>
               </div>
             </div>
             <div class="influence-assessment">
               <p class="influence-description">
-                Если хотите, вы можете дополнить запись тем, насколько вы
-                способны влиять или управлять своими:
+                Насколько вы можете управлять:
               </p>
               <div class="influence-controls">
                 <div class="influence-item">
