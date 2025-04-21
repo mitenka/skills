@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1.8.2";
+const CACHE_NAME = "v1.8.3";
 
 const FILES_TO_CACHE = [
   "/",
@@ -45,7 +45,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(FILES_TO_CACHE);
-    })
+    }),
   );
 });
 
@@ -58,10 +58,10 @@ self.addEventListener("activate", (event) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
-        })
+        }),
       );
       await self.clients.claim();
-    })()
+    })(),
   );
 });
 
@@ -70,7 +70,7 @@ function timeoutFetch(request, timeout = 5000) {
   return Promise.race([
     fetch(request),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Network timeout")), timeout)
+      setTimeout(() => reject(new Error("Network timeout")), timeout),
     ),
   ]);
 }
@@ -103,7 +103,7 @@ self.addEventListener("fetch", (event) => {
                 cache
                   .put(event.request, networkResponse.clone())
                   .catch((error) =>
-                    console.error("Cache update failed:", error)
+                    console.error("Cache update failed:", error),
                   );
               }
               return networkResponse;
@@ -111,7 +111,7 @@ self.addEventListener("fetch", (event) => {
             .catch((error) => {
               console.error(
                 `Network fetch failed for ${event.request.url}:`,
-                error
+                error,
               );
               // Возвращаем кэшированный ответ или offline.html
               return cachedResponse || caches.match("/offline.html");
@@ -124,6 +124,6 @@ self.addEventListener("fetch", (event) => {
           console.error("Cache match failed:", error);
           return caches.match("/offline.html");
         });
-    })
+    }),
   );
 });
