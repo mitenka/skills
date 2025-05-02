@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1.8.4";
+const CACHE_NAME = "v1.8.5";
 
 const FILES_TO_CACHE = [
   "/",
