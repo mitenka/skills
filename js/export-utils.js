@@ -163,18 +163,68 @@ export async function exportToCSV(entries) {
     ]),
   ];
 
-  // Преобразуем в строку CSV
-  const csvContent = csvRows.map((row) => row.join(",")).join("\n");
+  // Получаем данные о навыках
+  // Загружаем структуру навыков из theory.json
+  const response = await fetch("/data/theory.json");
+  const theory = await response.json();
 
-  // Создаем и скачиваем файл
-  const blob = new Blob(["\ufeff" + csvContent], {
-    type: "text/csv;charset=utf-8",
-  });
+  // Получаем все практики за указанный период
+  const startDateStr = dates[0].toISOString().split("T")[0];
+  const endDateStr = dates[dates.length - 1].toISOString().split("T")[0];
+
+  // Получаем все практики за период
+  const practices = await db.practices
+    .where("date")
+    .between(startDateStr, endDateStr, true, true)
+    .toArray();
+
+  // Добавляем пустую строку перед секцией навыков
+  csvRows.push([""]);
+  
+  // Добавляем заголовок секции навыков
+  csvRows.push(["НАВЫКИ"]);
+
+  // Проходим по всем блокам навыков из theory.json
+  for (const block of theory.blocks) {
+    // Добавляем название блока навыков
+    csvRows.push([block.title]);
+    
+    // Добавляем строки для каждого навыка в блоке
+    for (const skill of block.skills) {
+      const skillRow = [escapeCSV(skill.name)];
+      
+      // Добавляем данные о практике навыка для каждой даты
+      for (const date of dates) {
+        const dateStr = date.toISOString().split('T')[0];
+        const hasSkill = practices.some(p => 
+          p.date === dateStr && p.skill === skill.name
+        );
+        skillRow.push(escapeCSV(hasSkill ? '✓' : ''));
+      }
+      
+      csvRows.push(skillRow);
+    }
+  }
+
+  // Создаем CSV строку
+  const csvContent = csvRows
+    .map((row) => row.join(","))
+    .join("\n");
+
+  // Создаем Blob и ссылку для скачивания
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
+
+  // Создаем элемент ссылки для скачивания
   const link = document.createElement("a");
-  link.href = url;
-  link.download = "Дневник.csv";
+  link.setAttribute("href", url);
+  link.setAttribute(
+    "download",
+    `diary_${new Date().toISOString().split("T")[0]}.csv`
+  );
   document.body.appendChild(link);
+
+  // Запускаем скачивание и удаляем ссылку
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
